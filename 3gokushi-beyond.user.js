@@ -5,8 +5,9 @@
 // @include		http://*.3gokushi.jp/*
 // @include		http://mixi.jp/run_appli.pl?id=6598
 // @include		http://*.mixi-platform.com/*
-// @author		原作者hatt,編集者romer,etc...
-// @version		3.0.74α (2015/11/11)
+// @author		原作者hatt,編集者romer,etc...(with RAPT)
+// @version		3.0.74α+1 (2016/10/22)
+// @connect		3gokushi.jp
 // @grant		GM_addStyle
 // @grant		GM_deleteValue
 // @grant		GM_getValue
@@ -17,24 +18,24 @@
 // @grant		GM_getResourceURL
 // @require		http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js
 
-// @resource old_village                        http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg.jpg
-// @resource Spring_village                     http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_spring.jpg
-// @resource Summer_village                     http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_summer.jpg
-// @resource Autumn_village                     http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_autumn.jpg
-// @resource Winter_village                     http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_winter.jpg
+// @resource old_village						http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg.jpg
+// @resource Spring_village 					http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_spring.jpg
+// @resource Summer_village 					http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_summer.jpg
+// @resource Autumn_village 					http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_autumn.jpg
+// @resource Winter_village 					http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_winter.jpg
 
-// @resource old_map                            http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg.gif
-// @resource Spring_map                         http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_spring.gif
-// @resource Summer_map                         http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_summer.gif
-// @resource Autumn_map                         http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_autumn.gif
-// @resource Winter_map                         http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_winter.gif
+// @resource old_map							http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg.gif
+// @resource Spring_map 						http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_spring.gif
+// @resource Summer_map 						http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_summer.gif
+// @resource Autumn_map 						http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_autumn.gif
+// @resource Winter_map 						http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_winter.gif
 
 // ==/UserScript==
 //
 // ver3.00 2014.01.31 最適化開始 - 2014.03.08 各種ツールをマージ。多数のロジック修正及び、既存バグ、挙動不審な処理を修正。
-//         2014.03.08 コメントが処理速度に影響しているため、各スクリプト書き出しのコメントを整理
-//         2014.10.11 FireFox32+GreaseMonkey2.2対応
-//         2014.10.13 オート小麗、オート大鳳追加。その他微修正
+//		   2014.03.08 コメントが処理速度に影響しているため、各スクリプト書き出しのコメントを整理
+//		   2014.10.11 FireFox32+GreaseMonkey2.2対応
+//		   2014.10.13 オート小麗、オート大鳳追加。その他微修正
 // ver3.01 2014.10.13 兵士誤発注防止で入力枠が勝手に開く問題を修正
 // ver3.02 2014.10.13 出兵時の兵器ダメージ計算が動かない問題を修正
 // ver3.03 2014.10.13 新着があるときにロールオーバーが消える問題を修正
@@ -50,7 +51,7 @@
 // ver3.13 2014.10.20 拠点化予約時に動かないツールがある問題を修正。光栄リストを最新化。
 // ver3.14 2014.10.21 騎兵の強攻の合成スキルがでない問題を修正。領地が21以上あるときに領地一括破棄ボタンがページ切り替えの中に出現する問題を修正。
 // ver3.15 2014.10.22 右クリックの合成スキル表示が出ない問題を修正。JST表示のチェックが外れていてもJSTが消えない問題を修正。SR牛輔の合成スキルが表示されない問題を修正。
-//                    歴史書モードでオートビルダーが止まらない問題修正。10/22メンテで領地リンクのアイコンが折り返す問題を修正。
+//					  歴史書モードでオートビルダーが止まらない問題修正。10/22メンテで領地リンクのアイコンが折り返す問題を修正。
 // ver3.16 2014.10.25 自動ブショーダスの破棄対象からUC張梁、UC姜維、UC司馬懿を除外。10/22メンテ以降beyondのサイドバーで表示が崩れる問題を修正。
 // ver3.19 2014.11.15 ログイン画面のサーバ名が４列表示になるように修正。ワールド表示位置を修正。光栄、恋姫カードのイラスト表示を回復。
 // ver3.20 2014.11.15 atk_calcを最新化
@@ -76,13 +77,13 @@
 // ver3.42 2014.12.23 favorite tradeのデッキからの待機武将を下ろす機能を一括デッキセットから分離。軍極セットのチェックに影響を受けないようにした。
 // ver3.43 2014.12.24 出品画面、武将図鑑、ブショーダスの落札価格検索を全面書き直し。過去の遺物だったカードコレクション補助を削除。
 // ver3.44 2014.12.25 bro3_miscでトレードの表示非表示維持指定時に、レアリティLと公開期限が保持されない不具合を修正。
-//                    favorite tadeでのトレード画面の検索、落札機能を再構築、高速化。お気に入りページを削除し、トレード画面にボタン化。
+//					  favorite tadeでのトレード画面の検索、落札機能を再構築、高速化。お気に入りページを削除し、トレード画面にボタン化。
 // ver3.45 2014.12.25 メンテで機能しなくなった自動ブショーダスを動くように修正。
 // ver3.46 2014.12.25 bro3_dasuで合成画面でスキルが二重表示される問題、デッキでスキルがずれて表示される問題を暫定修正。
 // ver3.47 2014.12.26 bro3_dasuの内政スキル等の表示を修正。
 // ver3.48 2014.12.26 bro3_dasuの合成スキル表示、パラメータ付与画面でのスキル表示を復活（小カードも対応）。
 // ver3.49 2014.12.26 bro3_dasuのブショーダス破棄チェック、一括カード破棄チェックの機能復活。10連ブショーダスで合成スキルが見えるように修正。
-//                    クエスト補助の小麗、大鳳画像が404になっている問題を修正。
+//					  クエスト補助の小麗、大鳳画像が404になっている問題を修正。
 // ver3.50 2014.12.27 １枚引きのブショーダスから出品できなくなった問題を修正（メンテ影響？）。
 // ver3.51 2014.12.27 自動ブショーダスの結果が画面に表示されなくなったバグを修正。
 // ver3.52 2014.12.31 favorite tradeのお気に入り検索にLカードを設定できるように修正
@@ -102,511 +103,514 @@
 // ver3.67 2015.01.31 トレード検索まわりをメンテ対応
 // ver3.68 2015.02.01 覇の出品のときに合成スキル枠がずれる問題を修正
 // ver3.69 2015.03.21 資源充足タイマーアイコンを右に移動
+// ver3.0.74α   2015.11.11 http://www45.atwiki.jp/hasekun/pages/19.html
+// ver3.0.74α+1 2016.10.22 上記本家サイトからＤＬできないとのことで勝手に再配布開始。問題あればご連絡ください。
+//							仁君君の城壁補強実装誤りを修正、セキュリティー警告対策
 (function($) {
 
   $(".cardStatusDetail:contains('仁君LV')").each(function(){
-    if($(this).find(".set_release").length){
-      if(!$(this).find("tr:contains('仁君LV')").hasClass("used")){
-        $(this).find("td:contains('仁君LV')")
-          .css("color","blue")
-          .css("cursor","pointer")
-          .click(function(){
-            if(confirm($(this).text()+"を使用しますか？")){
-              var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
-              var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
-              var sid = "sd000"+($(this).text().match(/\d+/)[0]-1);
-              $(this).addClass("jinDisp").text("拠点確認中");
-              $.get("/card/domestic_setting.php",function(a){
-                if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
-                  alert("内政中の武将が居ます\n拠点を変更してください")
-                }else{
-                  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
-                  b["selected_village["+cid+"]"] = vid;
-                  $(".jinDisp").text("拠点セット中");
-                  $.post("/card/deck.php",b,function(){
-                      $(".jinDisp").text("内政セット中");
-                      $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
-                        $(".jinDisp").text("発動中");
-                        $.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
-                          $(".jinDisp").text("内政解除中");
-                          $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
-                            $(".jinDisp").text("拠点解除中");
-                            $.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
-                              $(".jinDisp").text("ページ更新中");
-                              location.reload();
-                            });
-                          });
-                        });
-                      });
-                  });
-                }
-              });
-            }
-        });
-      }
-    }
+	if($(this).find(".set_release").length){
+	  if(!$(this).find("tr:contains('仁君LV')").hasClass("used")){
+		$(this).find("td:contains('仁君LV')")
+		  .css("color","blue")
+		  .css("cursor","pointer")
+		  .click(function(){
+			if(confirm($(this).text()+"を使用しますか？")){
+			  var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
+			  var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
+			  var sid = "sd000"+($(this).text().match(/\d+/)[0]-1);
+			  $(this).addClass("jinDisp").text("拠点確認中");
+			  $.get("/card/domestic_setting.php",function(a){
+				if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
+				  alert("内政中の武将が居ます\n拠点を変更してください")
+				}else{
+				  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
+				  b["selected_village["+cid+"]"] = vid;
+				  $(".jinDisp").text("拠点セット中");
+				  $.post("/card/deck.php",b,function(){
+					  $(".jinDisp").text("内政セット中");
+					  $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
+						$(".jinDisp").text("発動中");
+						$.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
+						  $(".jinDisp").text("内政解除中");
+						  $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
+							$(".jinDisp").text("拠点解除中");
+							$.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
+							  $(".jinDisp").text("ページ更新中");
+							  location.reload();
+							});
+						  });
+						});
+					  });
+				  });
+				}
+			  });
+			}
+		});
+	  }
+	}
   });
   $(".cardStatusDetail:contains('神医の術式LV')").each(function(){
-    if($(this).find(".set_release").length){
-      if(!$(this).find("tr:contains('神医の術式LV')").hasClass("used")){
-        $(this).find("td:contains('神医の術式LV')")
-          .css("color","blue")
-          .css("cursor","pointer")
-          .click(function(){
-            if(confirm($(this).text()+"を使用しますか？")){
-              var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
-              var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
-              var sid = "sd003"+($(this).text().match(/\d+/)[0]-1);
-              $(this).addClass("jinDisp").text("拠点確認中");
-              $.get("/card/domestic_setting.php",function(a){
-                if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
-                  alert("内政中の武将が居ます\n拠点を変更してください")
-                }else{
-                  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
-                  b["selected_village["+cid+"]"] = vid;
-                  $(".jinDisp").text("拠点セット中");
-                  $.post("/card/deck.php",b,function(){
-                      $(".jinDisp").text("内政セット中");
-                      $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
-                        $(".jinDisp").text("発動中");
-                        $.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
-                          $(".jinDisp").text("内政解除中");
-                          $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
-                            $(".jinDisp").text("拠点解除中");
-                            $.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
-                              $(".jinDisp").text("ページ更新中");
-                              location.reload();
-                            });
-                          });
-                        });
-                      });
-                  });
-                }
-              });
-            }
-        });
-      }
-    }
+	if($(this).find(".set_release").length){
+	  if(!$(this).find("tr:contains('神医の術式LV')").hasClass("used")){
+		$(this).find("td:contains('神医の術式LV')")
+		  .css("color","blue")
+		  .css("cursor","pointer")
+		  .click(function(){
+			if(confirm($(this).text()+"を使用しますか？")){
+			  var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
+			  var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
+			  var sid = "sd003"+($(this).text().match(/\d+/)[0]-1);
+			  $(this).addClass("jinDisp").text("拠点確認中");
+			  $.get("/card/domestic_setting.php",function(a){
+				if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
+				  alert("内政中の武将が居ます\n拠点を変更してください")
+				}else{
+				  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
+				  b["selected_village["+cid+"]"] = vid;
+				  $(".jinDisp").text("拠点セット中");
+				  $.post("/card/deck.php",b,function(){
+					  $(".jinDisp").text("内政セット中");
+					  $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
+						$(".jinDisp").text("発動中");
+						$.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
+						  $(".jinDisp").text("内政解除中");
+						  $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
+							$(".jinDisp").text("拠点解除中");
+							$.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
+							  $(".jinDisp").text("ページ更新中");
+							  location.reload();
+							});
+						  });
+						});
+					  });
+				  });
+				}
+			  });
+			}
+		});
+	  }
+	}
   });
   $(".cardStatusDetail:contains('傾国LV')").each(function(){
-    if($(this).find(".set_release").length){
-      if(!$(this).find("tr:contains('傾国LV')").hasClass("used")){
-        $(this).find("td:contains('傾国LV')")
-          .css("color","blue")
-          .css("cursor","pointer")
-          .click(function(){
-            if(confirm($(this).text()+"を使用しますか？")){
-              var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
-              var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
-              var sid = "sd004"+($(this).text().match(/\d+/)[0]-1);
-              $(this).addClass("jinDisp").text("拠点確認中");
-              $.get("/card/domestic_setting.php",function(a){
-                if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
-                  alert("内政中の武将が居ます\n拠点を変更してください")
-                }else{
-                  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
-                  b["selected_village["+cid+"]"] = vid;
-                  $(".jinDisp").text("拠点セット中");
-                  $.post("/card/deck.php",b,function(){
-                      $(".jinDisp").text("内政セット中");
-                      $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
-                        $(".jinDisp").text("発動中");
-                        $.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
-                          $(".jinDisp").text("内政解除中");
-                          $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
-                            $(".jinDisp").text("拠点解除中");
-                            $.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
-                              $(".jinDisp").text("ページ更新中");
-                              location.reload();
-                            });
-                          });
-                        });
-                      });
-                  });
-                }
-              });
-            }
-        });
-      }
-    }
+	if($(this).find(".set_release").length){
+	  if(!$(this).find("tr:contains('傾国LV')").hasClass("used")){
+		$(this).find("td:contains('傾国LV')")
+		  .css("color","blue")
+		  .css("cursor","pointer")
+		  .click(function(){
+			if(confirm($(this).text()+"を使用しますか？")){
+			  var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
+			  var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
+			  var sid = "sd004"+($(this).text().match(/\d+/)[0]-1);
+			  $(this).addClass("jinDisp").text("拠点確認中");
+			  $.get("/card/domestic_setting.php",function(a){
+				if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
+				  alert("内政中の武将が居ます\n拠点を変更してください")
+				}else{
+				  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
+				  b["selected_village["+cid+"]"] = vid;
+				  $(".jinDisp").text("拠点セット中");
+				  $.post("/card/deck.php",b,function(){
+					  $(".jinDisp").text("内政セット中");
+					  $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
+						$(".jinDisp").text("発動中");
+						$.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
+						  $(".jinDisp").text("内政解除中");
+						  $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
+							$(".jinDisp").text("拠点解除中");
+							$.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
+							  $(".jinDisp").text("ページ更新中");
+							  location.reload();
+							});
+						  });
+						});
+					  });
+				  });
+				}
+			  });
+			}
+		});
+	  }
+	}
   });
   $(".cardStatusDetail:contains('弓腰姫の愛LV')").each(function(){
-    if($(this).find(".set_release").length){
-      if(!$(this).find("tr:contains('弓腰姫の愛LV')").hasClass("used")){
-        $(this).find("td:contains('弓腰姫の愛LV')")
-          .css("color","blue")
-          .css("cursor","pointer")
-          .click(function(){
-            if(confirm($(this).text()+"を使用しますか？")){
-              var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
-              var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
-              var sid = "sd001"+($(this).text().match(/\d+/)[0]-1);
-              $(this).addClass("jinDisp").text("拠点確認中");
-              $.get("/card/domestic_setting.php",function(a){
-                if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
-                  alert("内政中の武将が居ます\n拠点を変更してください")
-                }else{
-                  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
-                  b["selected_village["+cid+"]"] = vid;
-                  $(".jinDisp").text("拠点セット中");
-                  $.post("/card/deck.php",b,function(){
-                      $(".jinDisp").text("内政セット中");
-                      $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
-                        $(".jinDisp").text("発動中");
-                        $.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
-                          $(".jinDisp").text("内政解除中");
-                          $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
-                            $(".jinDisp").text("拠点解除中");
-                            $.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
-                              $(".jinDisp").text("ページ更新中");
-                              location.reload();
-                            });
-                          });
-                        });
-                      });
-                  });
-                }
-              });
-            }
-        });
-      }
-    }
+	if($(this).find(".set_release").length){
+	  if(!$(this).find("tr:contains('弓腰姫の愛LV')").hasClass("used")){
+		$(this).find("td:contains('弓腰姫の愛LV')")
+		  .css("color","blue")
+		  .css("cursor","pointer")
+		  .click(function(){
+			if(confirm($(this).text()+"を使用しますか？")){
+			  var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
+			  var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
+			  var sid = "sd001"+($(this).text().match(/\d+/)[0]-1);
+			  $(this).addClass("jinDisp").text("拠点確認中");
+			  $.get("/card/domestic_setting.php",function(a){
+				if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
+				  alert("内政中の武将が居ます\n拠点を変更してください")
+				}else{
+				  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
+				  b["selected_village["+cid+"]"] = vid;
+				  $(".jinDisp").text("拠点セット中");
+				  $.post("/card/deck.php",b,function(){
+					  $(".jinDisp").text("内政セット中");
+					  $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
+						$(".jinDisp").text("発動中");
+						$.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
+						  $(".jinDisp").text("内政解除中");
+						  $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
+							$(".jinDisp").text("拠点解除中");
+							$.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
+							  $(".jinDisp").text("ページ更新中");
+							  location.reload();
+							});
+						  });
+						});
+					  });
+				  });
+				}
+			  });
+			}
+		});
+	  }
+	}
   });
   $(".cardStatusDetail:contains('皇后の慈愛LV')").each(function(){
-    if($(this).find(".set_release").length){
-      if(!$(this).find("tr:contains('皇后の慈愛LV')").hasClass("used")){
-        $(this).find("td:contains('皇后の慈愛LV')")
-          .css("color","blue")
-          .css("cursor","pointer")
-          .click(function(){
-            if(confirm($(this).text()+"を使用しますか？")){
-              var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
-              var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
-              var sid = "sd012"+($(this).text().match(/\d+/)[0]-1);
-              $(this).addClass("jinDisp").text("拠点確認中");
-              $.get("/card/domestic_setting.php",function(a){
-                if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
-                  alert("内政中の武将が居ます\n拠点を変更してください")
-                }else{
-                  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
-                  b["selected_village["+cid+"]"] = vid;
-                  $(".jinDisp").text("拠点セット中");
-                  $.post("/card/deck.php",b,function(){
-                      $(".jinDisp").text("内政セット中");
-                      $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
-                        $(".jinDisp").text("発動中");
-                        $.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
-                          $(".jinDisp").text("内政解除中");
-                          $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
-                            $(".jinDisp").text("拠点解除中");
-                            $.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
-                              $(".jinDisp").text("ページ更新中");
-                              location.reload();
-                            });
-                          });
-                        });
-                      });
-                  });
-                }
-              });
-            }
-        });
-      }
-    }
+	if($(this).find(".set_release").length){
+	  if(!$(this).find("tr:contains('皇后の慈愛LV')").hasClass("used")){
+		$(this).find("td:contains('皇后の慈愛LV')")
+		  .css("color","blue")
+		  .css("cursor","pointer")
+		  .click(function(){
+			if(confirm($(this).text()+"を使用しますか？")){
+			  var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
+			  var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
+			  var sid = "sd012"+($(this).text().match(/\d+/)[0]-1);
+			  $(this).addClass("jinDisp").text("拠点確認中");
+			  $.get("/card/domestic_setting.php",function(a){
+				if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
+				  alert("内政中の武将が居ます\n拠点を変更してください")
+				}else{
+				  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
+				  b["selected_village["+cid+"]"] = vid;
+				  $(".jinDisp").text("拠点セット中");
+				  $.post("/card/deck.php",b,function(){
+					  $(".jinDisp").text("内政セット中");
+					  $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
+						$(".jinDisp").text("発動中");
+						$.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
+						  $(".jinDisp").text("内政解除中");
+						  $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
+							$(".jinDisp").text("拠点解除中");
+							$.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
+							  $(".jinDisp").text("ページ更新中");
+							  location.reload();
+							});
+						  });
+						});
+					  });
+				  });
+				}
+			  });
+			}
+		});
+	  }
+	}
   });
   $(".cardStatusDetail:contains('神医の施術LV')").each(function(){
-    if($(this).find(".set_release").length){
-      if(!$(this).find("tr:contains('神医の施術LV')").hasClass("used")){
-        $(this).find("td:contains('神医の施術LV')")
-          .css("color","blue")
-          .css("cursor","pointer")
-          .click(function(){
-            if(confirm($(this).text()+"を使用しますか？")){
-              var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
-              var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
-              var sid = "sd013"+($(this).text().match(/\d+/)[0]-1);
-              $(this).addClass("jinDisp").text("拠点確認中");
-              $.get("/card/domestic_setting.php",function(a){
-                if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
-                  alert("内政中の武将が居ます\n拠点を変更してください")
-                }else{
-                  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
-                  b["selected_village["+cid+"]"] = vid;
-                  $(".jinDisp").text("拠点セット中");
-                  $.post("/card/deck.php",b,function(){
-                      $(".jinDisp").text("内政セット中");
-                      $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
-                        $(".jinDisp").text("発動中");
-                        $.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
-                          $(".jinDisp").text("内政解除中");
-                          $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
-                            $(".jinDisp").text("拠点解除中");
-                            $.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
-                              $(".jinDisp").text("ページ更新中");
-                              location.reload();
-                            });
-                          });
-                        });
-                      });
-                  });
-                }
-              });
-            }
-        });
-      }
-    }
+	if($(this).find(".set_release").length){
+	  if(!$(this).find("tr:contains('神医の施術LV')").hasClass("used")){
+		$(this).find("td:contains('神医の施術LV')")
+		  .css("color","blue")
+		  .css("cursor","pointer")
+		  .click(function(){
+			if(confirm($(this).text()+"を使用しますか？")){
+			  var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
+			  var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
+			  var sid = "sd013"+($(this).text().match(/\d+/)[0]-1);
+			  $(this).addClass("jinDisp").text("拠点確認中");
+			  $.get("/card/domestic_setting.php",function(a){
+				if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
+				  alert("内政中の武将が居ます\n拠点を変更してください")
+				}else{
+				  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
+				  b["selected_village["+cid+"]"] = vid;
+				  $(".jinDisp").text("拠点セット中");
+				  $.post("/card/deck.php",b,function(){
+					  $(".jinDisp").text("内政セット中");
+					  $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
+						$(".jinDisp").text("発動中");
+						$.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
+						  $(".jinDisp").text("内政解除中");
+						  $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
+							$(".jinDisp").text("拠点解除中");
+							$.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
+							  $(".jinDisp").text("ページ更新中");
+							  location.reload();
+							});
+						  });
+						});
+					  });
+				  });
+				}
+			  });
+			}
+		});
+	  }
+	}
   });
   $(".cardStatusDetail:contains('桃色吐息LV')").each(function(){
-    if($(this).find(".set_release").length){
-      if(!$(this).find("tr:contains('桃色吐息LV')").hasClass("used")){
-        $(this).find("td:contains('桃色吐息LV')")
-          .css("color","blue")
-          .css("cursor","pointer")
-          .click(function(){
-            if(confirm($(this).text()+"を使用しますか？")){
-              var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
-              var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
-              var sid = "sd017"+($(this).text().match(/\d+/)[0]-1);
-              $(this).addClass("jinDisp").text("拠点確認中");
-              $.get("/card/domestic_setting.php",function(a){
-                if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
-                  alert("内政中の武将が居ます\n拠点を変更してください")
-                }else{
-                  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
-                  b["selected_village["+cid+"]"] = vid;
-                  $(".jinDisp").text("拠点セット中");
-                  $.post("/card/deck.php",b,function(){
-                      $(".jinDisp").text("内政セット中");
-                      $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
-                        $(".jinDisp").text("発動中");
-                        $.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
-                          $(".jinDisp").text("内政解除中");
-                          $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
-                            $(".jinDisp").text("拠点解除中");
-                            $.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
-                              $(".jinDisp").text("ページ更新中");
-                              location.reload();
-                            });
-                          });
-                        });
-                      });
-                  });
-                }
-              });
-            }
-        });
-      }
-    }
+	if($(this).find(".set_release").length){
+	  if(!$(this).find("tr:contains('桃色吐息LV')").hasClass("used")){
+		$(this).find("td:contains('桃色吐息LV')")
+		  .css("color","blue")
+		  .css("cursor","pointer")
+		  .click(function(){
+			if(confirm($(this).text()+"を使用しますか？")){
+			  var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
+			  var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
+			  var sid = "sd017"+($(this).text().match(/\d+/)[0]-1);
+			  $(this).addClass("jinDisp").text("拠点確認中");
+			  $.get("/card/domestic_setting.php",function(a){
+				if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
+				  alert("内政中の武将が居ます\n拠点を変更してください")
+				}else{
+				  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
+				  b["selected_village["+cid+"]"] = vid;
+				  $(".jinDisp").text("拠点セット中");
+				  $.post("/card/deck.php",b,function(){
+					  $(".jinDisp").text("内政セット中");
+					  $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
+						$(".jinDisp").text("発動中");
+						$.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
+						  $(".jinDisp").text("内政解除中");
+						  $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
+							$(".jinDisp").text("拠点解除中");
+							$.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
+							  $(".jinDisp").text("ページ更新中");
+							  location.reload();
+							});
+						  });
+						});
+					  });
+				  });
+				}
+			  });
+			}
+		});
+	  }
+	}
   });
-  $(".cardStatusDetail:contains('傾国LV')").each(function(){
-    if($(this).find(".set_release").length){
-      if(!$(this).find("tr:contains('城壁補強LV')").hasClass("used")){
-        $(this).find("td:contains('城壁補強LV')")
-          .css("color","blue")
-          .css("cursor","pointer")
-          .click(function(){
-            if(confirm($(this).text()+"を使用しますか？")){
-              var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
-              var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
-              var sid = "sd005"+($(this).text().match(/\d+/)[0]-1);
-              $(this).addClass("jinDisp").text("拠点確認中");
-              $.get("/card/domestic_setting.php",function(a){
-                if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
-                  alert("内政中の武将が居ます\n拠点を変更してください")
-                }else{
-                  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
-                  b["selected_village["+cid+"]"] = vid;
-                  $(".jinDisp").text("拠点セット中");
-                  $.post("/card/deck.php",b,function(){
-                      $(".jinDisp").text("内政セット中");
-                      $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
-                        $(".jinDisp").text("発動中");
-                        $.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
-                          $(".jinDisp").text("内政解除中");
-                          $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
-                            $(".jinDisp").text("拠点解除中");
-                            $.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
-                              $(".jinDisp").text("ページ更新中");
-                              location.reload();
-                            });
-                          });
-                        });
-                      });
-                  });
-                }
-              });
-            }
-        });
-      }
-    }
+  $(".cardStatusDetail:contains('城壁補強LV')").each(function(){
+	if($(this).find(".set_release").length){
+	  if(!$(this).find("tr:contains('城壁補強LV')").hasClass("used")){
+		$(this).find("td:contains('城壁補強LV')")
+		  .css("color","blue")
+		  .css("cursor","pointer")
+		  .click(function(){
+			if(confirm($(this).text()+"を使用しますか？")){
+			  var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
+			  var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
+			  var sid = "sd005"+($(this).text().match(/\d+/)[0]-1);
+			  $(this).addClass("jinDisp").text("拠点確認中");
+			  $.get("/card/domestic_setting.php",function(a){
+				if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
+				  alert("内政中の武将が居ます\n拠点を変更してください")
+				}else{
+				  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
+				  b["selected_village["+cid+"]"] = vid;
+				  $(".jinDisp").text("拠点セット中");
+				  $.post("/card/deck.php",b,function(){
+					  $(".jinDisp").text("内政セット中");
+					  $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
+						$(".jinDisp").text("発動中");
+						$.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
+						  $(".jinDisp").text("内政解除中");
+						  $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
+							$(".jinDisp").text("拠点解除中");
+							$.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
+							  $(".jinDisp").text("ページ更新中");
+							  location.reload();
+							});
+						  });
+						});
+					  });
+				  });
+				}
+			  });
+			}
+		});
+	  }
+	}
   });
   $(".cardStatusDetail:contains('勇姫督励LV')").each(function(){
-    if($(this).find(".set_release").length){
-      if(!$(this).find("tr:contains('勇姫督励LV')").hasClass("used")){
-        $(this).find("td:contains('勇姫督励LV')")
-          .css("color","blue")
-          .css("cursor","pointer")
-          .click(function(){
-            if(confirm($(this).text()+"を使用しますか？")){
-              var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
-              var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
-              var sid = "sd018"+($(this).text().match(/\d+/)[0]-1);
-              $(this).addClass("jinDisp").text("拠点確認中");
-              $.get("/card/domestic_setting.php",function(a){
-                if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
-                  alert("内政中の武将が居ます\n拠点を変更してください")
-                }else{
-                  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
-                  b["selected_village["+cid+"]"] = vid;
-                  $(".jinDisp").text("拠点セット中");
-                  $.post("/card/deck.php",b,function(){
-                      $(".jinDisp").text("内政セット中");
-                      $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
-                        $(".jinDisp").text("発動中");
-                        $.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
-                          $(".jinDisp").text("内政解除中");
-                          $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
-                            $(".jinDisp").text("拠点解除中");
-                            $.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
-                              $(".jinDisp").text("ページ更新中");
-                              location.reload();
-                            });
-                          });
-                        });
-                      });
-                  });
-                }
-              });
-            }
-        });
-      }
-    }
+	if($(this).find(".set_release").length){
+	  if(!$(this).find("tr:contains('勇姫督励LV')").hasClass("used")){
+		$(this).find("td:contains('勇姫督励LV')")
+		  .css("color","blue")
+		  .css("cursor","pointer")
+		  .click(function(){
+			if(confirm($(this).text()+"を使用しますか？")){
+			  var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
+			  var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
+			  var sid = "sd018"+($(this).text().match(/\d+/)[0]-1);
+			  $(this).addClass("jinDisp").text("拠点確認中");
+			  $.get("/card/domestic_setting.php",function(a){
+				if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
+				  alert("内政中の武将が居ます\n拠点を変更してください")
+				}else{
+				  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
+				  b["selected_village["+cid+"]"] = vid;
+				  $(".jinDisp").text("拠点セット中");
+				  $.post("/card/deck.php",b,function(){
+					  $(".jinDisp").text("内政セット中");
+					  $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
+						$(".jinDisp").text("発動中");
+						$.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
+						  $(".jinDisp").text("内政解除中");
+						  $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
+							$(".jinDisp").text("拠点解除中");
+							$.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
+							  $(".jinDisp").text("ページ更新中");
+							  location.reload();
+							});
+						  });
+						});
+					  });
+				  });
+				}
+			  });
+			}
+		});
+	  }
+	}
   });
   $(".cardStatusDetail:contains('優雅な調べLV')").each(function(){
-    if($(this).find(".set_release").length){
-      if(!$(this).find("tr:contains('優雅な調べLV')").hasClass("used")){
-        $(this).find("td:contains('優雅な調べLV')")
-          .css("color","blue")
-          .css("cursor","pointer")
-          .click(function(){
-            if(confirm($(this).text()+"を使用しますか？")){
-              var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
-              var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
-              var sid = "sd011"+($(this).text().match(/\d+/)[0]-1);
-              $(this).addClass("jinDisp").text("拠点確認中");
-              $.get("/card/domestic_setting.php",function(a){
-                if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
-                  alert("内政中の武将が居ます\n拠点を変更してください")
-                }else{
-                  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
-                  b["selected_village["+cid+"]"] = vid;
-                  $(".jinDisp").text("拠点セット中");
-                  $.post("/card/deck.php",b,function(){
-                      $(".jinDisp").text("内政セット中");
-                      $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
-                        $(".jinDisp").text("発動中");
-                        $.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
-                          $(".jinDisp").text("内政解除中");
-                          $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
-                            $(".jinDisp").text("拠点解除中");
-                            $.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
-                              $(".jinDisp").text("ページ更新中");
-                              location.reload();
-                            });
-                          });
-                        });
-                      });
-                  });
-                }
-              });
-            }
-        });
-      }
-    }
+	if($(this).find(".set_release").length){
+	  if(!$(this).find("tr:contains('優雅な調べLV')").hasClass("used")){
+		$(this).find("td:contains('優雅な調べLV')")
+		  .css("color","blue")
+		  .css("cursor","pointer")
+		  .click(function(){
+			if(confirm($(this).text()+"を使用しますか？")){
+			  var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
+			  var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
+			  var sid = "sd011"+($(this).text().match(/\d+/)[0]-1);
+			  $(this).addClass("jinDisp").text("拠点確認中");
+			  $.get("/card/domestic_setting.php",function(a){
+				if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
+				  alert("内政中の武将が居ます\n拠点を変更してください")
+				}else{
+				  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
+				  b["selected_village["+cid+"]"] = vid;
+				  $(".jinDisp").text("拠点セット中");
+				  $.post("/card/deck.php",b,function(){
+					  $(".jinDisp").text("内政セット中");
+					  $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
+						$(".jinDisp").text("発動中");
+						$.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
+						  $(".jinDisp").text("内政解除中");
+						  $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
+							$(".jinDisp").text("拠点解除中");
+							$.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
+							  $(".jinDisp").text("ページ更新中");
+							  location.reload();
+							});
+						  });
+						});
+					  });
+				  });
+				}
+			  });
+			}
+		});
+	  }
+	}
   });
   $(".cardStatusDetail:contains('劉備の契りLV')").each(function(){
-    if($(this).find(".set_release").length){
-      if(!$(this).find("tr:contains('劉備の契りLV')").hasClass("used")){
-        $(this).find("td:contains('劉備の契りLV')")
-          .css("color","blue")
-          .css("cursor","pointer")
-          .click(function(){
-            if(confirm($(this).text()+"を使用しますか？")){
-              var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
-              var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
-              var sid = "sd022"+($(this).text().match(/\d+/)[0]-1);
-              $(this).addClass("jinDisp").text("拠点確認中");
-              $.get("/card/domestic_setting.php",function(a){
-                if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
-                  alert("内政中の武将が居ます\n拠点を変更してください")
-                }else{
-                  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
-                  b["selected_village["+cid+"]"] = vid;
-                  $(".jinDisp").text("拠点セット中");
-                  $.post("/card/deck.php",b,function(){
-                      $(".jinDisp").text("内政セット中");
-                      $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
-                        $(".jinDisp").text("発動中");
-                        $.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
-                          $(".jinDisp").text("内政解除中");
-                          $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
-                            $(".jinDisp").text("拠点解除中");
-                            $.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
-                              $(".jinDisp").text("ページ更新中");
-                              location.reload();
-                            });
-                          });
-                        });
-                      });
-                  });
-                }
-              });
-            }
-        });
-      }
-    }
+	if($(this).find(".set_release").length){
+	  if(!$(this).find("tr:contains('劉備の契りLV')").hasClass("used")){
+		$(this).find("td:contains('劉備の契りLV')")
+		  .css("color","blue")
+		  .css("cursor","pointer")
+		  .click(function(){
+			if(confirm($(this).text()+"を使用しますか？")){
+			  var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
+			  var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
+			  var sid = "sd022"+($(this).text().match(/\d+/)[0]-1);
+			  $(this).addClass("jinDisp").text("拠点確認中");
+			  $.get("/card/domestic_setting.php",function(a){
+				if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
+				  alert("内政中の武将が居ます\n拠点を変更してください")
+				}else{
+				  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
+				  b["selected_village["+cid+"]"] = vid;
+				  $(".jinDisp").text("拠点セット中");
+				  $.post("/card/deck.php",b,function(){
+					  $(".jinDisp").text("内政セット中");
+					  $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
+						$(".jinDisp").text("発動中");
+						$.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
+						  $(".jinDisp").text("内政解除中");
+						  $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
+							$(".jinDisp").text("拠点解除中");
+							$.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
+							  $(".jinDisp").text("ページ更新中");
+							  location.reload();
+							});
+						  });
+						});
+					  });
+				  });
+				}
+			  });
+			}
+		});
+	  }
+	}
   });
   $(".cardStatusDetail:contains('酔吟吐息LV')").each(function(){
-    if($(this).find(".set_release").length){
-      if(!$(this).find("tr:contains('酔吟吐息LV')").hasClass("used")){
-        $(this).find("td:contains('酔吟吐息LV')")
-          .css("color","blue")
-          .css("cursor","pointer")
-          .click(function(){
-            if(confirm($(this).text()+"を使用しますか？")){
-              var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
-              var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
-              var sid = "sd026"+($(this).text().match(/\d+/)[0]-1);
-              $(this).addClass("jinDisp").text("拠点確認中");
-              $.get("/card/domestic_setting.php",function(a){
-                if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
-                  alert("内政中の武将が居ます\n拠点を変更してください")
-                }else{
-                  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
-                  b["selected_village["+cid+"]"] = vid;
-                  $(".jinDisp").text("拠点セット中");
-                  $.post("/card/deck.php",b,function(){
-                      $(".jinDisp").text("内政セット中");
-                      $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
-                        $(".jinDisp").text("発動中");
-                        $.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
-                          $(".jinDisp").text("内政解除中");
-                          $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
-                            $(".jinDisp").text("拠点解除中");
-                            $.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
-                              $(".jinDisp").text("ページ更新中");
-                              location.reload();
-                            });
-                          });
-                        });
-                      });
-                  });
-                }
-              });
-            }
-        });
-      }
-    }
+	if($(this).find(".set_release").length){
+	  if(!$(this).find("tr:contains('酔吟吐息LV')").hasClass("used")){
+		$(this).find("td:contains('酔吟吐息LV')")
+		  .css("color","blue")
+		  .css("cursor","pointer")
+		  .click(function(){
+			if(confirm($(this).text()+"を使用しますか？")){
+			  var cid = $(this).parents(".statusDetail").find(".thickbox").attr("href").match(/\d+/g)[2];
+			  var vid = $(".attention_detail").find("option").eq($("li:has('.map-basing')").index($("li.on"))).val();
+			  var sid = "sd026"+($(this).text().match(/\d+/)[0]-1);
+			  $(this).addClass("jinDisp").text("拠点確認中");
+			  $.get("/card/domestic_setting.php",function(a){
+				if(a.replace(/rowspan="\d"/g,"").replace(/\s/g,"").match("<td>内政中</td>")){
+				  alert("内政中の武将が居ます\n拠点を変更してください")
+				}else{
+				  var b = {mode:"set",target_card:cid,ssid:$("#ssid").val()};
+				  b["selected_village["+cid+"]"] = vid;
+				  $(".jinDisp").text("拠点セット中");
+				  $.post("/card/deck.php",b,function(){
+					  $(".jinDisp").text("内政セット中");
+					  $.get("/card/domestic_setting.php?id="+cid+"&mode=domestic",function(){
+						$(".jinDisp").text("発動中");
+						$.get("/card/domestic_setting.php?mode=skill&id="+cid+"&sid="+sid,function(){
+						  $(".jinDisp").text("内政解除中");
+						  $.get("/card/domestic_setting.php?mode=u_domestic&id="+cid,function(){
+							$(".jinDisp").text("拠点解除中");
+							$.post("/card/deck.php",{mode:"unset",target_card:cid,ssid:$("#ssid").val()},function(){
+							  $(".jinDisp").text("ページ更新中");
+							  location.reload();
+							});
+						  });
+						});
+					  });
+				  });
+				}
+			  });
+			}
+		});
+	  }
+	}
   });
 })(jQuery);
 //================================================
@@ -1144,7 +1148,7 @@ var gousei_skill = {
 };
 
 // 兵力計算用のシーズンテーブル
-var serverTable = [ 
+var serverTable = [
 	// サーバー情報初期設定
 
 	["w1",16],
@@ -1183,7 +1187,7 @@ var P_HARC = 9;		// 弩兵
 var P_HKNT = 10;	// 近衛騎兵
 
 // 鯖の期番号、敵兵出現パラメータ、マップツールの対応表
-var season_list = 
+var season_list =
 [
 	{
 		// point1ki
@@ -1846,7 +1850,7 @@ var card_list =	{
 	"2116":{n:"許?",  r:"R", c:3, a:250, i:4, d1:435, bs:"守将の出陣"},
 	"2117":{n:"曹彰",  r:"R", c:3, a:340, i:7, d1:345, bs:"弓兵の強攻"},
 	"2118":{n:"司馬懿",  r:"UC", c:2.5, a:200, i:16, d1:240, bs:"覇道"},
-	"2119":{n:"典韋・許?",  r:"UR", c:4, a:500, i:9, d1:640, bs:"守神の進撃"},
+	"2119":{n:"典韋・許?",	r:"UR", c:4, a:500, i:9, d1:640, bs:"守神の進撃"},
 	"2120":{n:"賈?",  r:"SR", c:1.5, a:150, i:17, d1:220, bs:"騎兵の大号令"},
 	"2121":{n:"張春華",  r:"R", c:1, a:15, i:9, d1:135, bs:"才女の瞳"},
 	"2122":{n:"辛憲英",  r:"R", c:1, a:10, i:10, d1:100, bs:"聡明叡知"},
@@ -2121,7 +2125,7 @@ var card_list =	{
 	"4001":{n:"呂布",  r:"SR", c:4, a:500, i:3, d1:545, bs:"飛将"},
 	"4002":{n:"董卓",  r:"R", c:3, a:325, i:6, d1:300, bs:"剣兵の進撃"},
 	"4003":{n:"袁紹",  r:"R", c:2.5, a:220, i:10, d1:350, bs:"弓兵突撃"},
-	"4004":{n:"公孫?",  r:"R", c:3, a:315, i:8, d1:345, bs:"騎兵突撃"},
+	"4004":{n:"公孫?",	r:"R", c:3, a:315, i:8, d1:345, bs:"騎兵突撃"},
 	"4005":{n:"袁術",  r:"R", c:2.5, a:235, i:8, d1:210, bs:"練兵訓練"},
 	"4006":{n:"孟獲",  r:"UC", c:2.5, a:270, i:4, d1:240, bs:"蛮族の襲撃"},
 	"4007":{n:"孟獲",  r:"C", c:2.5, a:255, i:4, d1:240, bs:"蛮族の襲撃"},
@@ -2149,7 +2153,7 @@ var card_list =	{
 	"4029":{n:"孟獲",  r:"R", c:3, a:335, i:5, d1:310, bs:"蛮王の襲撃"},
 	"4030":{n:"蔡?",  r:"R", c:1, a:10, i:10, d1:125, bs:"攻城の檄文"},
 	"4031":{n:"呂布",  r:"UR", c:4, a:510, i:5, d1:545, bs:"飛将"},
-	"4032":{n:"公孫?",  r:"SR", c:3, a:340, i:10, d1:350, bs:"騎兵の猛撃"},
+	"4032":{n:"公孫?",	r:"SR", c:3, a:340, i:10, d1:350, bs:"騎兵の猛撃"},
 	"4033":{n:"孟獲",  r:"SR", c:3, a:365, i:2, d1:290, bs:"蛮王の襲撃"},
 	"4034":{n:"董卓",  r:"SR", c:3, a:350, i:8, d1:305, bs:"強襲突覇"},
 	"4035":{n:"祝融",  r:"SR", c:2.5, a:280, i:3, d1:190, bs:"弓兵の極撃"},
@@ -2158,12 +2162,12 @@ var card_list =	{
 	"4038":{n:"袁術",  r:"UC", c:2, a:185, i:6, d1:190, bs:"練兵修練"},
 	"4039":{n:"張角",  r:"UR", c:3.5, a:380, i:22, d1:120, bs:"群雄の極撃"},
 	"4040":{n:"貂蝉",  r:"UR", c:1, a:10, i:10, d1:110, bs:"速撃の舞"},
-	"4041":{n:"?徳・馬超",  r:"UR", c:4, a:510, i:13, d1:575, bs:"鬼神の鹵獲"},
+	"4041":{n:"?徳・馬超",	r:"UR", c:4, a:510, i:13, d1:575, bs:"鬼神の鹵獲"},
 	"4042":{n:"于吉",  r:"SR", c:2, a:200, i:17, d1:270, bs:"農林技術"},
 	"4043":{n:"王異",  r:"SR", c:2.5, a:290, i:9, d1:240, bs:"剣兵の極撃"},
 	"4044":{n:"馬騰",  r:"SR", c:3.5, a:410, i:10, d1:425, bs:"騎兵の極撃"},
 	"4045":{n:"献帝",  r:"UR", c:1, a:10, i:10, d1:130, bs:"富国強兵"},
-	"4046":{n:"公孫?",  r:"UC", c:2.5, a:275, i:8, d1:265, bs:"騎兵強行"},
+	"4046":{n:"公孫?",	r:"UC", c:2.5, a:275, i:8, d1:265, bs:"騎兵強行"},
 	"4047":{n:"顔良",  r:"SR", c:3.5, a:435, i:5, d1:350, bs:"飛将"},
 	"4048":{n:"文醜",  r:"SR", c:3.5, a:425, i:5, d1:350, bs:"猛将の鹵獲"},
 	"4049":{n:"蔡?",  r:"SR", c:1, a:10, i:10, d1:130, bs:"優雅な調べ"},
@@ -2172,7 +2176,7 @@ var card_list =	{
 	"4052":{n:"張角",  r:"R", c:2.5, a:180, i:17, d1:310, bs:"八卦の陣"},
 	"4053":{n:"呂布",  r:"UR", c:4, a:520, i:5, d1:545, bs:"神飛将"},
 	"4054":{n:"劉表",  r:"SR", c:2.5, a:180, i:18, d1:325, bs:"強兵の檄文"},
-	"4055":{n:"公孫?",  r:"UR", c:3.5, a:420, i:11, d1:460, bs:"飛蹄進軍"},
+	"4055":{n:"公孫?",	r:"UR", c:3.5, a:420, i:11, d1:460, bs:"飛蹄進軍"},
 	"4056":{n:"華雄",  r:"SR", c:3.5, a:420, i:8, d1:390, bs:"槍兵の極撃"},
 	"4057":{n:"紀霊",  r:"R", c:2.5, a:270, i:6, d1:300, bs:"騎兵の猛撃"},
 	"4058":{n:"祝融",  r:"UR", c:3, a:360, i:4, d1:320, bs:"隣地猛攻"},
@@ -2227,7 +2231,7 @@ var card_list =	{
 	"4107":{n:"黄祖",  r:"R", c:1.5, a:200, i:3, d1:195, bs:"密偵精鋭"},
 	"4108":{n:"貂蝉",  r:"R", c:1.5, a:10, i:9, d1:90, bs:"桃色吐息"},
 	"4109":{n:"張任",  r:"R", c:2.5, a:270, i:10, d1:390, bs:"防将戦法"},
-	"4110":{n:"公孫?",  r:"SR", c:3, a:360, i:9, d1:430, bs:"白馬将"},
+	"4110":{n:"公孫?",	r:"SR", c:3, a:360, i:9, d1:430, bs:"白馬将"},
 	"4111":{n:"袁紹",  r:"UR", c:3.5, a:425, i:20, d1:545, bs:"群将の督戦"},
 	"4112":{n:"高順",  r:"R", c:3, a:330, i:10, d1:340, bs:"兵器突撃"},
 	"4113":{n:"何進",  r:"UC", c:2.5, a:245, i:2, d1:200, bs:"剣兵の進攻"},
@@ -2245,7 +2249,7 @@ var card_list =	{
 	"4125":{n:"張梁",  r:"UC", c:3, a:350, i:11, d1:310, bs:"弓兵突覇"},
 	"4126":{n:"パンダ(仮)",  r:"R", c:1.5, a:100, i:10, d1:100, bs:"熊猫の猛襲"},
 	"4127":{n:"左慈娘・鶴爺",  r:"SR", c:3.5, a:380, i:18, d1:400, bs:"娘々武神"},
-	"4128":{n:"公孫?",  r:"R", c:3.5, a:390, i:9, d1:375, bs:"千里雷光"},
+	"4128":{n:"公孫?",	r:"R", c:3.5, a:390, i:9, d1:375, bs:"千里雷光"},
 	"4129":{n:"孟優",  r:"UR", c:4, a:520, i:10, d1:550, bs:"剣兵烈攻"},
 	"4130":{n:"文醜",  r:"UC", c:3, a:320, i:4, d1:315, bs:"神速"},
 	"4131":{n:"韓遂",  r:"SR", c:2.5, a:280, i:11, d1:290, bs:"騎兵突攻"},
@@ -2300,7 +2304,7 @@ var card_list =	{
 	"4184":{n:"水鏡娘",  r:"SR", c:3.5, a:405, i:20, d1:505, bs:"鹵獲の猛攻"},
 	"4186":{n:"胡車児",  r:"UR", c:2.0, a:280, i:8, d1:205, bs:"強襲奮迅"},
 	"4187":{n:"水鏡娘",  r:"SR", c:3.5, a:395, i:18, d1:395, bs:"猛将の鹵獲"},
-	"4191":{n:"李?・郭汜",  r:"UR", c:4, a:515, i:6, d1:445, bs:"鬼神の鹵獲"},
+	"4191":{n:"李?・郭汜",	r:"UR", c:4, a:515, i:6, d1:445, bs:"鬼神の鹵獲"},
 	"4192":{n:"木鹿大王",  r:"UR", c:4, a:525, i:10, d1:510, bs:"飛将"},
 	"4193":{n:"張宝",  r:"SR", c:3.5, a:405, i:22, d1:405, bs:"兵器の猛攻"},
 	"4194":{n:"李儒",  r:"SR", c:2.5, a:220, i:18, d1:250, bs:"大剣兵移送"},
@@ -2328,7 +2332,7 @@ var card_list =	{
 	"4235":{n:"厳白虎",  r:"R", c:3, a:355, i:5, d1:335, bs:"謀反の猛攻"},
 	"4236":{n:"馬鉄",  r:"SR", c:2.5, a:315, i:9, d1:315, bs:"謀反の突攻"},
 	"4237":{n:"王異",  r:"R", c:2, a:270, i:7, d1:275, bs:"謀反の速攻"},
-	"4238":{n:"張?・高覧",  r:"UR", c:4, a:550, i:16, d1:375, bs:"飛速迅雷"},
+	"4238":{n:"張?・高覧",	r:"UR", c:4, a:550, i:16, d1:375, bs:"飛速迅雷"},
 	"4239":{n:"盧植",  r:"UR", c:4, a:380, i:24, d1:715, bs:"剣将の封聖域"},
 	"4241":{n:"王允",  r:"UR", c:4, a:400, i:26, d1:505, bs:"全軍の飛速令"},
 	"4242":{n:"張松",  r:"SR", c:4, a:370, i:24, d1:555, bs:"兵器の大極撃"},
@@ -2377,12 +2381,12 @@ var card_list =	{
 	"5014":{n:"楽進×淳于瓊",  r:"R", c:3, a:310, i:7, d1:325, bs:""},
 	"5015":{n:"水鏡娘×パンダ",  r:"UR", c:3.5, a:300, i:13, d1:420, bs:""},
 	"5016":{n:"王異×馬超",  r:"UR", c:4, a:490, i:10, d1:455, bs:"剣兵の大神撃"},
-	"5017":{n:"賈?×韓遂",  r:"SR", c:3.5, a:350, i:20, d1:390, bs:"才略謀略"},
+	"5017":{n:"賈?×韓遂",	r:"SR", c:3.5, a:350, i:20, d1:390, bs:"才略謀略"},
 	"5018":{n:"魏延×楊儀",  r:"R", c:3, a:300, i:16, d1:310, bs:"謀反の猛攻"},
 	"5019":{n:"大虎×小虎",  r:"UR", c:4, a:440, i:10, d1:550, bs:""},
 	"5020":{n:"貂蝉×董卓",  r:"UR", c:2, a:220, i:17, d1:335, bs:""},
 	"5021":{n:"左慈娘×水鏡娘",  r:"UR", c:4, a:340, i:24, d1:605, bs:"守衛聖陣"},
-	"5022":{n:"?統×張任",  r:"UR", c:4, a:405, i:24, d1:395, bs:""},
+	"5022":{n:"?統×張任",	r:"UR", c:4, a:405, i:24, d1:395, bs:""},
 	"5023":{n:"呂蒙×関羽",  r:"SR", c:4, a:415, i:16, d1:415, bs:""},
 	"5024":{n:"少帝×献帝",  r:"UR", c:4, a:485, i:21, d1:490, bs:""},
 	"5025":{n:"諸葛恪×諸葛誕",  r:"UR", c:4, a:425, i:23, d1:555, bs:""},
@@ -2391,7 +2395,7 @@ var card_list =	{
 	"5028":{n:"王允×張譲",  r:"R", c:3, a:235, i:15, d1:385, bs:""},
 	"5029":{n:"徐庶×曹仁",  r:"UR", c:4, a:480, i:23, d1:445, bs:""},
 	"5030":{n:"凌操×甘寧",  r:"R", c:3.5, a:405, i:10, d1:405, bs:""},
-	"5031":{n:"張?×馬謖",  r:"R", c:3, a:290, i:13, d1:320, bs:""},
+	"5031":{n:"張?×馬謖",	r:"R", c:3, a:290, i:13, d1:320, bs:""},
 };
 
 var SPEC = [
@@ -2538,9 +2542,9 @@ var GRAPH_HEIGHT = 500;
 var GRAPH_PADDING = 8;
 
 //色定義
-var ALLY_COLORS_5 = new Array("blue", "red", "green", "olive", "brown", 
-	"purple", "black", "indigo", "deeppink", "darkcyan", 
-	"dodgerblue", "lightcoral", "lawngreen", "yellow", "tomato", 
+var ALLY_COLORS_5 = new Array("blue", "red", "green", "olive", "brown",
+	"purple", "black", "indigo", "deeppink", "darkcyan",
+	"dodgerblue", "lightcoral", "lawngreen", "yellow", "tomato",
 	"plum", "darkgray", "mediumpurple", "pink", "cyan");
 
 //保存データインデックス
@@ -2595,7 +2599,7 @@ var FLAG2 = "0000000  0  0  000000000000";
 var FLAG3_1 = "010000情報を表示する１";
 var FLAG3_2 = "010000情報を表示する２";
 var FLAG3_3 = "010000情報を表示する３";
-var FLAG4   = "";
+var FLAG4	= "";
 
 // ブラウザ判別用
 var browserType;
@@ -2633,8 +2637,8 @@ var FLAG2_OWNER = 4;			// 本拠地一覧の表示
 var FLAG2_EMPTY_DRAW = 5;	   // 空き地を着色
 var FLAG2_EMPTY_DRAW_COLOR = 6; // 空き地の枠色
 var FLAG2_STRONG_AREANO = 7;	// 強調表示領地リスト番号(3桁)
-var FLAG2_STRONG_AREANO2 = 10;  // 強調表示領地リスト番号(3桁)
-var FLAG2_STRONG_AREANO3 = 13;  // 強調表示領地リスト番号(3桁)
+var FLAG2_STRONG_AREANO2 = 10;	// 強調表示領地リスト番号(3桁)
+var FLAG2_STRONG_AREANO3 = 13;	// 強調表示領地リスト番号(3桁)
 var FLAG2_MENU2 = 16;		   // メニュークローズドスイッチ2
 var FLAG2_MENU4 = 17;		   // メニュークローズドスイッチ4
 var FLAG2_HFUNC = 18;		   //
@@ -3616,7 +3620,7 @@ var solname = ["剣","槍","弓","騎","矛","弩","近","斥","斥騎","衝","�
 //faraway 11.書簡送信アシスタントのソース(bro3_Send_Mail_Supporter.user.js) 変数部 開始
 //グローバル変数
 var VERSION_11 = "0.4.1β";  //バージョン情報
-var INTERVAL=1000;  //負荷対策 回線速度によっては正常動作しない時があります。その際は数値を増やしてください。1秒=1000
+var INTERVAL=1000;	//負荷対策 回線速度によっては正常動作しない時があります。その際は数値を増やしてください。1秒=1000
 var HOST = location.hostname; //アクセスURLホスト
 var PGNAME = "_MailSendSuppoter_"; //グリモン領域への保存時のPGの名前
 var DELIMIT_11 = "#$%";
@@ -3666,7 +3670,7 @@ var opValues = {};			// {autoCash: true/false, uneiLimit: true/false}
 //faraway 13.書簡保存＆検索ツールのソース() 変数部 終了
 
 //faraway 14.トレード検索条件記憶のソース() 変数部 開始
-//faraway 12.と重複の為　
+//faraway 12.と重複の為
 var num_14 = 200;	// 設定する個数 faraway110606復活	111012 num->num_14
 //faraway 14.トレード検索条件記憶のソース() 変数部 終了
 
@@ -3754,7 +3758,7 @@ var OPT_FUC_NAME = [	"拠点","伐採所","石切り場","製鉄所","畑","倉�
 var OPT_FNID = new Array();
 OPT_FNID["拠点"] =	0;
 OPT_FNID["伐採所"] =	1;
-OPT_FNID["石切り場"] =  2;
+OPT_FNID["石切り場"] =	2;
 OPT_FNID["製鉄所"] =	3;
 OPT_FNID["畑"] =	4;
 OPT_FNID["倉庫"] =	5;
@@ -3766,7 +3770,7 @@ OPT_FNID["兵舎"] =	10;
 OPT_FNID["弓兵舎"] =	11;
 OPT_FNID["厩舎"] =	12;
 OPT_FNID["宿舎"] =	13;
-OPT_FNID["兵器工房"] =  14;
+OPT_FNID["兵器工房"] =	14;
 OPT_FNID["市場"] =	15;
 OPT_FNID["訓練所"] =	16;
 OPT_FNID["水車"] =	17;
@@ -3799,7 +3803,7 @@ var URL_viID = "viID";
 
 //新規作成リンク
 
-var CREATELINK = "http://SITE/facility/build.php?ssid=ssid_val&x=urlX&y=urlY&village_id=viID#ptop";//2012.4.24  VerUp対応 ひろひろひろ
+var CREATELINK = "http://SITE/facility/build.php?ssid=ssid_val&x=urlX&y=urlY&village_id=viID#ptop";//2012.4.24	VerUp対応 ひろひろひろ
 var URL_SSID ="ssid_val";//SSID ;//2012.4.24  VerUp対応 ひろひろひろ
 var URL_fID = "fID"; //建物のID
 var HATAKE = 215;
@@ -4180,7 +4184,7 @@ var VILLAGES_INFO= {};
 
 var SID = '';
 
-var OPT_STYLE   = 0;
+var OPT_STYLE	= 0;
 var OPT_FAMEPOS = 1;
 var DISP_RANK = 1;
 
@@ -4217,9 +4221,9 @@ if(OPT_FAMEPOS) move_pos_fame();	//スタイル変更設定で、名声表示位
 
 if( DISP_RANK )	GM_addStyle("#social {display:none !important;}");//ｽﾀｲﾙ変更にﾁｪｯｸが入っていなくても動作するようにここでｺｰﾙfaraway110525
 
-if(DEBUG_MESSAGE) console.log('開始： disp_village()');	if( OPT_VILLAGE )   disp_village();
-	if( OPT_BASELINK )  disp_baseLink();
-	if( OPT_MAPLINK )   disp_mapLink();
+if(DEBUG_MESSAGE) console.log('開始： disp_village()');	if( OPT_VILLAGE )	disp_village();
+	if( OPT_BASELINK )	disp_baseLink();
+	if( OPT_MAPLINK )	disp_mapLink();
 	if( OPT_MEMO )	  disp_memo();
 	if( OPT_ALLY )	  disp_AllianceInfo();//XYリンク加工前に呼ぶ
 if(DEBUG_MESSAGE) console.log('開始：disp_XYLink()');if( OPT_XYLINK )	disp_XYLink();
@@ -4228,14 +4232,14 @@ if(DEBUG_MESSAGE) console.log('開始：disp_navigationaddition()');if( OPT_NAVI
 if(DEBUG_MESSAGE) console.log('開始：disp_Details()');if( OPT_DETAILS )   disp_Details();
 	// デッキ選択先表示は自動化
 	disp_Deck();
-if(DEBUG_MESSAGE) console.log('開始：disp_CompleteTimeBuild()');if( OPT_CTIME_B )   disp_CompleteTimeBuild();
+if(DEBUG_MESSAGE) console.log('開始：disp_CompleteTimeBuild()');if( OPT_CTIME_B )	disp_CompleteTimeBuild();
 if(DEBUG_MESSAGE) console.log('開始：disp_CompleteTimeUnit()');if( OPT_CTIME_U )   disp_CompleteTimeUnit();
 if(DEBUG_MESSAGE) console.log('開始：disp_ResourcesTotal()');if( OPT_RES_T )	 disp_ResourcesTotal();
 if(DEBUG_MESSAGE) console.log('開始：disp_RemoveList()');if( OPT_REMOVELIST) disp_RemoveList();
-	if( OPT_USER_STAR)  disp_UserStar();
+	if( OPT_USER_STAR)	disp_UserStar();
 	if( OPT_USER_LEVEL) disp_UserLevel();
-	if( OPT_MAPCENTER)  disp_MapCenter();
-if(DEBUG_MESSAGE) console.log('開始：disp_TSendTime()');if( OPT_TSENDTIME)  disp_TSendTime();
+	if( OPT_MAPCENTER)	disp_MapCenter();
+if(DEBUG_MESSAGE) console.log('開始：disp_TSendTime()');if( OPT_TSENDTIME)	disp_TSendTime();
 if(DEBUG_MESSAGE) console.log('開始：disp_SmallButton()');if( OPT_SMALLBTN)   disp_SmallButton();
 if(DEBUG_MESSAGE) console.log('開始：disp_AttackMap();');if( OPT_ATTACKMAP)  disp_AttackMap();
 if(DEBUG_MESSAGE) console.log('開始：disp_PikaYorozu();');if( OPT_PIKA_YOROZU ) disp_PikaYorozu();
@@ -4263,7 +4267,7 @@ if(DEBUG_MESSAGE) console.log('開始：disp_tradingretrieval()');if( OPT_TRADIN
 if(DEBUG_MESSAGE) console.log('開始：disp_tradingafter()');if( OPT_TRADINGAFTER ) disp_tradingafter();
 if(DEBUG_MESSAGE) console.log('開始：disp_npcfort()');if( OPT_NPCFORT ) disp_npcfort();
 	if( OPT_RIGHTCLICK ) disp_rightclick();//NPCを使用すると発生の為、位置を下にしたfaraway110528
-	if( OPT_RES_TIME )  disp_ResourcesTime();//NPCを使用すると全体地図で資源時間の表示位置がずれて見えない為、位置を下にしたfaraway110620
+	if( OPT_RES_TIME )	disp_ResourcesTime();//NPCを使用すると全体地図で資源時間の表示位置がずれて見えない為、位置を下にしたfaraway110620
 	if ( OPT_NEXT_MEISEI ) disp_nextFameTimer();//faraway110620
 	if( OPT_MAPLIST)	disp_MapList();//faraway110425
 	if( OPT_CHANGE_MOVE_SIZE ) disp_change_move_size();
@@ -4309,10 +4313,10 @@ if(DEBUG_MESSAGE) console.log('開始：AutoRound();');if( OPT_AUTOROUND	)	AutoR
 if(DEBUG_MESSAGE) console.log('開始：ReportLog()');if( OPT_REPORTLOG	)	ReportLog();		//32."報告書・同盟ログCSV出力"
 if(DEBUG_MESSAGE) console.log('開始：TradeStatus()');if( OPT_TRADESTATUS  )	TradeStatus();		//34."トレードステータス表示"
 if(DEBUG_MESSAGE) console.log('開始：bro3_url_change_reverse_res_view()');
-	if( OPT_URL_CHANGE_REV_RES   )	bro3_url_change_reverse_res_view();	//掲示板逆順表示
+	if( OPT_URL_CHANGE_REV_RES	 )	bro3_url_change_reverse_res_view();	//掲示板逆順表示
 // 設定なしで無条件実行するメソッド群
-if(DEBUG_MESSAGE) console.log('開始：label_colorise();');    label_colorise();	//ラベル着色
-if(DEBUG_MESSAGE) console.log('開始：csortSideBox();');      csortSideBox();
+if(DEBUG_MESSAGE) console.log('開始：label_colorise();');	 label_colorise();	//ラベル着色
+if(DEBUG_MESSAGE) console.log('開始：csortSideBox();'); 	 csortSideBox();
 if(DEBUG_MESSAGE) console.log('開始：crenumberSideBox();');  crenumberSideBox();
 if(DEBUG_MESSAGE) console.log('開始：Pika_blinkElements();');Pika_blinkElements();
 if(DEBUG_MESSAGE) console.log('開始：bro3HighLightName();');bro3HighLightName();
@@ -4323,7 +4327,7 @@ if(DEBUG_MESSAGE) console.log('開始：bro3HighLightName();');bro3HighLightName
 copy_protection_unlock();			// 一括保護解除画面のボタンを上にコピー 2014/09/22
 disp_multiple_drop_territory();		// 一括領地破棄を領地管理画面に追加(2014/10/18 常時実行)
 if(OPT_DELETECUSTOM) {
-	allCardDeleteCustom();  // 一括破棄画面でトレードとかをできるようにする
+	allCardDeleteCustom();	// 一括破棄画面でトレードとかをできるようにする
 }
 if( OPT_MAPLINK ) {
 	// 領地リンクのアイコンが折り返す問題を修正(2014/10/22 メンテ影響)
@@ -4563,10 +4567,10 @@ function loadOptions()
 	OPT_TRADEINCOME   = cloadData( "OPT_TRADEINCOME"  , 1 );	//"トレード収入計算"
 	OPT_HISTANALYSIS  = cloadData( "OPT_HISTANALYSIS" , 1 );	//"武将ダス履歴抽出分析 Ver1.09"
 	OPT_QUESTASSIST   = cloadData( "OPT_QUESTASSIST"  , 1 );	//"クエスト補助"
-	OPT_URL_CHANGE	= cloadData( "OPT_URL_CHANGE"   , 1 );	//URLリンク変更スクリプト
-	OPT_URL_CHANGE_REV_RES	= cloadData( "OPT_URL_CHANGE_REV_RES"   , 1 );	//掲示板逆順表示
+	OPT_URL_CHANGE	= cloadData( "OPT_URL_CHANGE"	, 1 );	//URLリンク変更スクリプト
+	OPT_URL_CHANGE_REV_RES	= cloadData( "OPT_URL_CHANGE_REV_RES"	, 1 );	//掲示板逆順表示
 	OPT_ATK_CALC	  = cloadData( "OPT_ATK_CALC"	 , 0 );	//スキル込計算スクリプト
-	OPT_DISPJST	= cloadData( "OPT_DISPJST"   , 1 );	//掲示板逆順表示
+	OPT_DISPJST	= cloadData( "OPT_DISPJST"	 , 1 );	//掲示板逆順表示
 	OPT_TIMER = cloadData( "OPT_TIMER", 0 );
 	OPT_ALLIANCE = cloadData( "OPT_ALLIANCE", 1 );
 	OPT_DEVELOPMENT = cloadData( "OPT_DEVELOPMENT", 1 );
@@ -4663,7 +4667,7 @@ function loadOptions()
 	OPT_AR_CHANGE = cloadData( "OPT_AR_CHANGE", 0 ); // 見た目を全部URに置き換えるアホツール
 	OPT_BR_CHANGE = cloadData( "OPT_BR_CHANGE", 0 ); // 見た目を全部SRに置き換えるアホツール
 	OPT_ADD_SHOW_SKILL = cloadData( "OPT_ADD_SHOW_SKILL",1);   // 合成確率アップ素材のスキル表示
-	OPT_AUTO_SKILLUP = cloadData( "OPT_AUTO_SKILLUP",0);       // 自動連続スキルアップ
+	OPT_AUTO_SKILLUP = cloadData( "OPT_AUTO_SKILLUP",0);	   // 自動連続スキルアップ
 }
 function saveOptions()
 {
@@ -4777,8 +4781,8 @@ function saveOptions()
 	OPT_HR_CHANGE = cgetCheckBoxValue("OPT_HR_CHANGE"); // 見た目を全部HRに置き換えるアホツール
 	OPT_AR_CHANGE = cgetCheckBoxValue("OPT_AR_CHANGE"); // 見た目を全部URに置き換えるアホツール
 	OPT_BR_CHANGE = cgetCheckBoxValue("OPT_BR_CHANGE"); // 見た目を全部SRに置き換えるアホツール
-	OPT_ADD_SHOW_SKILL = cgetCheckBoxValue( "OPT_ADD_SHOW_SKILL");   // 合成確率アップ素材のスキル表示
-	OPT_AUTO_SKILLUP = cgetCheckBoxValue( "OPT_AUTO_SKILLUP");   // 合成自動スキルアップ
+	OPT_ADD_SHOW_SKILL = cgetCheckBoxValue( "OPT_ADD_SHOW_SKILL");	 // 合成確率アップ素材のスキル表示
+	OPT_AUTO_SKILLUP = cgetCheckBoxValue( "OPT_AUTO_SKILLUP");	 // 合成自動スキルアップ
 
 	csaveData("OPT_REPORTLOG",	OPT_REPORTLOG	);	//"報告書・同盟ログCSV出力"
 	csaveData("OPT_AUTOROUND",	OPT_AUTOROUND	);	//"自動巡回"
@@ -4791,7 +4795,7 @@ function saveOptions()
 	csaveData("OPT_URL_CHANGE_REV_RES",   OPT_URL_CHANGE_REV_RES);	//URLリンク変更スクリプト
 	csaveData("OPT_ATK_CALC",	 OPT_ATK_CALC  );	//スキル込計算スクリプト
 	csaveData("OPT_DISPJST",   OPT_DISPJST);	//JST表示
-	csaveData("OPT_DELETECUSTOM",   OPT_DELETECUSTOM);	//一括破棄画面拡張
+	csaveData("OPT_DELETECUSTOM",	OPT_DELETECUSTOM);	//一括破棄画面拡張
 
 	csaveData( "OPT_TIMER", OPT_TIMER );
 	csaveData( "OPT_ALLIANCE", OPT_ALLIANCE );
@@ -4889,8 +4893,8 @@ function saveOptions()
 	csaveData( "OPT_HR_CHANGE", OPT_HR_CHANGE ); // 見た目を全部HRに置き換えるアホツール
 	csaveData( "OPT_AR_CHANGE", OPT_AR_CHANGE ); // 見た目を全部URに置き換えるアホツール
 	csaveData( "OPT_BR_CHANGE", OPT_BR_CHANGE ); // 見た目を全部SRに置き換えるアホツール
-	csaveData( "OPT_ADD_SHOW_SKILL", OPT_ADD_SHOW_SKILL );    // 合成確率アップ素材のスキル表示
-	csaveData( "OPT_AUTO_SKILLUP", OPT_AUTO_SKILLUP );    // 自動スキルアップ
+	csaveData( "OPT_ADD_SHOW_SKILL", OPT_ADD_SHOW_SKILL );	  // 合成確率アップ素材のスキル表示
+	csaveData( "OPT_AUTO_SKILLUP", OPT_AUTO_SKILLUP );	  // 自動スキルアップ
 
 	alert("設定を保存しました");
 	deleteOptionsHtml();
@@ -5028,7 +5032,7 @@ function addOptionsHtml() {
 	ccreateCheckBox(td1, "OPT_REMOVELIST", OPT_REMOVELIST, "破棄中の領地表示","破棄中の領地一覧を表示し、マップにマークを付けます",0);
 	ccreateCheckBox(td1, "OPT_SUZAN_SEISAN", OPT_SUZAN_SEISAN, "拠点生産量表示","拠点の生産量を表示します",0);
 	ccreateCheckBox(td1, "OPT_RESERVE_VILLAGE", OPT_RESERVE_VILLAGE, "拠点の建設予約、破棄予約",0);
-    ccreateCheckBox(td1, "OPT_TTALLYPRSN", OPT_TTALLYPRSN, "同盟/君主表示","全ての[拠点/領地]リンクのToolTipsを同盟/君主表示に変更します",0);
+	ccreateCheckBox(td1, "OPT_TTALLYPRSN", OPT_TTALLYPRSN, "同盟/君主表示","全ての[拠点/領地]リンクのToolTipsを同盟/君主表示に変更します",0);
 	ccreateCheckBox(td1, "OPT_ALLY", OPT_ALLY, "同盟表示改善","同盟員一覧の表示改善",0);
 	ccreateCheckBox(td1, "OPT_ALLY_IS", OPT_ALLY_IS, "同盟表示のソート","同盟員一覧の並べ替えを追加します",15);
 	ccreateCheckBox(td1, "OPT_ALLY_XY", OPT_ALLY_XY, "同盟員座標表示","同盟員一覧に本居城の座標を追加します",15);
@@ -5045,7 +5049,7 @@ function addOptionsHtml() {
 
 	ccreateCheckBox(td2, "OPT_DISTANCE", OPT_TTDISTANCE, "移動時間表示","全ての[兵を送る]リンクのToolTipsを移動時間の目安表示に変更します",0);
 //faraway 110504 strat	移動時間表示の文字化け対応
-	var work_0 = OPT_TTDISTANCE_ITEMS;	
+	var work_0 = OPT_TTDISTANCE_ITEMS;
 	try {
 		work_0 = work_0.replace("[", "", "g");
 		work_0 = work_0.replace("]", "", "g");
@@ -5254,13 +5258,13 @@ function bro3_url_change(){
 		var re4 = /(http(s)?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+(jpg|jpeg|gif|png|bmp))/gi;
 		var re5 = /(https:\/\/docs.google.com\/spreadsheet\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)/gi;
 		var text = html.match(re1);
-		
+
 		if (text) {
 			text = unique(text);
-			
+
 			for (i = 0; i < text.length; i++) {
 				var re3 = new RegExp(text[i].replace(/\&amp;/gi, '\\&amp;').replace(/\?/gi, '\\?'), "gi");
-				
+
 				if (text[i].match(re4)) {
 					html1 = html1.replace(text[i], "<a href=\""+text[i]+"\" target=\"_blank\"><img src=\""+text[i]+"\" width=\"200px\" /></a>");
 				} else if (text[i].match(re2)) {
@@ -5274,7 +5278,7 @@ function bro3_url_change(){
 				}
 			}
 		}
-		
+
 		return html1;
 	}
 
@@ -5285,7 +5289,7 @@ function bro3_url_change(){
 		wkurl = location.href;
 		var arr = wkurl.split("/");
 		wkurl = arr[arr.length-2];
-		
+
 		return wkurl;
 	}
 	/*------------+---------------------------------------------------------+
@@ -5299,7 +5303,7 @@ function bro3_url_change(){
 		wkurl = arr[0];
 		arr = wkurl.split("?");
 		wkurl = arr[0];
-		
+
 		return wkurl;
 	}
 	/*------------+---------------------------------------------------------+
@@ -5311,7 +5315,7 @@ function bro3_url_change(){
 		wkurl = arr[arr.length-1];
 		arr = wkurl.split("#");
 		wkurl = arr[1];
-		
+
 		return wkurl;
 	}
 
@@ -5351,7 +5355,7 @@ function bro3_url_change_reverse_res_view(){
 			s.parentNode.insertBefore(ttl2[max_idx].parentNode,s);
 			s.parentNode.insertBefore(ttl4[max_idx].parentNode,s);
 		}
-		
+
 		var tbl = document.getElementsByClassName("commonTables");
 		var tr = tbl[0].getElementsByTagName("tr");
 		var html1 = tbl[0].getElementsByTagName("tr")[tr.length - 3].innerHTML;
@@ -5360,7 +5364,7 @@ function bro3_url_change_reverse_res_view(){
 		tbl[0].deleteRow(tbl[0].rows.length - 3);
 		tbl[0].deleteRow(tbl[0].rows.length - 2);
 		tbl[0].deleteRow(tbl[0].rows.length - 1);
-		
+
 		var row1 = tbl[0].insertRow(4);
 		var row2 = tbl[0].insertRow(5);
 		var row3 = tbl[0].insertRow(6);
@@ -5376,7 +5380,7 @@ function bro3_url_change_reverse_res_view(){
 		wkurl = arr[0];
 		arr = wkurl.split("?");
 		wkurl = arr[0];
-		
+
 		return wkurl;
 	}
 }
@@ -5551,9 +5555,9 @@ function disp_village() {
 				var level = parseInt(title[2],10);
 				var blding = 0;
 				var dlting = 0;
-				
+
 				//console.log(xy[1] +"#"+xy[2]);
-			   
+
 			   for ( var xxx=0 ; xxx < xybld_a.length ; xxx++){
 					if( xy[1] == xybld_a[xxx][1] && xy[2] == xybld_a[xxx][2] ) {
 						level ++ ;
@@ -5795,7 +5799,7 @@ function saveMapLink()
 	var value = v_name + "\n" + xy[1] + "\n" + xy[2];
 	csaveData( "link" + maplinks  , value, true );
 	maplinks++;
-	csaveData( "links"  , maplinks, true );
+	csaveData( "links"	, maplinks, true );
 
 	resetMapLinks();
 
@@ -5816,7 +5820,7 @@ function saveMapLink()
 	var value = user_id + "\n" + user_name + "\n" + disp_name + "\n" + comment;
 	csaveData( "link" + maplinks  , value, true );
 	maplinks++;
-	csaveData( "links"  , maplinks, true );
+	csaveData( "links"	, maplinks, true );
 
 	resetMapLinks();
 
@@ -5892,7 +5896,7 @@ function configMapLink(n, evt)
 			var tmp = cloadData( "link" + i, "", true );
 			csaveData( "link" + (i-1), tmp, true );
 		}
-		csaveData( 'links'  , maplinks-1, true );
+		csaveData( 'links'	, maplinks-1, true );
 		configMapLinkClose();
 		resetMapLinks();
 	});
@@ -6100,7 +6104,7 @@ function mapLinkList(evt)
 				}
 				//チェック
 				if( dat.length == 3 ) {
-					if( !dat[1].match(/[\-0-9]+/g)  || !dat[2].match(/[\-0-9]+/g) ) {
+					if( !dat[1].match(/[\-0-9]+/g)	|| !dat[2].match(/[\-0-9]+/g) ) {
 						alert("解析エラーです。処理を中断します。\n( " + lines[i] + " )" );
 						return;
 					}
@@ -6135,7 +6139,7 @@ function mapLinkList(evt)
 			for(var i=0 ; i<saveLines.length ; i++ ) {
 				csaveData( "link" + i  , saveLines[i], true );
 			}
-			csaveData( "links"  , saveLines.length, true );
+			csaveData( "links"	, saveLines.length, true );
 
 
 			alert("上書き保存しました");
@@ -6266,9 +6270,9 @@ function disp_XYLink()
 function disp_TTable()
 {
 	if( location.pathname == "/message/inbox.php" ||
-		location.pathname == "/message/outbox.php"  ||
+		location.pathname == "/message/outbox.php"	||
 		location.pathname == "/message/new.php" ||
-		location.pathname == "/bbs/topic_view.php"  ||
+		location.pathname == "/bbs/topic_view.php"	||
 		location.pathname == "/facility/unit_status.php" ||
 		location.pathname == "/facility/castle_send_troop.php") {
 		return ;
@@ -6547,7 +6551,7 @@ function disp_Deck()
 
 			// タグをAタグからdivに書き換えて、デッキセットのbindメソッドを呼ぶ
 			var divTag = aTag.replaceWith('<div id="set_deck_' + cardNo + '">' + aTag.html() + '</div>');
-			j$("#set_deck_" + cardNo, this).bind("click", 
+			j$("#set_deck_" + cardNo, this).bind("click",
 				function() {
 					var vid = j$("#village_list_" + cardNo + " select[name=selected_village]").val();
 					var vname = j$("#village_list_" + cardNo + " select[name=selected_village] option:selected").text();
@@ -6573,7 +6577,7 @@ function disp_Deck()
 			// タグをAタグからdivに書き換えて、デッキセットのbindメソッドを呼ぶ
 			j$("img", aTag).eq(0).removeAttr("onclick");
 			var divTag = aTag.replaceWith('<div id="set_deck_' + cardNo + '">' + aTag.html() + '</div>');
-			j$("#set_deck_" + cardNo, this).bind("click", 
+			j$("#set_deck_" + cardNo, this).bind("click",
 				function() {
 					var vid = j$("#village_list_" + cardNo + " select[name=selected_village]").val();
 					var vname = j$("#village_list_" + cardNo + " select[name=selected_village] option:selected").text();
@@ -6610,7 +6614,7 @@ function disp_Deck()
 }
 
 
-//////////////////////	
+//////////////////////
 //完了時刻の表示（建物）
 //////////////////////
 function disp_CompleteTimeBuild()
@@ -6721,9 +6725,9 @@ function disp_CompleteTimeUnit()
 //////////////////////
 function disp_AllianceInfo()
 {
-	if( OPT_ALLY_XY )   allianceXY();
-	if( OPT_ALLY_IS )   allianceSort();
-	if( OPT_ALLY_CSV )  allianceCSV();
+	if( OPT_ALLY_XY )	allianceXY();
+	if( OPT_ALLY_IS )	allianceSort();
+	if( OPT_ALLY_CSV )	allianceCSV();
 
 
 	//同盟表示のソート
@@ -7038,7 +7042,7 @@ function disp_AllianceInfo()
 	function getXYListfromUserHTML(html)
 	{
 		var ret = new Array();
-		
+
 		var tmp = html.match(/<td[^>]*>君主<\/td>[^<]*<td[^>]*>([^<]+)<img[^>]*>([^<]+)/);	//W12専用
 		if (!tmp) {
 			var tmp = html.match(/<td[^>]*>君主<\/td>[^<]*<td[^>]*>([^<]+)/);	//それ以外の鯖
@@ -7047,7 +7051,7 @@ function disp_AllianceInfo()
 		} else {
 			var user_name = tmp[2].replace(/(^\s+|\s+$)/g, "");
 		}
-		
+
 //		var tmp = html.match(/<td[^>]*>君主<\/td>[^<]*<td[^>]*>([^<\s]+)/);
 //		var tmp = html.match(/<td[^>]*>君主<\/td>[^<]*<td[^>]*>([^<]+)/);
 //		if( !tmp ) return null;
@@ -7055,13 +7059,13 @@ function disp_AllianceInfo()
 //		var user_name = tmp[1].replace(/(^\s+|\s+$)/g, "");
 
 //		tmp = html.match(/<td[^>]*>同盟<\/td>[^<]*<td[^>]*><a href="[^"]*">([^<]+)<\/a><\/td>/);
-		
+
 		tmp = html.match(/<td[^>]*>同盟<\/td>[^<]*<td[^>]*>[^>]*><a href="[^"]*">([^<]+)<\/a>[^>]*<\/td>/);
 		if (!tmp) {
 			tmp = html.match(/<td[^>]*>同盟<\/td>[^<]*<td[^>]*>[^>]*<a href="[^"]*">([^<]+)<\/a>[^>]*<\/td>/);
 			if( !tmp ) return;
 		}
-		
+
 //		tmp = html.match(/<td[^>]*>同盟<\/td>[^<]*<td[^>]*>[^>]*<a href="[^"]*">([^<]+)<\/a>[^>]*<\/td>/);
 		if( !tmp ) return;
 		var ally_name = tmp[1];
@@ -7156,12 +7160,12 @@ function disp_AllianceInfo()
 						csv_txt += parseInt(tds[2].innerHTML, 10)  + "\t";
 						csv_txt += parseInt(tds[3].innerHTML, 10)  + "\t";
 						csv_txt += parseInt(tds[4].innerHTML, 10)  + "\t";
-						csv_txt += dt.all_rank  + "\t";
+						csv_txt += dt.all_rank	+ "\t";
 						csv_txt += dt.all_point  + "\t";
 						csv_txt += dt.jinko  + "\t";
 						csv_txt += dt.attack  + "\t";
 						csv_txt += dt.defence  + "\t";
-						csv_txt += dt.attack_score  + "\t";
+						csv_txt += dt.attack_score	+ "\t";
 						csv_txt += dt.defence_score  + "\t";
 						csv_txt += dt.x  + "\t";
 						csv_txt += dt.y  + "\n";
@@ -7258,12 +7262,12 @@ function disp_AllianceInfo()
 					var dt = getXYListfromUserHTML(req.responseText);
 					if( dt ) {
 						for(var i=0 ; i<dt.length ; i++) {
-							csv_txt += dt[i].ally_name  + "\t";
-							csv_txt += dt[i].user_name  + "\t";
-							csv_txt += dt[i].area_name  + "\t";
-							csv_txt += dt[i].x  + "\t";
-							csv_txt += dt[i].y  + "\t";
-							csv_txt += dt[i].jinko  + "\t";
+							csv_txt += dt[i].ally_name	+ "\t";
+							csv_txt += dt[i].user_name	+ "\t";
+							csv_txt += dt[i].area_name	+ "\t";
+							csv_txt += dt[i].x	+ "\t";
+							csv_txt += dt[i].y	+ "\t";
+							csv_txt += dt[i].jinko	+ "\t";
 							csv_txt += dt[i].honkyo  + "\n";
 						}
 
@@ -7468,7 +7472,7 @@ function disp_RemoveList(){
 		var icon = "";
 		if( lists[i].kind == 1 || lists[i].kind == 3 ) {		//村破棄or村作成
 			icon = IMG_DIR + "panel/village_b_l.png";
-		}else if( lists[i].kind == 2 || lists[i].kind == 4 ) {  //砦破棄or砦作成
+		}else if( lists[i].kind == 2 || lists[i].kind == 4 ) {	//砦破棄or砦作成
 			icon = IMG_DIR + "panel/fort_b_l.png";
 		}else{
 			icon = IMG_DIR + "panel/territory_b_s.png";
@@ -7562,7 +7566,7 @@ function disp_ResourcesTime(){
 	var stat_right = $("status_right");
 	if( stat_left && stat_right ) {
 		stat_left.style.width = "725px";	//670 + 55
-		stat_right.style.width = "200px";   //255 - 55
+		stat_right.style.width = "200px";	//255 - 55
 	}
 
 	var status_resources = $("status_resources");
@@ -7627,7 +7631,7 @@ function disp_ResourcesTime(){
 				dv.style.color="lightgreen";
 
 				if( bldtbl[i] != 999 ) {
-					dv.innerHTML = "次拠点:" +  bldtbl[i];
+					dv.innerHTML = "次拠点:" +	bldtbl[i];
 					if(OPT_NEXT_MEISEI){			//名声獲得タイマー機能使用時	faraway110620
 						dv.style.top = "-7px";		//位置ずれるため固定	faraway110620
 					}else{
@@ -7853,7 +7857,7 @@ function disp_MapList(){
 		var flag_akichi = cgetCheckBoxValue("beyond_maplist_akichi");
 		var flag_ryouchi = cgetCheckBoxValue("beyond_maplist_ryouchi");
 		var flag_kyoten = cgetCheckBoxValue("beyond_maplist_kyoten");
-		
+
 		var area = $a("//map[@id=\"mapOverlayMap\"]//area");
 		var lists = new Array();
 		for(var i=0; i<area.length ; i++) {
@@ -7866,11 +7870,11 @@ function disp_MapList(){
 				lists.push(trdata);
 			}
 		}
-		
+
 		lists.sort( function(a,b){
 			if(a.ally == "" && b.ally != "") return 1;
 			else if(a.ally != "" && b.ally == "") return -1;
-			
+
 			if(a.ally > b.ally) return 1;
 			else if(a.ally < b.ally) return -1;
 			else{
@@ -7896,9 +7900,9 @@ function disp_MapList(){
 			}
 			return 0;
 			});
-		
+
 		var tbl = initTable();
-		
+
 		for(var i=0 ; i<lists.length ; i++) {
 			var tr = d.createElement("tr");
 			var td;
@@ -7909,7 +7913,7 @@ function disp_MapList(){
 			td.innerHTML = lists[i].user_name;
 			tr.appendChild(td);
 			td = d.createElement("td");
-			if( lists[i].kyoten_img ) td.innerHTML = "<img src=\"" + lists[i].kyoten_img +  "\" style=\"width:30px; height:30px;\" />";
+			if( lists[i].kyoten_img ) td.innerHTML = "<img src=\"" + lists[i].kyoten_img +	"\" style=\"width:30px; height:30px;\" />";
 			tr.appendChild(td);
 			td = d.createElement("td");
 			td.style.display = "none";
@@ -7921,7 +7925,7 @@ function disp_MapList(){
 			td = d.createElement("td");
 			td.innerHTML = lists[i].name;
 			tr.appendChild(td);
-			
+
 			td = d.createElement("td");
 			var xy = lists[i].xy.match(/\(([\-0-9]+),([\-0-9]+)\)/);
 			if( xy ) td.innerHTML = cgetXYHtml(xy[1], xy[2]);
@@ -7934,16 +7938,16 @@ function disp_MapList(){
 			if( lists[i].npc ) td.style.color = "red";
 			td.innerHTML = lists[i].star;
 			tr.appendChild(td);
-			
+
 			tbl.appendChild(tr);
 		}
-		
+
 		if( OPT_TTDISTANCE) disp_ToolTipsDistance();//試し
-		
+
 		function getTRData(name, user_name, jinko, xy, ally, star, kyori, wood, stone, iron, rice, npc)
 		{
 			if( !flag_akichi && ally == "" ) return null;
-			
+
 			if( jinko == "-") jinko = "";
 			var kyoten_img = "";
 			var kyoten_kind = 0;
@@ -7965,28 +7969,28 @@ function disp_MapList(){
 							else if( kyoten_img.match(/village/) ) kyoten_kind = 1;
 							else if( kyoten_img.match(/fort/) ) kyoten_kind = 2;
 							else if( kyoten_img.match(/capital/) ) kyoten_kind = 3;
-						
+
 						}
 					}
 				}
 			}
-			
+
 			if( !flag_ryouchi && ally != "" && kyoten_kind == 0 ) return null;
 			if( !flag_kyoten && ally != "" && kyoten_kind != 0 ) return null;
-			
+
 			return {"kyoten_kind":kyoten_kind, "kyoten_img":kyoten_img,
 					"jinko":jinko , "ally":ally, "user_name":user_name,
 					"name":name, "xy":xy, "kyori":kyori, "star":star, "npc":npc};
 		}
-		
+
 		var sort_kind, sort_order;
-		
+
 		function row_sort(col, kind, order) {
 			var tbl = $("beyond_maplist_table");
 			var trs = $a("descendant::tr[position()>1]",tbl);
 			sort_kind = kind;
 			sort_order = order;
-			
+
 			var strs = new Array();
 			if( kind == "xy" ) {
 				//座標はaの下
@@ -8006,7 +8010,7 @@ function disp_MapList(){
 					}
 				}
 			}
-		
+
 			strs.sort( function(a,b) {
 				var ret = 0;
 				if( sort_kind == "num" ){
@@ -8050,21 +8054,21 @@ function disp_MapList(){
 				}
 				return ret;
 			});
-		
+
 			tbl = initTable();
-		
+
 			for(var i=0 ; i<trs.length ; i++) {
 				tbl.appendChild(strs[i].node);
 			}
 		}
-		
+
 		function appendSortButton(col, sortcol, kind )
 		{
 			var tbl = $("beyond_maplist_table");
 			var th = $x("descendant::tr[1]//th[" + col + "]", tbl);
 			if( !th ) return;
 			th.appendChild(d.createElement("br"));
-		
+
 			var a = d.createElement("a");
 			a.href = "javascript:void(0);";
 			var img = d.createElement("img");
@@ -8073,33 +8077,33 @@ function disp_MapList(){
 			img.title = img.alt;
 			a.appendChild(img);
 			th.appendChild(a);
-		
+
 			(function(n, k){
 				$e(a, "click", function(){row_sort(n, k, "asc"); } );
 			})(sortcol, kind);
-		
-		
+
+
 			th.appendChild(d.createTextNode(" "));
-			
+
 			a = d.createElement("a");
 			a.href = "javascript:void(0)";
 			img = d.createElement("img");
 			img.src= IMG_DIR + "trade/icon_down.gif";
 			img.alt = "降順に並べ替え";
 			img.title = img.alt;
-			
+
 			a.appendChild(img);
 			th.appendChild(a);
-			
+
 			(function(n, k){
 				$e(a, "click", function(){row_sort(n, k, "dsc"); } );
 			})(sortcol, kind);
-		
+
 		}
-		
+
 		function initTable(){
 			var dv = $("beyond_maplist");
-		
+
 			var tbl = $("beyond_maplist_table");
 			if( tbl ) {
 				tbl.parentNode.removeChild(tbl);
@@ -8111,17 +8115,17 @@ function disp_MapList(){
 				a.id = "beyond_maplist_table_gotop";
 				dv.appendChild(a);
 			}
-		
+
 			tbl = d.createElement("table");
 			tbl.id = "beyond_maplist_table";
-			
+
 			tbl.innerHTML = "<tr>" +
 				"<th>同盟</th><th>君主</th><th>拠点</th><th style=\"display:none;\">拠点Kind</th>" +
 				"<th>人口</th><th>領地名</th><th>座標</th><th>距離</th><th>戦力</th>" +
 				"</tr>";
-		
+
 			dv.insertBefore(tbl, $("beyond_maplist_table_gotop"));
-			
+
 			appendSortButton(1, 1, "str" );
 			appendSortButton(2, 2, "str" );
 			appendSortButton(3, 4, "kyo" );
@@ -8129,7 +8133,7 @@ function disp_MapList(){
 			appendSortButton(7, 7, "xy" );
 			appendSortButton(8, 8, "float" );
 			appendSortButton(9, 9, "str" );
-		
+
 			return tbl;
 		}
 	});
@@ -8236,7 +8240,7 @@ function disp_ToolTipsDistance()
 			td.style.textAlign = "right";
 			td.appendChild(d.createTextNode(timeText));
 			tr.appendChild(td);
-			
+
 			var dayText = caddDate(now, timeText);
 			dayText = dayText.substring(5, dayText.length - 3).replace("-", "/");
 
@@ -8249,10 +8253,10 @@ function disp_ToolTipsDistance()
 
 			tbl.appendChild(tr);
 		}
-		
+
 		tw.appendChild(tbl);
 		$("beyond_floatpanel").appendChild(tw);
-		
+
 		function getTime(speed, dist){
 			var tmp = dist * 3600 / speed;
 			var h = Math.floor(tmp / 3600);
@@ -8707,7 +8711,7 @@ function disp_UserLevel(){
 			//GM_log("td:" + td.innerHTML);
 			var level = parseInt(td.innerHTML,10);
 			if( isNaN( ""+level ) ) continue;
-			td.innerHTML =  level + " (+)";
+			td.innerHTML =	level + " (+)";
 		}
 	}
 	function updateLevelUpLink(){
@@ -8845,9 +8849,9 @@ function disp_TSendTime()
 		}
 
 		var dt = new Date(y, m - 1, d, h - parseInt(tim[1],10) , mi - parseInt(tim[2],10), s - parseInt(tim[3],10) );
-		
 
-		$("beyond_send_time").innerHTML = 
+
+		$("beyond_send_time").innerHTML =
 			dt.getFullYear() + "-" + (dt.getMonth()+1) + "-" + dt.getDate() + " " +
 			(dt.getHours()+100).toString().substr(-2)  + ":" +
 			(dt.getMinutes()+100).toString().substr(-2)  + ":" +
@@ -9244,7 +9248,7 @@ function disp_PikaHPRestTime()
 //////////////////////
 function disp_SuzanSeisan()
 {
-	var icon = IMG_DIR  + "common/sidebar/icon_production.gif";
+	var icon = IMG_DIR	+ "common/sidebar/icon_production.gif";
 	var elms = ccreateSideBox("beyond_sidebox_suzanseisan", icon, "拠点生産");
 
 	if(location.pathname == "/village.php") {
@@ -9909,7 +9913,7 @@ function SetPositionBox(id, title, elm_box, dat)	//faraway110525
 		ccnt++;
 	}
 
-	if( ccnt <= 1){	
+	if( ccnt <= 1){
 		if(id == "beyond_sidebox_villageListBox"){//拠点
 		elm_box.style.position = "absolute";
 		elm_box.style.top = "311px";
@@ -9918,7 +9922,7 @@ function SetPositionBox(id, title, elm_box, dat)	//faraway110525
 		}
 	}
 
-	if( ccnt <= 1){	
+	if( ccnt <= 1){
 
 		if(OPT_MEMO	== 1){				//メモ機能"
 			if(id.match("beyond_sidebox_memo")){		//メモ
@@ -10230,7 +10234,7 @@ function Pika_formatEstimate(hours, displaySecs) {
 
 	if (days == 0) {
 		var seconds = Math.floor((hours * 3600) % 60);
-		var minutes = Math.floor((hours *   60) % 60);
+		var minutes = Math.floor((hours *	60) % 60);
 		hours = Math.floor(hours);
 
 		if (hours == 0) {
@@ -10310,16 +10314,16 @@ function bro3HighLightName(){
 		var tbl = dom.getElementsByClassName("commonTables")[0];
 		var tr = tbl.getElementsByTagName("tr");
 		myName = tr[1].getElementsByTagName("td")[1].innerHTML.replace(/\s+/g, "");
-	
+
 		if (myName) {
 			var gray02Wrapper = document.getElementById("gray02Wrapper")
 			var tables = gray02Wrapper.getElementsByClassName("tables")[0]
 			var tr = tables.getElementsByTagName("tr")
 			var len = tr.length
-	
+
 			for (var i=0;i<len;i++){
 				var target = tr[i].getElementsByTagName("a")[0]
-	
+
 				if (target == undefined){
 					continue;
 				}
@@ -10362,7 +10366,7 @@ function Pika_installTradeHelper() {
 
 	jQuery.noConflict();
 	j$ = jQuery;
-	
+
 	j$("#button").bind("click",
 		function(){
 			var t = j$("#t").val();
@@ -10957,14 +10961,14 @@ if( location.pathname == "/alliance/level.php" ) {
 	np2 = parseInt(cl[8].innerHTML.match(/^[^\/]+/));
 	nl1 = parseInt(cl[7].innerHTML.match(/[^\/]+$/));
 	nl2 = parseInt(cl[7].innerHTML.match(/^[^\/]+/));
-	nd  = parseInt(cl[9].innerHTML);
+	nd	= parseInt(cl[9].innerHTML);
 
 	cl[7].innerHTML+=	'<span style="color:black;"> (空き:</span>'+
 				'<span style="color:red;">'+(nl1-nl2)+'</span>'+
 				'<span style="color:black;">)</span>'
 
 	cl[8].innerHTML+=	'<br /><span style="color:black;">次まで:</span>' +
-				'<span style="color:red;">'+(np1-np2)+'</span><br />' + 
+				'<span style="color:red;">'+(np1-np2)+'</span><br />' +
 				'<span style="color:black;">1人あたり:</span>' +
 				'<span style="color:red;">'+(parseInt((np1-np2)/nl2))+'</span>';
 
@@ -11075,7 +11079,7 @@ function disp_BGChange(css){
 			var node = document.createElement("style");
 			node.type = "text/css";
 			node.appendChild(document.createTextNode(css));
-			heads[0].appendChild(node); 
+			heads[0].appendChild(node);
 		}
 	}
 }
@@ -11140,7 +11144,7 @@ function cut_main2(){
 		"#worldtime dd {border:1px #fd0 solid;}" +
 		"#server_time_disp { padding:0 !important;}" +
 		"#bptpcp_area {position:absolute; top:137px; left:770px; background:none !important;}" +
-		"#statusIcon {top:22px !important; left:710px !important; white-space:nowrap !important;}" +	
+		"#statusIcon {top:22px !important; left:710px !important; white-space:nowrap !important;}" +
 		"#lodgment {top:183px !important; left:774px !important; background-image:none !important;}" +
 		"#lodgment * {background-image:none !important; background-color:#333 !important;}" +
 		"#lodgment ul li {padding:2px 0 !important;}" +
@@ -11429,7 +11433,7 @@ function cajaxRequest_1(url, method, param, func_success, func_fail){
 }
 
 // jQuery append by どらごら
-// 
+//
 function jQueryAppend() {
 
 	jQuery.noConflict();
@@ -11441,12 +11445,12 @@ function jQueryAppend() {
 		"</div>");
 	j$("#route_contextmenu")
 		.hide()
-		.css({ 
-			position: "absolute", 
-			backgroundColor: "white", 
-			border: "outset 2px gray", 
-			color: "black", 
-			padding: "3px", 
+		.css({
+			position: "absolute",
+			backgroundColor: "white",
+			border: "outset 2px gray",
+			color: "black",
+			padding: "3px",
 			zIndex: 999
 		});
 
@@ -11525,7 +11529,7 @@ function onMapContextMenu(e, x,y,p,c,b) {
 	j$("#chkLink")
 		.addClass("subMenuItem")
 		.unbind("click")
-		.one("click", 
+		.one("click",
 			function (x,y,p,c,b) {
 				return function () {
 					menuMapChk(e, x,y,p,c,b);
@@ -11535,7 +11539,7 @@ function onMapContextMenu(e, x,y,p,c,b) {
 	j$("#delLink")
 		.addClass("subMenuItem")
 		.unbind("click")
-		.one("click", 
+		.one("click",
 			function (x,y,p,c,b) {
 				return function () {
 					menuChkDel(e, x,y,p,c,b);
@@ -11545,7 +11549,7 @@ function onMapContextMenu(e, x,y,p,c,b) {
 	j$("#moveLink")
 		.addClass("subMenuItem")
 		.unbind("click")
-		.one("click", 
+		.one("click",
 			function (x,y,p,c,b) {
 				return function () {
 					location.href = "map.php?x=" + x + "&y=" + y;
@@ -11555,7 +11559,7 @@ function onMapContextMenu(e, x,y,p,c,b) {
 	j$("#detailLink")
 		.addClass("subMenuItem")
 		.unbind("click")
-		.one("click", 
+		.one("click",
 			function (x,y,p,c,b) {
 				return function () {
 					location.href = "land.php?x=" + x + "&y=" + y;
@@ -11566,7 +11570,7 @@ function onMapContextMenu(e, x,y,p,c,b) {
 	j$("#sortieLink")
 		.addClass("subMenuItem")
 		.unbind("click")
-		.one("click", 
+		.one("click",
 			function (x,y,p,c,b) {
 				return function () {
 					location.href = "facility/castle_send_troop.php?x=" + x + "&y=" + y + "#ptop";
@@ -11577,15 +11581,15 @@ function onMapContextMenu(e, x,y,p,c,b) {
 
 	// メニュー表示
 	j$("#route_contextmenu")
-		.css({ 
-			left: e.pageX + "px", 
+		.css({
+			left: e.pageX + "px",
 			top: e.pageY + "px"
 		})
 		.show();
 
 	j$(document)
 		.unbind("click")
-		.one("click", 
+		.one("click",
 			function () {
 				j$("#route_contextmenu").hide();
 			});
@@ -11604,22 +11608,22 @@ function onValidation() {
 	var lineNum;
 
 	for(var i=0;i<line.length;i++) {
-		
+
 		regObj = new RegExp(/[^-^\d]*([^,]*),([^\)]*)\)[\s\u3000\u2605\u2606\d]*(.*)/);
 		if (line[i].match(regObj)) {
-			
+
 			var tdElem = document.getElementById("route_td_" + RegExp.$1 + "_" + RegExp.$2);
 			if (tdElem == null) {
 				continue;
 			}
-			
+
 			if ((x == null) && (y == null)) {
 				x = RegExp.$1;
 				y = RegExp.$2;
 				lineNum = i;
 				continue;
 			}
-			
+
 			if ((Math.abs(x - RegExp.$1) > 1 ) || (Math.abs(y - RegExp.$2) > 1 )) {
 				// not chain
 				var msg = (lineNum + 1) + "行目の(" + x + "," + y + ")と\n" +
@@ -11630,7 +11634,7 @@ function onValidation() {
 			y = RegExp.$2;
 			lineNum = i;
 		}
-		
+
 	}
 
 	alert("チェック終了！");
@@ -11650,26 +11654,26 @@ function menuChkDel(e, x,y,p,c,b) {
 	var newText = "";
 
 	for(var i=0;i<line.length;i++) {
-		
+
 		regObj = new RegExp(/[^-^\d]*([^,]*),([^\)]*)\)[\s\u3000\u2605\u2606\d]*(.*)/);
 		if (line[i].match(regObj)) {
-			
+
 			if((x == RegExp.$1) && (y == RegExp.$2)) {
-				
+
 				var tdElem = document.getElementById("route_td_" + RegExp.$1 + "_" + RegExp.$2);
 				if(tdElem != null) {
 					tdElem.style.backgroundColor = b;
 				}
-				
+
 			} else {
 				newText += line[i] + "\n";
 			}
-			
+
 		} else {
 			// 一致しなくても、行は有効
 			newText += line[i] + "\n";
 		}
-		
+
 	}
 	txtbox.value = newText;
 
@@ -11681,22 +11685,22 @@ function onReWrite() {
 	var line = txtbox.value.split("\n");
 
 	for(var i=0;i<line.length;i++) {
-		
+
 		regObj = new RegExp(/[^-^\d]*([^,]*),([^\)]*)\)[\s\u3000\u2605\u2606\d]*(.*)/);
 		if (line[i].match(regObj)) {
-			
+
 			var tdElem = document.getElementById("route_td_" + RegExp.$1 + "_" + RegExp.$2);
 			if(tdElem == null) {
 				continue;
 			}
-			
+
 			if(RegExp.$3.trim() == "") {
 				tdElem.style.backgroundColor = "#FF00FF";
 			} else {
 				tdElem.style.backgroundColor = "#00FF00";
 			}
 		}
-		
+
 	}
 }
 
@@ -11773,10 +11777,10 @@ function sendTroopInfo() {
 			.next().text("")
 			;
 		j$("#locationErrMsg").show();
-		
+
 	} else {
 		var clsData = new genPopupText(data, x, y);	// by どらごら
-		
+
 		j$("#sendTroopInfoTable td:first")
 			.text(clsData.data[IDX_WOOD])
 			.next().text(clsData.data[IDX_STONE])
@@ -11821,7 +11825,7 @@ function allianceCSV_1(){
 
 function GetMember() {
 
-	j$("#csvMake").text("情報取得中" +  (MEMBER_ID_MAX_COUNTER - MEMBER_ID_LIST_COUNTER) + "/" + MEMBER_ID_MAX_COUNTER);
+	j$("#csvMake").text("情報取得中" +	(MEMBER_ID_MAX_COUNTER - MEMBER_ID_LIST_COUNTER) + "/" + MEMBER_ID_MAX_COUNTER);
 	if(MEMBER_ID_LIST.length == 0) {
 		if (MEMBER_ID_LIST_COUNTER > 0){
 			window.setTimeout(GetMember, 1000);
@@ -11878,7 +11882,7 @@ function GetMember() {
 //		var tmp = html.match(/<td>君主<\/td>[^<]*<td>([^<]*)<\/td>/);
 //		if( !tmp ) return null;
 //		var user_name = tmp[1].replace(/[\r\n\t ]/g, "");
-		
+
 		var tmp = html.match(/<td[^>]*>君主<\/td>[^<]*<td[^>]*>([^<]+)<img[^>]*>([^<]+)/);	//W12専用
 		if (!tmp) {
 			var tmp = html.match(/<td[^>]*>君主<\/td>[^<]*<td[^>]*>([^<]+)/);	//それ以外の鯖
@@ -11887,7 +11891,7 @@ function GetMember() {
 		} else {
 			var user_name = tmp[2].replace(/(^\s+|\s+$)/g, "");
 		}
-		
+
 		var pos;
 		var reg = /<a href="\.\.\/(?:land|village_change)\.php[^"]*">\s*([^<\s]+)\s*<\/a>[^<]*<\/td>[^<]*<td[^>]*>([\-0-9]+),([\-0-9]+)<\/td>[^<]*<td[^>]*>([0-9]+|&nbsp;)<\/td>/;
 		var honkyo = 1;
@@ -11932,8 +11936,8 @@ function ConfigClose() {
 //---------------------------------------------
 // 同盟貢献チェッカー
 //---------------------------------------------
-function disp_alliance() {	
-	if(location.pathname != "/alliance/info.php") return;	
+function disp_alliance() {
+	if(location.pathname != "/alliance/info.php") return;
 	//mixi鯖障害回避用: 広告iframe内で呼び出されたら無視
 	var container = document.evaluate('//*[@id="container"]',
 		document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -11998,7 +12002,7 @@ function disp_alliance() {
 	messageSaveEnd.style.margin = "0px 5px";
 	messageSaveEnd.style.fontSize = "10px";
 	tableTitle.snapshotItem(0).appendChild(messageSaveEnd);
-}	
+}
 
 //貢献チェック実行
 function chackContrib() {
@@ -12010,29 +12014,29 @@ function chackContrib() {
 	for (var i = 0; i < userElems.snapshotLength; i++) {
 		var newModified = "";
 		var oldModified = "";
-		
-		var rowFields = document.evaluate('./td', userElems.snapshotItem(i), 
+
+		var rowFields = document.evaluate('./td', userElems.snapshotItem(i),
 			null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 		if (rowFields.snapshotLength == 0) continue;
-		
+
 		//「君主」欄
 		var userField = rowFields.snapshotItem(1);
 		var userLink = document.evaluate('./a', userField,
 			null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 		var user = trim_3(userLink.snapshotItem(0).innerHTML);
-		
+
 		//前回値取得
 		var userData = new Array();
 		var dataStr = GM_getValue(generateUserKey_3(user), "");
 		if (dataStr != "") {
 			userData = dataStr.split(DELIMIT_3);
 		}
-		
+
 		//「ランク」欄
 		{
 			var rankField = rowFields.snapshotItem(0);
 			var newRank = trim_3(rankField.innerHTML);
-			
+
 			var rankItem = new Array("", "");
 			if (userData[IDX_RANK] != undefined && userData[IDX_RANK] != "") {
 				rankItem = userData[IDX_RANK].split(",");
@@ -12045,13 +12049,13 @@ function chackContrib() {
 					else rankField.style.color = "blue";
 					rankField.innerHTML = newRank + "<font size='-2'>(" + diff + ")</font>";
 				}
-				
+
 				rankItem[0] = newRank;
 				rankItem[1] = CURRENT_TIME;
 				userData[IDX_RANK] = rankItem;
 			}
 		}
-		
+
 		//貢献チェック対象データ
 		var fieldId = new Array(
 			new Array(IDX_POINT, 2), //ポイント
@@ -12062,39 +12066,39 @@ function chackContrib() {
 			var targetElem = rowFields.snapshotItem(fieldId[j][1]);
 			var targetData = userData[fieldId[j][0]];
 			var newValue = trim_3(targetElem.innerHTML);
-			
+
 			var dataItem = new Array("", "");
 			if (targetData != undefined && targetData != "") {
 				dataItem = targetData.split(",");
 			}
 			var oldValue = dataItem[0];
-			
+
 			if (dataItem[1] > oldModified) {
 				oldModified = dataItem[1];
 			}
-			
+
 			if (newValue != oldValue) {
-				
+
 				//増減表示
 				if (oldValue != "") {
 					var diff = diffNum(newValue, oldValue);
 					if (parseInt(diff) > 0) targetElem.style.color = "red";
 					else targetElem.style.color = "blue";
-					
-					targetElem.innerHTML = newValue + 
+
+					targetElem.innerHTML = newValue +
 						"<font size='-2'>(" + diff + ")</font>";
 				}
-				
+
 				dataItem[0] = newValue;
 				dataItem[1] = CURRENT_TIME;
 				userData[fieldId[j][0]] = genDelimitString_3(dataItem, ",");
 				newModified = CURRENT_TIME;
-				
+
 			} else if (oldModified > newModified) {
 				newModified = oldModified;
 			}
 		}
-		
+
 		//前回変化からの時間数を表示
 		var newText = trim_3(userField.innerHTML);
 		newText += "<font size='-2'> (";
@@ -12104,11 +12108,11 @@ function chackContrib() {
  		newText += diffTime(CURRENT_TIME, newModified);
  		newText += ")</font>";
  		userField.innerHTML = newText;
-		
+
 		if (oldModified != newModified) {
 			userField.style.color = "red";
 		}
-		
+
 		//データを保存
 		if (newModified == CURRENT_TIME || rankItem[1] == CURRENT_TIME) {
 			SAVE_DATA[user] = userData;
@@ -12185,8 +12189,8 @@ function diffTime(strTime1, strTime2) {
 
 //日時文字列編集（yyyy/mm/dd hh:mm:ss）
 function generateDateString_3(date) {
-	var res = "" + date.getFullYear() + "/" + padZero_3(date.getMonth() + 1) + 
-		"/" + padZero_3(date.getDate()) + " " + padZero_3(date.getHours()) + ":" + 
+	var res = "" + date.getFullYear() + "/" + padZero_3(date.getMonth() + 1) +
+		"/" + padZero_3(date.getDate()) + " " + padZero_3(date.getHours()) + ":" +
 		padZero_3(date.getMinutes()) + ":" + padZero_3(date.getSeconds());
 	return res;
 }
@@ -12320,15 +12324,15 @@ function disp_development() {	//4.発展チェッカー faraway
 		var targetElem = document.evaluate(fieldPaths[i],
 			document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 		var value = targetElem.snapshotItem(0).innerHTML;
-		
+
 		var dataItem = new Array();
 		if (data[i] != undefined) {
 			dataItem = data[i].split(",");
 		}
-		
+
 		//値変化を表示
 		var lastUpdate = getCurrentTime_4();
-		
+
 		//日時表示編集
 		var dateText = dataItem[1];
 		if (dateText == undefined) dateText = lastUpdate;
@@ -12336,14 +12340,14 @@ function disp_development() {	//4.発展チェッカー faraway
 		dateText = dateText.replace(/:[0-9]{2}$/, "");
 		if (dataItem[0] != undefined && value != dataItem[0]) {
 			targetElem.snapshotItem(0).style.color = "red";
-			targetElem.snapshotItem(0).innerHTML = 
-				value + " ← " + dataItem[0] + 
+			targetElem.snapshotItem(0).innerHTML =
+				value + " ← " + dataItem[0] +
 				" (" + dateText + " ～)";
 		} else {
-			targetElem.snapshotItem(0).innerHTML = 
+			targetElem.snapshotItem(0).innerHTML =
 				value + " (" + dateText + " ～)";
 		}
-		
+
 		//値に変更があったら更新
 		if (value != dataItem[0]) {
 			dataItem[0] = value;
@@ -12354,7 +12358,7 @@ function disp_development() {	//4.発展チェッカー faraway
 
 	//値を保存
 	GM_setValue(generateUserKey_4(user), genDelimitString_4(data, DELIMIT_4));
-}	
+}
 
 //君主データキー生成
 function generateUserKey_4(userName) {
@@ -12365,8 +12369,8 @@ function generateUserKey_4(userName) {
 //現在時刻取得（yyyy-mm-dd hh:mm:ss）
 function getCurrentTime_4() {
 	var date = new Date();
-	var res = "" + date.getFullYear() + "-" + padZero_4(date.getMonth() + 1) + 
-		"-" + padZero_4(date.getDate()) + " " + padZero_4(date.getHours()) + ":" + 
+	var res = "" + date.getFullYear() + "-" + padZero_4(date.getMonth() + 1) +
+		"-" + padZero_4(date.getDate()) + " " + padZero_4(date.getHours()) + ":" +
 		padZero_4(date.getMinutes()) + ":" + padZero_4(date.getSeconds());
 	return res;
 }
@@ -12444,8 +12448,8 @@ function initGMWrapper_4() {
 // 公開ページ: http://blog.livedoor.jp/froo/archives/51416669.html
 // 使い方: 「統計」-「同盟」ページ検索欄横の各リンクをクリック
 
-function disp_statistics() {	//faraway 
-	if(location.pathname != "/alliance/list.php") return;	
+function disp_statistics() {	//faraway
+	if(location.pathname != "/alliance/list.php") return;
 
 	//mixi鯖障害回避用: 広告iframe内で呼び出されたら無視
 	var container = document.evaluate('//*[@id="container"]',
@@ -12458,7 +12462,7 @@ function disp_statistics() {	//faraway
 	getAllyData_5();
 	addLinkHtml_5();
 
-}	
+}
 
 //同盟ランキングデータ取得
 function getAllyData_5() {
@@ -12480,7 +12484,7 @@ function getAllyData_5() {
 	}
 
 	//日時に編集
-	var datetime = tmpDate.getFullYear() + "/" + padZero_5(tmpDate.getMonth() + 1) + 
+	var datetime = tmpDate.getFullYear() + "/" + padZero_5(tmpDate.getMonth() + 1) +
 		"/" + padZero_5(tmpDate.getDate()) + " " + time;
 
 	//各同盟データ取得
@@ -12489,17 +12493,17 @@ function getAllyData_5() {
 		var item = tableElems.snapshotItem(i);
 		var appendData = new Array();
 		appendData[IDX_DATETIME] = datetime;
-		
+
 		//更新データ取得
 		var name = getChildElement_5(getChildElement_5(item, 1), 0).innerHTML; //同盟略称
 		appendData[IDX_POINT_5] = getChildElement_5(item, 2).innerHTML; //ポイント
 		appendData[IDX_RANK_5] = getChildElement_5(item, 0).innerHTML.replace(/→\s/, ""); //ランク
 		appendData[IDX_MEMBER] = getChildElement_5(item, 3).innerHTML; //メンバー
 		CURRENT_ALLYS_5.push(name);
-		
+
 		//既存データを取得
 		var data = loadAllyData_5(name);
-		
+
 		//データ更新
 		var upIdx = data.length;
 		if (data.length >= 1) {
@@ -12509,10 +12513,10 @@ function getAllyData_5() {
 			}
 		}
 		data[upIdx] = appendData;
-		
+
 		//Greasemonkey領域へ永続保存
 		saveAllyData_5(name, data);
-		
+
 		//検索用索引更新
 		if (searchArrayItem_5(ALLYS_INDEX_5, name) < 0) {
 			ALLYS_INDEX_5.push(name);
@@ -12598,7 +12602,7 @@ function addGraphHtml(parentElem) {
 	graphElem.style.position = "relative";
 
 	var canvasHtml = "<canvas id='graphCanvas' " +
-		"width='" + (GRAPH_WIDTH + GRAPH_PADDING * 2) + 
+		"width='" + (GRAPH_WIDTH + GRAPH_PADDING * 2) +
 		"' height='" + (GRAPH_HEIGHT + GRAPH_PADDING * 2) + "'></canvas>";
 	graphElem.innerHTML = canvasHtml;
 	var canvas = document.getElementById("graphCanvas");
@@ -12608,7 +12612,7 @@ function addGraphHtml(parentElem) {
 	//時間がかかるので別スレッド化（一旦描画して砂時計を表示させる）
 	setWaitCursor_5();
 	window.setTimeout(function() {
-		
+
 		//同盟データ取得
 		var allysData = new Array();
 		var maxDatetime = new Date("2000/1/1 00:00:00");
@@ -12619,54 +12623,54 @@ function addGraphHtml(parentElem) {
 			if (ALLYS_5[i] == "") continue;
 			var srcData = loadAllyData_5(ALLYS_5[i]);
 			if (srcData.length == 0) continue;
-			
+
 			allysData[i] = new Array();
 			for (var j = 0; j < srcData.length; j++) {
 				allysData[i][j] = new Array();
 				var datetime = new Date(srcData[j][IDX_DATETIME]);
 				var point = parseInt(srcData[j][IDX_POINT_5]);
 				if (isNaN(point)) point = 0;
-				
+
 				//最大/最小値チェック
 				if (datetime.getTime() > maxDatetime.getTime()) maxDatetime = datetime;
 				if (datetime.getTime() < minDatetime.getTime()) minDatetime = datetime;
 				if (point > maxPoint) maxPoint = point;
-				
+
 				allysData[i][j][IDX_DATETIME] = datetime;
 				allysData[i][j][IDX_POINT_5] = point;
 			}
 		}
-		
+
 		//グラフ表示
 		for (var i = allysData.length - 1; i >= 0; i--) {
 			if (allysData[i] == undefined) continue;
 			ctx.strokeStyle = ALLY_COLORS_5[i];
 			ctx.beginPath();
-			
+
 			var isFirst = true;
 			for (var j = 0; j < allysData[i].length; j++) {
 				if (allysData[i][j] == undefined) continue;
 				var datetime = allysData[i][j][IDX_DATETIME];
 				var point = allysData[i][j][IDX_POINT_5];
-				
+
 				var xRatio = 0;
-				if (maxDatetime.getTime() > minDatetime.getTime()) { 
-					 xRatio = (datetime.getTime() - minDatetime.getTime()) 
+				if (maxDatetime.getTime() > minDatetime.getTime()) {
+					 xRatio = (datetime.getTime() - minDatetime.getTime())
 						/ (maxDatetime.getTime() - minDatetime.getTime());
 				}
-				
+
 				var yRatio = 0;
 				if (maxPoint > minPoint) {
 					yRatio = (point - minPoint) / (maxPoint - minPoint);
 				}
-				
+
 				var xPos = Math.floor(GRAPH_WIDTH * xRatio) + GRAPH_PADDING;
 				var yPos = GRAPH_HEIGHT - Math.floor(GRAPH_HEIGHT * yRatio) + GRAPH_PADDING;
-				
+
 				if (isFirst) ctx.moveTo(xPos, yPos);
 				else ctx.lineTo(xPos, yPos);
 				isFirst = false;
-				
+
 				var mark = document.createElement("div");
 				graphElem.appendChild(mark);
 				mark.style.position = "absolute";
@@ -12676,9 +12680,9 @@ function addGraphHtml(parentElem) {
 				mark.style.height = "6px";
 				mark.style.left = (xPos - 4) + "px";
 				mark.style.top = (yPos - 4) + "px";
-				
+
 				//ポップアップ設定
-				var popupText = ALLYS_5[i] + "<br/>" + generateDateString_5(datetime) + 
+				var popupText = ALLYS_5[i] + "<br/>" + generateDateString_5(datetime) +
 					"<br/> " + point + "ポイント";
 				if (navigator.userAgent.toLowerCase().indexOf('chrome') >= 0) {
 					mark.title = popupText.replace(/<br\/>/g, "\n");
@@ -12687,10 +12691,10 @@ function addGraphHtml(parentElem) {
 					mark.addEventListener("mouseout", function() {offPopup_5();}, true);
 				}
 			}
-			
+
 			ctx.stroke();
 		}
-		
+
 		resetCursor_5();
 	}, 0);
 }
@@ -12702,7 +12706,7 @@ function addCtrlHtml(parentElem) {
 	addElem.id = "graphCtrl";
 	addElem.style.margin = "2px 2px";
 
-	addElem.innerHTML = 
+	addElem.innerHTML =
 		"<table style='font-size:11px'>"+
 		"<tr>"+
 			"<td style='background-color:black; padding:5px 4px; text-align:center;'>"+
@@ -12793,7 +12797,7 @@ function addCtrlHtml(parentElem) {
 	//イベントリスナー登録（保存ボタン）
 	document.getElementById('graphtoolSave').addEventListener("click",
 		function() {
-			
+
 			//入力同盟名をGreasemonkey領域に保存
 			for (var i = 0; i < ALLY_COLORS_5.length; i++) {ALLYS_5[i] = trim_5(document.getElementById("ally" + (i+1)).value);}
 			GM_setValue(location.hostname + "_allys", genDelimitString_5(ALLYS_5, DELIMIT_5));
@@ -12894,18 +12898,18 @@ function outputCsv() {
 		addElem.id = "toolCsv";
 		addElem.style.fontSize = "12px";
 		frameDoc.body.appendChild(addElem);
-		
+
 		//タイトル行
 		var csvText = "";
 		csvText += "ALLIANCER,DATETIME,RANK,POINT,MEMBER\n";
-		
+
 		//データ行
 		for (var i = 0; i < ALLYS_INDEX_5.length; i++) {
-			
+
 			//保存データ取得
 			var srcData = loadAllyData_5(ALLYS_INDEX_5[i]);
 			if (srcData.length == 0) continue;
-			
+
 			for (var j = 0; j < srcData.length; j++) {
 				csvText += convCsvString_5(ALLYS_INDEX_5[i]);
 				csvText += ",";
@@ -12919,7 +12923,7 @@ function outputCsv() {
 				csvText += "\n";
 			}
 		}
-		
+
 		addElem.innerHTML = csvText;
 		resetCursor_5();
 	}, 0);
@@ -12962,7 +12966,7 @@ function addGlobalStyle_5(css) {
 
 //日時文字列編集（mm/dd hh:mm）
 function generateDateString_5(date) {
-	var res = "" + padZero_5(date.getMonth() + 1) + "/" + padZero_5(date.getDate()) + 
+	var res = "" + padZero_5(date.getMonth() + 1) + "/" + padZero_5(date.getDate()) +
 		" " + padZero_5(date.getHours()) + ":" + padZero_5(date.getMinutes());
 	return res;
 }
@@ -13054,7 +13058,7 @@ function initGMWrapper_5() {
 // 　　　　報告書詳細(/report/detail.php)下部に戦力計算表示
 // 　　　　拠点詳細(/village.php)・領地詳細(/land.php)に関連最新ログリンク
 
-function disp_alliancelog() {	
+function disp_alliancelog() {
 	//mixi鯖障害回避用: 広告iframe内で呼び出されたら無視
 	var container = document.evaluate('//*[@id="container"]',document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 	if (container.snapshotLength == 0) return;
@@ -13067,12 +13071,12 @@ function disp_alliancelog() {
 		LOG_DATA[IDX_DATE] = getLogDate();
 		LOG_DATA[IDX_ACTOR] = getActor();
 		LOG_DATA[IDX_SOLDIER_COUNT] = getSoldier();
-		
+
 		//HTML追加
 		if (LOG_DATA[IDX_ACTOR].length > 0) {appendHeaderHtml();appendLinksHtml();}
 		//保存
 		saveLogData(LOG_ID, LOG_DATA);
-		
+
 	} else if (location.pathname == "/report/detail.php") {
 		$tmp=$x_7('//div[@id="gray02Wrapper"]/table[@class="tables"]//tr[2]/td[1]').innerHTML;
 		if(($tmp.indexOf("ブショーデュエルで"))>0) return;	//デュエルの結果ならおしまい。
@@ -13093,7 +13097,7 @@ function disp_alliancelog() {
 		appendHeaderHtml();
 		appendSoldierCountHtml(getSoldier());
 	}
-}	
+}
 
 //件名取得
 function getSubject() {
@@ -13129,13 +13133,13 @@ function getActor() {
 		result[i][IDX2_USER_NAME] = "";
 		result[i][IDX2_VILLAGE_ID] = "";
 		result[i][IDX2_VILLAGE_NAME] = "";
-		
+
 		if (links[i] == undefined) {
 			//何もしない
 		} else if (links[i].snapshotLength == 1) {
 			result[i][IDX2_VILLAGE_ID] = getParameter2_6(links[i].snapshotItem(0).href, "village_id");
 			result[i][IDX2_VILLAGE_NAME] = trim_6(links[i].snapshotItem(0).innerHTML);
-		
+
 		} else if (links[i].snapshotLength >= 3) {
 			result[i][IDX2_ALLY_ID] = getParameter2_6(links[i].snapshotItem(0).href, "id");
 			result[i][IDX2_ALLY_NAME] = trim_6(links[i].snapshotItem(0).innerHTML);
@@ -13144,7 +13148,7 @@ function getActor() {
 			result[i][IDX2_VILLAGE_ID] = getParameter2_6(links[i].snapshotItem(2).href, "village_id");
 			result[i][IDX2_VILLAGE_NAME] = trim_6(links[i].snapshotItem(2).innerHTML);
 		}
-		
+
 		//防御者情報がない場合は件名欄から取得
 		if (i == 1 && result[i][IDX2_VILLAGE_ID] == "") {
 			var subject = getSubject();
@@ -13152,11 +13156,11 @@ function getActor() {
 			if (subject.match(/【同盟変更】/)) continue;
 			if (subject.match(/【脱退】/)) continue;
 			if (subject.match(/【同盟追放】/)) continue;
-			
+
 			var titleElem = document.evaluate(
 				'//*[@id="gray02Wrapper"]/table[1]/tbody/tr[2]/td/a',
 				document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-			
+
 			if (titleElem.snapshotLength >= 2) {
 				var allyIdx;
 				var villageIdx;
@@ -13173,21 +13177,21 @@ function getActor() {
 					allyIdx = 0;
 					villageIdx = 1;
 				}
-				
+
 				if (allyIdx == undefined) {
 					result[i][IDX2_ALLY_ID] = "";
 					result[i][IDX2_ALLY_NAME] = "";
 				} else {
-					result[i][IDX2_ALLY_ID] = 
+					result[i][IDX2_ALLY_ID] =
 						getParameter2_6(titleElem.snapshotItem(allyIdx).href, "id");
-					result[i][IDX2_ALLY_NAME] = 
+					result[i][IDX2_ALLY_NAME] =
 						trim_6(titleElem.snapshotItem(allyIdx).innerHTML);
 				}
 				result[i][IDX2_USER_ID] = "";
 				result[i][IDX2_USER_NAME] = "";
-				result[i][IDX2_VILLAGE_ID] = 
+				result[i][IDX2_VILLAGE_ID] =
 					getParameter2_6(titleElem.snapshotItem(villageIdx).href, "village_id");
-				result[i][IDX2_VILLAGE_NAME] = 
+				result[i][IDX2_VILLAGE_NAME] =
 					trim_6(titleElem.snapshotItem(villageIdx).innerHTML);
 			}
 		}
@@ -13206,7 +13210,7 @@ function getSoldier() {
 		document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 	for (var i = 0; i < tables.snapshotLength; i++) {
 		var itemTable = tables.snapshotItem(i);
-		
+
 		if (itemTable.summary == "攻撃者") {
 			attackerData = addSoldierCount(attackerData, getSoldierCount(itemTable));
 		} else if (itemTable.summary == "防御者") {
@@ -13348,12 +13352,12 @@ function appendHistoryHtml(actorIdx) {
 		if (logs[i] == LOG_ID) {dataRow.style.backgroundColor = "yellow";}
 		var logData = loadLogData(logs[i]);
 		if (logData.length == 0) continue;
-		
+
 		//件名
-		var subject = "<a href='/alliance/detail.php?id=" + logs[i] + 
-			"&p=" + getParameter_6("p") + "'>" + 
+		var subject = "<a href='/alliance/detail.php?id=" + logs[i] +
+			"&p=" + getParameter_6("p") + "'>" +
 			logData[IDX_SUBJECT].replace(/<[^>]+>/g, "") + "</a>";
-		
+
 		//戦力
 		var soldierTotal = new Array();
 		for (var j = 0; j < 2; j++) {
@@ -13395,7 +13399,7 @@ function getSoldierCount(table) {
 		table, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 	for (var i = 0; i < rows.snapshotLength; i++) {
 		var row = rows.snapshotItem(i);
-		
+
 		var fields = document.evaluate('./td',row, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 		if (fields.snapshotLength != 12) continue;
 		var temp = new Array();
@@ -13403,7 +13407,7 @@ function getSoldierCount(table) {
 			var field = fields.snapshotItem(j);
 			temp[j] = parseInt(trim_6(field.innerHTML));
 		}
-		
+
 		result.push(temp);
 	}
 
@@ -13417,7 +13421,7 @@ function appendRestTable(container, atData, dfData) {
 	table.id = "restSoldier";
 	table.className = "tables";
 
-	table.innerHTML = 
+	table.innerHTML =
 		'<tr>'+
 			'<th class="attacker" style="background-color:lawngreen;">残兵士合計</th>'+
 			'<th class="attackerBase" style="background-color:lawngreen;" colspan="13"></th>'+
@@ -13474,7 +13478,7 @@ function appendRestTable(container, atData, dfData) {
 	for (var i = 0; i < rowKey.length; i++) {
 		if (allData[i] == undefined) break;
 		var restArray = new Array();
-		
+
 		for (var col = 0; col < 11; col++) {
 			if (allData[i][0] == undefined || allData[i][1] == undefined) {
 				restArray[col] = NaN;
@@ -13484,7 +13488,7 @@ function appendRestTable(container, atData, dfData) {
 			var field = document.getElementById(rowKey[i] + col);
 			field.innerHTML = convDispNum(restArray[col]);
 		}
-		
+
 		var totalField = document.getElementById(rowKey[i] + "Total");
 		totalField.innerHTML = convDispNum(totalSoldiers(restArray));
 	}
@@ -13497,7 +13501,7 @@ function appendLossTable(container, atData, dfData) {
 	table.id = "lossSoldier";
 	table.className = "tables";
 
-	table.innerHTML = 
+	table.innerHTML =
 		'<tr>'+
 			'<th class="attacker" style="background-color:lawngreen;">死傷者合計</th>'+
 			'<th class="attackerBase" style="background-color:lawngreen;" colspan="13"></th>'+
@@ -13553,19 +13557,19 @@ function appendLossTable(container, atData, dfData) {
 	var allData = new Array(atData, dfData);
 	for (var i = 0; i < rowKey.length; i++) {
 		if (allData[i] == undefined) break;
-		
+
 		var lossArray;
 		if (allData[i][1] == undefined) {
 			lossArray = new Array();
 		} else {
 			lossArray = allData[i][1];
 		}
-		
+
 		for (var col = 0; col < 11; col++) {
 			var field = document.getElementById(rowKey[i] + col);
 			field.innerHTML = convDispNum(lossArray[col]);
 		}
-		
+
 		var totalField = document.getElementById(rowKey[i] + "Total");
 		totalField.innerHTML = convDispNum(totalSoldiers(lossArray));
 	}
@@ -13605,12 +13609,12 @@ function saveLogData(logId, logData) {
 	//攻撃者・防御者
 	logDataStr[IDX_ACTOR] = new Array();
 	if (logData[IDX_ACTOR].length > 0) {
-		logDataStr[IDX_ACTOR][0] = 
+		logDataStr[IDX_ACTOR][0] =
 			genDelimitString_6(logData[IDX_ACTOR][0], DELIMIT3_6); //攻撃者
-		logDataStr[IDX_ACTOR][1] = 
+		logDataStr[IDX_ACTOR][1] =
 			genDelimitString_6(logData[IDX_ACTOR][1], DELIMIT3_6); //防御者
 	}
-	logDataStr[IDX_ACTOR] = 
+	logDataStr[IDX_ACTOR] =
 		genDelimitString_6(logDataStr[IDX_ACTOR], DELIMIT2_6);
 
 	//兵士数
@@ -13621,14 +13625,14 @@ function saveLogData(logId, logData) {
 		for (var j = 0; j < logData[IDX_SOLDIER_COUNT][i].length; j++) {
 			logDataStr[IDX_SOLDIER_COUNT][i][j] = new Array();
 			for (var k = 0; k < logData[IDX_SOLDIER_COUNT][i][j].length ; k++) {
-				logDataStr[IDX_SOLDIER_COUNT][i][j][k] = 
+				logDataStr[IDX_SOLDIER_COUNT][i][j][k] =
 					convDispNum(logData[IDX_SOLDIER_COUNT][i][j][k]);
 			}
 		}
-		logDataStr[IDX_SOLDIER_COUNT][i] = 
+		logDataStr[IDX_SOLDIER_COUNT][i] =
 			genDelimitString_6(logDataStr[IDX_SOLDIER_COUNT][i], DELIMIT3_6);
 	}
-	logDataStr[IDX_SOLDIER_COUNT] = 
+	logDataStr[IDX_SOLDIER_COUNT] =
 		genDelimitString_6(logDataStr[IDX_SOLDIER_COUNT], DELIMIT2_6);
 
 	//ログデータ本体をGreasemonkey領域へ永続保存
@@ -13642,14 +13646,14 @@ function saveLogData(logId, logData) {
 		var nameUpdate = false;
 		var names = splitDelimited_6(
 			GM_getValue(location.hostname + "_village_name", ""), DELIMIT_6);
-		
+
 		for (var i = 0; i < logData[IDX_ACTOR].length; i++) {
 			var actorId = logData[IDX_ACTOR][i][IDX2_VILLAGE_ID];
 			var actorName = logData[IDX_ACTOR][i][IDX2_VILLAGE_NAME];
-			
+
 			//拠点ID-ログIDインデックスに追加
 			addIndex(generateVillageKey(actorId), logId, ",");
-			
+
 			//拠点ID-拠点名インデックスに追加
 			if (actorName != "") {
 				var nameExists = false;
@@ -13668,7 +13672,7 @@ function saveLogData(logId, logData) {
 				}
 			}
 		}
-		
+
 		//拠点名-拠点IDインデックスをGreasemonkey領域へ永続保存
 		if (nameUpdate) {
 			GM_setValue(location.hostname + "_village_name", genDelimitString_6(names, DELIMIT_6));
@@ -13682,7 +13686,7 @@ function addIndex(key, value, delimiter) {
 
 	if (items.indexOf(value) == -1) {
 		items.push(value);
-		
+
 		//Greasemonkey領域へ永続保存
 		GM_setValue(key, genDelimitString_6(items, delimiter));
 	}
@@ -13702,13 +13706,13 @@ function loadLogData(logId) {
 	//兵士数
 	result[IDX_SOLDIER_COUNT] = splitDelimited_6(result[IDX_SOLDIER_COUNT], DELIMIT2_6);
 	for (var i = 0; i < result[IDX_SOLDIER_COUNT].length; i++) {
-		result[IDX_SOLDIER_COUNT][i] = 
+		result[IDX_SOLDIER_COUNT][i] =
 			splitDelimited_6(result[IDX_SOLDIER_COUNT][i], DELIMIT3_6);
 		for (var j = 0; j < result[IDX_SOLDIER_COUNT][i].length; j++) {
-			result[IDX_SOLDIER_COUNT][i][j] = 
+			result[IDX_SOLDIER_COUNT][i][j] =
 				splitDelimited_6(result[IDX_SOLDIER_COUNT][i][j], ",");
 			for (var k = 0; k < result[IDX_SOLDIER_COUNT][i][j].length; k++) {
-				result[IDX_SOLDIER_COUNT][i][j][k] = 
+				result[IDX_SOLDIER_COUNT][i][j][k] =
 					parseInt(result[IDX_SOLDIER_COUNT][i][j][k]);
 			}
 		}
@@ -13726,7 +13730,7 @@ function checkAlreadyRead() {
 		document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 	for (var i = 0; i < rowElems.snapshotLength; i++) {
 		var field = rowElems.snapshotItem(i);
-		var link = document.evaluate('./a', field, null, 
+		var link = document.evaluate('./a', field, null,
 			XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
 		var id = getParameter2_6(link.href, "id");
 		if (logs.indexOf(id) == -1) {
@@ -13775,13 +13779,13 @@ function appendNewestLogLink() {
 		if(!statusElem){var statusElem = document.evaluate('//*[@id="basepoint"]/div[@class="status village-bottom"]',
 			document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
 		}
-		
+
 		var sepElem = document.createElement("span");
 		statusElem.appendChild(sepElem);
 		sepElem.className = "sep";
 		sepElem.style.margin = "4px";
 		sepElem.innerHTML = "|";
-		
+
 		var linkElem = document.createElement("a");
 		statusElem.appendChild(linkElem);
 		linkElem.href = "/alliance/detail.php?id=" + logId;
@@ -13921,23 +13925,23 @@ function bro3_atk_calc(){
 	HOST = location.hostname;
 	server = HOST.split(".")[0];	//ｻｰﾊﾞ名
 	PATHNAME = location.pathname;	//ﾌｧｲﾙﾊﾟｽ名
-	
+
 	//現在表示URL
 	NowUrl = URLGet();
-	
+
 	//同盟ｽｷﾙﾌﾗｸﾞ
 	var AlliSkilFlg = GM_getValue(server + "_alliskilflg", 0);
 	//全軍ｽｷﾙﾌﾗｸﾞ
 	var AFFlg = GM_getValue(server + "_afflg", 0);
 	var AFNum = parseFloat(GM_getValue(server + "_afnum", 0));
-	
-	
+
+
 	//ﾃﾞｯｷｾｯﾄ済みClass取得
 	if (NowUrl == "busyobook_card.php") {
 		var deckSet_ctl = j$(".busyo-card");
 	} else if(NowUrl == "deck.php"){
 		var deckSet_ctl = j$(".cardColmn");
-		
+
 		//設定ﾘﾝｸ追加
 		j$("#statMenu").find("li").eq(9).removeClass("last");
 		var a1 = j$("<a/>");
@@ -13948,21 +13952,21 @@ function bro3_atk_calc(){
 		li1.attr("class", "last");
 		li1.append(a1);
 		j$("#statMenu").append(li1);
-		
+
 		j$("#initlink").live("click", function(){
 			ac_Init_Proc();
 		});
-		
+
 	} else{
 		return;
 	}
-	
-	
+
+
 	//○枚目ｶｳﾝﾄ用
 	var cardcnt = 0;
 	//ﾃﾞｯｷｾｯﾄ済ｶｳﾝﾄ用
 	var deckcnt = 0;
-	
+
 	var skil1 = new Array();	//ｽｷﾙ1効果
 	var skil2 = new Array();	//ｽｷﾙ2効果
 	var skil3 = new Array();	//ｽｷﾙ3効果
@@ -13971,9 +13975,9 @@ function bro3_atk_calc(){
 	var skilcnt2 = 0;
 	var skilcnt3 = 0;
 	var skilcnt4 = 0;
-	
+
 	var card_type = new Array();	//兵科
-	
+
 	/*=====================================
 	 * 変更前ｽﾃｰﾀｽ
 	 *====================================*/
@@ -13984,11 +13988,11 @@ function bro3_atk_calc(){
 	var card_bdef = new Array();	//弓防御
 	var card_rdef = new Array();	//馬防御
 	var card_speed = new Array();	//移動速度
-	
-	
+
+
 	//ｶｰﾄﾞ裏情報取得用
 	var deck_CBack = j$(".card_back_extra");
-	
+
 	//同盟ｽｷﾙ上昇率
 	var alliance1 = 0;
 	var alliance2 = 0;
@@ -14001,7 +14005,7 @@ function bro3_atk_calc(){
 			success: function(r){
 				var re1 = /\d+(?:\.\d+)?[%%%]?/;	//ｽｷﾙ効果(小数点含む)
 				var wk = j$(r).find(".ttl4" + ".center");
-				
+
 				if (wk.length > 0) {
 					wk1 = String(wk.eq(1).html().match(re1));
 					if (wk1 != "null") {
@@ -14019,17 +14023,17 @@ function bro3_atk_calc(){
 			}
 		});
 	}
-	
-	
+
+
 	/*=======================================================
 	   表示関連 初期処理
 	=========================================================*/
 	//ﾃﾞｯｷｾｯﾄ済＆ｶｰﾄﾞ表示用
 	for (i = 0; i < deckSet_ctl.length; i++) {
 		html = SkilSet(i);
-		
+
 		deckSet_ctl.eq(i).prepend(html);
-		
+
 		//ｽｷﾙ選択ｺﾝﾎﾞﾎﾞｯｸｽ 処理追加
 		j$("#deckSkil" + i).live("change", function(){
 			SkilSelect(this.className);
@@ -14046,28 +14050,28 @@ function bro3_atk_calc(){
 		j$("#kakinDef" + i).live("click", function(){
 			SkilSelect(this.className);
 		});
-		
+
 		cardcnt = cardcnt + 1;
 		deckcnt = i;
 	}
-	
+
 	//ｶｰﾄﾞ表示以外の場合
 	var sortflg = j$(".sortTotal");
 	if (sortflg.eq(0).val() != 1) {
 		var othercard = j$(".statusDetail");
 		var stscard = j$(".statusDetail");
 		var wk = j$(".cardStatusDetail");
-		
+
 		if (cardcnt == 0) {
 			deckcnt = -1;
 		}
-		
+
 		for (i = 0; i < othercard.length; i++) {
 			wk.eq(i).css("margin-bottom", "45px");
 			html = SkilSet(i + deckcnt + 1);
-			
+
 			othercard.eq(i).prepend(html);
-			
+
 			//ｽｷﾙ選択ｺﾝﾎﾞﾎﾞｯｸｽ 処理追加
 			j$("#deckSkil" + (i + deckcnt + 1)).live("change", function(){
 				SkilSelect(this.className);
@@ -14084,25 +14088,25 @@ function bro3_atk_calc(){
 			j$("#kakinDef" + (i + deckcnt + 1)).live("click", function(){
 				SkilSelect(this.className);
 			});
-			
+
 			cardcnt = cardcnt + 1;
 		}
 	}
-	
-	
+
+
 	/*------------+---------------------------------------------------------+
-	 * ｽｷﾙ取得＆ｺﾝﾎﾞﾎﾞｯｸｽ作成処理                                           |
+	 * ｽｷﾙ取得＆ｺﾝﾎﾞﾎﾞｯｸｽ作成処理											|
 	 *------------+---------------------------------------------------------+
-	 * cnt        | ｶｰﾄﾞ取得用ｶｳﾝﾄ                                          |
+	 * cnt		  | ｶｰﾄﾞ取得用ｶｳﾝﾄ											|
 	 *------------+---------------------------------------------------------+
-	 * 戻り値     |                                                         |
+	 * 戻り値	  | 														|
 	 *------------+---------------------------------------------------------*/
 	function SkilSet(cnt) {
 		var passiveFlg1 = 0;	//ﾊﾟｯｼﾌﾞ有無ﾌﾗｸﾞ
 		var passiveFlg2 = 0;	//ﾊﾟｯｼﾌﾞ有無ﾌﾗｸﾞ
 		var passiveFlg3 = 0;	//ﾊﾟｯｼﾌﾞ有無ﾌﾗｸﾞ
 		var passiveFlg4 = 0;	//ﾊﾟｯｼﾌﾞ有無ﾌﾗｸﾞ
-		
+
 		//ｽｷﾙ名(Lv込)取得
 		var skilname1 = j$(".skillName1" + ".skill_name").eq(cnt).html();
 		var wkskil1 = j$(".skill1").eq(cnt).html();
@@ -14120,7 +14124,7 @@ function bro3_atk_calc(){
 			skil1[cardcnt] = "";
 			skilcnt1 = skilcnt1 + 1;
 		}
-		
+
 		var skilname2 = j$(".skillName2" + ".skill_name").eq(cnt).html();
 		var wkskil2 = j$(".skill2").eq(cnt).html();
 		if (deck_CBack.eq(cnt).html().indexOf("skillName2 skill_name red") != -1 && skilname2 != "") {
@@ -14137,7 +14141,7 @@ function bro3_atk_calc(){
 			skil2[cardcnt] = "";
 			skilcnt2 = skilcnt2 + 1;
 		}
-		
+
 		var skilname3 = j$(".skillName3" + ".skill_name").eq(cnt).html();
 		var wkskil3 = j$(".skill3").eq(cnt).html();
 		if (deck_CBack.eq(cnt).html().indexOf("skillName3 skill_name red") != -1 && skilname3 != "") {
@@ -14154,7 +14158,7 @@ function bro3_atk_calc(){
 			skil3[cardcnt] = "";
 			skilcnt3 = skilcnt3 + 1;
 		}
-		
+
 		if (deck_CBack.eq(cnt).html().indexOf("skillName4 skill_name red") != -1) {
 			//ﾊﾟｯｼﾌﾞの場合
 			var skilname4 = j$(".skillName4" + ".skill_name").eq(skilcnt4).html();
@@ -14173,7 +14177,7 @@ function bro3_atk_calc(){
 			var skilname4 = "";
 			skil4[cardcnt] = "";
 		}
-		
+
 		//兵科取得
 		str = j$("span[class=soltype]").eq(cardcnt).find("img").attr("alt");
 		if (str == "剣兵") {
@@ -14181,7 +14185,7 @@ function bro3_atk_calc(){
 		} else {
 			card_type[cardcnt] = str;
 		}
-		
+
 		/*=====================================
 		 * 変更前ｽﾃｰﾀｽ取得
 		 *====================================*/
@@ -14192,17 +14196,17 @@ function bro3_atk_calc(){
 		card_bdef[cardcnt] = j$(".status_bdef").eq(cardcnt).html();		//弓防御
 		card_rdef[cardcnt] = j$(".status_rdef").eq(cardcnt).html();		//馬防御
 		card_speed[cardcnt] = j$(".status_speed").eq(cardcnt).html();		//移動速度
-		
+
 		//ｺﾝﾎﾞﾎﾞｯｸｽ作成
 		var div1 = j$("<div/>");
 		div1.attr("style", "height:30px;width:220px;display:table;display:table-cell;vertical-align:middle;margin:auto;");
-		
+
 		var select1 = j$('<select/>');
 		select1.attr("name", "deckSkil" + cnt);
 		select1.attr("style", "width:200px;");
 		select1.attr("id", "deckSkil" + cnt);
 		select1.attr("class", cnt);
-		
+
 		var opt0 = j$('<option value="0">指定無し</option>');
 		select1.append(opt0);
 		if (alliance1 != "" || alliance2 != "") {
@@ -14217,7 +14221,7 @@ function bro3_atk_calc(){
 			opt0 = j$('<option value="110">指定無し(同盟ｽｷﾙ&全軍ｽｷﾙ込)</option>');
 			select1.append(opt0);
 		}
-		
+
 		if (skilname1.replace(/\s+/g, "") != "" && passiveFlg1 == 0) {
 			var opt1 = j$('<option value="1">' + skilname1.substring(2) + '</option>');
 			select1.append(opt1);
@@ -14282,7 +14286,7 @@ function bro3_atk_calc(){
 				select1.append(opt4);
 			}
 		}
-		
+
 		var chk1 = j$('<input type="checkbox"/>');
 		chk1.attr("id", "p_chk" + cnt);
 		chk1.attr("class", cnt);
@@ -14291,30 +14295,30 @@ function bro3_atk_calc(){
 		}
 		var str1 = j$("<span/>");
 		str1.text("パッシブ　");
-		
+
 		var chk2 = j$('<input type="checkbox"/>');
 		chk2.attr("id", "kakinAtt" + cnt);
 		chk2.attr("class", cnt);
 		var str2 = j$("<span/>");
 		str2.text("攻撃課金　");
-		
+
 		var chk3 = j$('<input type="checkbox"/>');
 		chk3.attr("id", "kakinDef" + cnt);
 		chk3.attr("class", cnt);
 		var str3 = j$("<span/>");
 		str3.text("防御課金");
-		
+
 		div1.append(select1).append("<br />").append(chk1).append(str1).append(chk2).append(str2).append(chk3).append(str3);
-		
+
 		return div1;
 	}
-	
+
 	/*------------+---------------------------------------------------------+
-	 * ｽｷﾙ選択後処理                                                        |
+	 * ｽｷﾙ選択後処理														|
 	 *------------+---------------------------------------------------------+
-	 * l          | 選択ｺﾝﾎﾞﾎﾞｯｸｽ番号                                       |
+	 * l		  | 選択ｺﾝﾎﾞﾎﾞｯｸｽ番号										|
 	 *------------+---------------------------------------------------------+
-	 * 戻り値     |                                                         |
+	 * 戻り値	  | 														|
 	 *------------+---------------------------------------------------------*/
 	function SkilSelect(l) {
 		var val = j$("#deckSkil" + l).val();
@@ -14323,9 +14327,9 @@ function bro3_atk_calc(){
 		var kakinFlg2 = j$("#kakinDef" + l).attr("checked");
 		var alliFlg = 0;
 		var AFSkilFlg = 0;
-		
+
 		var skil_res = "";
-		
+
 		if (val >= 100) {
 			//全軍S使用
 			val = val - 100;
@@ -14336,7 +14340,7 @@ function bro3_atk_calc(){
 			val = val - 10;
 			alliFlg = 1;
 		}
-		
+
 		if (val == 1) {
 			skil_res = skil1[l];
 		} else if (val == 2) {
@@ -14346,7 +14350,7 @@ function bro3_atk_calc(){
 		} else if (val == 4) {
 			skil_res = skil4[l];
 		}
-		
+
 		//ﾌﾗｸﾞが無ければｽﾃｰﾀｽALLｸﾘｱし抜ける
 		if (skil_res == "" && passiveFlg == false && kakinFlg == false && kakinFlg2 == false && alliFlg == 0 && AFSkilFlg == 0) {
 			j$(".status_att").eq(l).html(card_att[l]);		//攻撃力
@@ -14356,7 +14360,7 @@ function bro3_atk_calc(){
 			j$(".status_bdef").eq(l).html(card_bdef[l]);		//弓防御
 			j$(".status_rdef").eq(l).html(card_rdef[l]);		//馬防御
 			j$(".status_speed").eq(l).html(card_speed[l]);		//移動速度
-			
+
 			//ｶｰﾄﾞ表示以外の場合
 			if (deckcnt < l) {
 				var sts_atk1 = j$(".statusParameter1");
@@ -14369,50 +14373,50 @@ function bro3_atk_calc(){
 				sts_atk2.eq(11).html(card_rdef[l]);
 				sts_atk2.eq(13).html(card_speed[l]);
 			}
-			
+
 			return;
 		}
-		
-		
+
+
 		/*=====================================
 		 * 正規表現用ｾｯﾄ
 		 *====================================*/
 		var re1 = /\d+(?:\.\d+)?[%%%]?/;	//ｽｷﾙ効果(小数点含む)
 		var re2 = /\d+(?:\.\d+)?[％]?/;	//ｽｷﾙ効果(小数点含む)
 		var re3 = /\d+(?:\.\d+)?/;	//ｽｷﾙ効果(小数点含む)
-		
+
 		/*=====================================
 		 * 各上昇率用ｾｯﾄ
 		 *====================================*/
 		var wk_att_skil = 0;
 		var wk_def_skil = 0;
 		var wk_spe_skil = 0;
-		
+
 		var att_skilnum = 0;
 		var def_skilnum = 0;
 		var spd_skilnum = 0;
-		
+
 		var atk_kakinFlg = 0;
 		var def_kakinFlg = 0;
-		
+
 		var housan_Flg = 0;
-		
+
 		if (passiveFlg == true) {
 			//ﾊﾟｯｼﾌﾞ取得
 			var p_skil = new Array();
-			
+
 			p_skil[0] = skil1[l];
 			p_skil[1] = skil2[l];
 			p_skil[2] = skil3[l];
 			p_skil[3] = skil4[l];
-			
+
 			for (i = 0; i < 4; i++) {
 				var wkskil_res = p_skil[i];
-				
+
 				wk_att_skil = 0;
 				wk_def_skil = 0;
 				wk_spe_skil = 0;
-				
+
 				wkcnt0 = wkskil_res.indexOf("自動");
 				if (wkskil_res != "" && wkcnt0 > -1) {
 					//攻撃力用
@@ -14451,7 +14455,7 @@ function bro3_atk_calc(){
 							}
 						}
 					}
-					
+
 					//防御力用
 					wkcnt1 = wkskil_res.indexOf("武将の防御力");
 					if (wkcnt1 > -1) {
@@ -14469,7 +14473,7 @@ function bro3_atk_calc(){
 							wk_def_skil = parseFloat(wk_def_skil.substring(0, (wk_def_skil.length - 1))) / 100;
 						}
 					}
-					
+
 					//移速用
 					wkcnt1 = wkskil_res.indexOf("移動速度");
 					if (wkcnt1 > -1) {
@@ -14511,7 +14515,7 @@ function bro3_atk_calc(){
 						}
 					}
 				}
-				
+
 				att_skilnum = att_skilnum + wk_att_skil;
 				def_skilnum = def_skilnum + wk_def_skil;
 				spd_skilnum = spd_skilnum + wk_spe_skil;
@@ -14529,11 +14533,11 @@ function bro3_atk_calc(){
 			var wkcnt1 = 0;
 			var wkcnt2 = 0;
 			var wkcnt3 = 0;
-			
+
 			wk_att_skil = 0;
 			wk_def_skil = 0;
 			wk_spe_skil = 0;
-			
+
 			//攻撃力用
 			wkcnt0 = skil_res.indexOf(")の武将1枚につき");
 			if (wkcnt0 > -1) {
@@ -14595,46 +14599,46 @@ function bro3_atk_calc(){
 												wk_att_skil = parseFloat(wk_att_skil.substring(0, (wk_att_skil.length - 1))) / 100;
 											}
 										} else {
-										    wkcnt0 = skil_res.indexOf("兵の攻撃力");
-							    			if (wkcnt0 > -1) {
+											wkcnt0 = skil_res.indexOf("兵の攻撃力");
+											if (wkcnt0 > -1) {
 												wkcnt1 = skil_res.indexOf("武将の攻撃力");
 												if (wkcnt1 > -1) {
 													wk_skil = skil_res.substring(wkcnt1);
-					    							wk_att_skil = String(wk_skil.match(re1));
-					    							wk_att_skil = parseFloat(wk_att_skil.substring(0, (wk_att_skil.length - 1))) / 100;
+													wk_att_skil = String(wk_skil.match(re1));
+													wk_att_skil = parseFloat(wk_att_skil.substring(0, (wk_att_skil.length - 1))) / 100;
 												}
-							    			} else {
-							    				wkcnt0 = skil_res.indexOf("攻撃力");
-							    				if (wkcnt0 > -1) {
-							    					wkcnt1 = skil_res.indexOf("武将の攻撃力");
-							    					if (wkcnt1 > -1) {
-							    						wkcnt2 = skil_res.indexOf("兵科");
-							    						if (wkcnt2 > -1) {
-							    							wkcnt3 = skil_res.indexOf(card_type[l]);
-							    							if (wkcnt3 > -1) {
-							    								wk_skil = skil_res.substring(wkcnt3);
-							    								wk_att_skil = String(wk_skil.match(re1));
-							    								wk_att_skil = parseFloat(wk_att_skil.substring(0, (wk_att_skil.length - 1))) / 100;
+											} else {
+												wkcnt0 = skil_res.indexOf("攻撃力");
+												if (wkcnt0 > -1) {
+													wkcnt1 = skil_res.indexOf("武将の攻撃力");
+													if (wkcnt1 > -1) {
+														wkcnt2 = skil_res.indexOf("兵科");
+														if (wkcnt2 > -1) {
+															wkcnt3 = skil_res.indexOf(card_type[l]);
+															if (wkcnt3 > -1) {
+																wk_skil = skil_res.substring(wkcnt3);
+																wk_att_skil = String(wk_skil.match(re1));
+																wk_att_skil = parseFloat(wk_att_skil.substring(0, (wk_att_skil.length - 1))) / 100;
 															}
-							    						} else {
-							    							wk_skil = skil_res.substring(wkcnt1);
-							    							wk_att_skil = String(wk_skil.match(re1));
-							    							wk_att_skil = parseFloat(wk_att_skil.substring(0, (wk_att_skil.length - 1))) / 100;
-							    						}
-							    					} else {
-							    						wkcnt2 = skil_res.indexOf("兵科");
-							    						if (wkcnt2 > -1) {
-							    							wk_skil = skil_res.substring(wkcnt2);
-							    							wk_att_skil = String(wk_skil.match(re1));
-							    							wk_att_skil = parseFloat(wk_att_skil.substring(0, (wk_att_skil.length - 1))) / 100;
-							    						} else {
-							    							wk_skil = skil_res.substring(wkcnt0);
-							    							wk_att_skil = String(wk_skil.match(re1));
-							    							wk_att_skil = parseFloat(wk_att_skil.substring(0, (wk_att_skil.length - 1))) / 100;
-							    						}
-							    					}
-							    				}
-							    			}
+														} else {
+															wk_skil = skil_res.substring(wkcnt1);
+															wk_att_skil = String(wk_skil.match(re1));
+															wk_att_skil = parseFloat(wk_att_skil.substring(0, (wk_att_skil.length - 1))) / 100;
+														}
+													} else {
+														wkcnt2 = skil_res.indexOf("兵科");
+														if (wkcnt2 > -1) {
+															wk_skil = skil_res.substring(wkcnt2);
+															wk_att_skil = String(wk_skil.match(re1));
+															wk_att_skil = parseFloat(wk_att_skil.substring(0, (wk_att_skil.length - 1))) / 100;
+														} else {
+															wk_skil = skil_res.substring(wkcnt0);
+															wk_att_skil = String(wk_skil.match(re1));
+															wk_att_skil = parseFloat(wk_att_skil.substring(0, (wk_att_skil.length - 1))) / 100;
+														}
+													}
+												}
+											}
 										}
 									}
 								}
@@ -14643,7 +14647,7 @@ function bro3_atk_calc(){
 					}
 				}
 			}
-			
+
 			//防御力用
 			wkcnt0 = skil_res.indexOf(")の武将1枚につき");
 			if (wkcnt0 > -1) {
@@ -14671,7 +14675,7 @@ function bro3_atk_calc(){
 					}
 				}
 			}
-			
+
 			//移速用
 			wkcnt0 = skil_res.indexOf("自拠点へ援軍出兵時");
 			if (wkcnt0 > -1) {
@@ -14786,7 +14790,7 @@ function bro3_atk_calc(){
 					}
 				}
 			}
-			
+
 			att_skilnum = att_skilnum + wk_att_skil;
 			def_skilnum = def_skilnum + wk_def_skil;
 			if (housan_Flg != 0) {
@@ -14797,7 +14801,7 @@ function bro3_atk_calc(){
 				}
 			}
 		}
-		
+
 		//攻撃用
 		if (alliFlg == 1 && alliance1 != 0 && val > 0 && att_skilnum != 0) {
 			att_skilnum = att_skilnum + alliance1;
@@ -14809,7 +14813,7 @@ function bro3_atk_calc(){
 		}
 		if (att_skilnum != 0 || atk_kakinFlg == 1) {
 			var wkcalc1 = 0;
-			
+
 			if (atk_kakinFlg == 0) {
 				wkcalc1 = Math.ceil((parseFloat(card_att[l]) * att_skilnum) + parseFloat(card_att[l]));
 			} else if (atk_kakinFlg == 1 && att_skilnum != 0) {
@@ -14818,11 +14822,11 @@ function bro3_atk_calc(){
 			} else if (atk_kakinFlg == 1 && att_skilnum == 0) {
 				wkcalc1 = Math.ceil((parseFloat(card_att[l]) * 0.1) + parseFloat(card_att[l]));
 			}
-			
+
 			var sts_atk = j$(".status_att");
-			
+
 			sts_atk.eq(l).html("<span style=\"color:#FF0000;\">" + wkcalc1 + "</span>");
-			
+
 			//ｶｰﾄﾞ表示以外の場合
 			if (deckcnt < l) {
 				var sts_atk1 = j$(".statusParameter1");
@@ -14831,7 +14835,7 @@ function bro3_atk_calc(){
 			}
 		} else {
 			j$(".status_att").eq(l).html(card_att[l]);		//攻撃力
-			
+
 			//ｶｰﾄﾞ表示以外の場合
 			if (deckcnt < l) {
 				var sts_atk1 = j$(".statusParameter1");
@@ -14839,7 +14843,7 @@ function bro3_atk_calc(){
 				sts_atk2.eq(1).html(card_att[l]);
 			}
 		}
-		
+
 		//防御用
 		if (alliFlg == 1 && alliance2 != 0 && val > 0 && def_skilnum != 0) {
 			def_skilnum = def_skilnum + alliance2;
@@ -14851,7 +14855,7 @@ function bro3_atk_calc(){
 			var wkcalc3 = 0;
 			var wkcalc4 = 0;
 			var wkcalc5 = 0;
-			
+
 			if (def_kakinFlg == 0) {
 				wkcalc2 = Math.ceil((parseFloat(card_wdef[l]) * def_skilnum) + parseFloat(card_wdef[l]));
 				wkcalc3 = Math.ceil((parseFloat(card_sdef[l]) * def_skilnum) + parseFloat(card_sdef[l]));
@@ -14862,7 +14866,7 @@ function bro3_atk_calc(){
 				wkcalc3 = Math.ceil((parseFloat(card_sdef[l]) * def_skilnum) + parseFloat(card_sdef[l]));
 				wkcalc4 = Math.ceil((parseFloat(card_bdef[l]) * def_skilnum) + parseFloat(card_bdef[l]));
 				wkcalc5 = Math.ceil((parseFloat(card_rdef[l]) * def_skilnum) + parseFloat(card_rdef[l]));
-				
+
 				wkcalc2 = Math.ceil((wkcalc2 * 0.1) + wkcalc2);
 				wkcalc3 = Math.ceil((wkcalc3 * 0.1) + wkcalc3);
 				wkcalc4 = Math.ceil((wkcalc4 * 0.1) + wkcalc4);
@@ -14873,12 +14877,12 @@ function bro3_atk_calc(){
 				wkcalc4 = Math.ceil((parseFloat(card_bdef[l]) * 0.1) + parseFloat(card_bdef[l]));
 				wkcalc5 = Math.ceil((parseFloat(card_rdef[l]) * 0.1) + parseFloat(card_rdef[l]));
 			}
-			
+
 			j$(".status_wdef").eq(l).html("<span style=\"color:#FF0000;\">" + wkcalc2 + "</span>");	//歩防御
 			j$(".status_sdef").eq(l).html("<span style=\"color:#FF0000;\">" + wkcalc3 + "</span>");	//槍防御
 			j$(".status_bdef").eq(l).html("<span style=\"color:#FF0000;\">" + wkcalc4 + "</span>");	//弓防御
 			j$(".status_rdef").eq(l).html("<span style=\"color:#FF0000;\">" + wkcalc5 + "</span>");	//馬防御
-			
+
 			//ｶｰﾄﾞ表示以外の場合
 			if (deckcnt < l) {
 				var sts_atk1 = j$(".statusParameter1");
@@ -14893,7 +14897,7 @@ function bro3_atk_calc(){
 			j$(".status_sdef").eq(l).html(card_sdef[l]);		//槍防御
 			j$(".status_bdef").eq(l).html(card_bdef[l]);		//弓防御
 			j$(".status_rdef").eq(l).html(card_rdef[l]);		//馬防御
-			
+
 			//ｶｰﾄﾞ表示以外の場合
 			if (deckcnt < l) {
 				var sts_atk1 = j$(".statusParameter1");
@@ -14904,13 +14908,13 @@ function bro3_atk_calc(){
 				sts_atk2.eq(11).html(card_rdef[l]);
 			}
 		}
-		
+
 		//速度用
 		if (spd_skilnum != 0 || wk_spe_skil == 99999) {
 			var wkcalc6 = 0;
 			if (housan_Flg != 0) {
 				wkcalc6 = housan_Flg;
-				
+
 				j$(".status_speed").eq(l).html("<span style=\"color:#FF0000;\">" + wkcalc6 + "</span>");	//移動速度
 			} else {
 				if (wk_spe_skil != 99999) {
@@ -14918,10 +14922,10 @@ function bro3_atk_calc(){
 				} else {
 					wkcalc6 = ((parseFloat(card_speed[l]) * spd_skilnum) + parseFloat(card_speed[l])) / 2;
 				}
-				
+
 				j$(".status_speed").eq(l).html("<span style=\"color:#FF0000;\">" + wkcalc6.toFixed(1) + "</span>");	//移動速度
 			}
-			
+
 			//ｶｰﾄﾞ表示以外の場合
 			if (deckcnt < l) {
 				var sts_atk1 = j$(".statusParameter1");
@@ -14934,7 +14938,7 @@ function bro3_atk_calc(){
 			}
 		} else {
 			j$(".status_speed").eq(l).html(card_speed[l]);	//移動速度
-			
+
 			//ｶｰﾄﾞ表示以外の場合
 			if (deckcnt < l) {
 				var sts_atk1 = j$(".statusParameter1");
@@ -14943,7 +14947,7 @@ function bro3_atk_calc(){
 			}
 		}
 	}
-	
+
 	function ac_Init_Proc() {
 		//表示コンテナ作成
 		var div1 = j$("<div/>");
@@ -14965,7 +14969,7 @@ function bro3_atk_calc(){
 		var btn2 = j$('<input type="button"/>');
 		btn2.attr("id", "ac_close");
 		btn2.attr("value", "閉じる");
-		
+
 		var div4 = j$("<div/>");
 		div4.attr("style", "margin-top:4px;");
 		var chk1 = j$('<input type="checkbox"/>');
@@ -14975,13 +14979,13 @@ function bro3_atk_calc(){
 		text1.attr("maxlength", "7");
 		text1.attr("id", "ac_afnum");
 		div4.append(chk1).append("&nbsp;全軍用スキルON/OFF　").append(text1).append("％");
-		
+
 		div3.append(btn1).append(btn2);
 		div2.append(radio1).append("同盟スキルON　").append(radio2).append("同盟スキルOFF").append("<br />").append(div4).append(div3);
 		div1.append("【スキル込計算設定】").append(div2);
-		
+
 		j$("body").append(div1);
-		
+
 		if (AlliSkilFlg == 1) {
 			j$("#atk_calc_radio1").attr("checked", "true");
 		} else {
@@ -14995,7 +14999,7 @@ function bro3_atk_calc(){
 			j$("#ac_afnum").css({"background-color":"#DDD"});
 		}
 		j$("#ac_afnum").val(AFNum);
-		
+
 		j$("#ac_write").live("click", function(){
 			ac_Init_Write();
 		});
@@ -15025,7 +15029,7 @@ function bro3_atk_calc(){
 			GM_setValue(server + "_afflg", 0);
 		}
 		GM_setValue(server + "_afnum", j$("#ac_afnum").val());
-		
+
 		alert("登録しました。");
 		var url = location.href;
 		location.href = url;
@@ -15046,11 +15050,11 @@ function bro3_atk_calc(){
 			j$("#ac_afnum").css({"background-color":"#DDD"});
 		}
 	}
-	
+
 	/*------------+---------------------------------------------------------+
-	 * 現在ﾌｧｲﾙ名取得用                                                     |
+	 * 現在ﾌｧｲﾙ名取得用 													|
 	 *------------+---------------------------------------------------------+
-	 * 戻り値     | Path                                                    |
+	 * 戻り値	  | Path													|
 	 *------------+---------------------------------------------------------*/
 	function URLGet() {
 		wkurl = location.href;
@@ -15060,9 +15064,9 @@ function bro3_atk_calc(){
 		wkurl = arr[0];
 		arr = wkurl.split("?");
 		wkurl = arr[0];
-		
+
 		return wkurl;
-	
+
 	}
 }
 
@@ -15110,7 +15114,7 @@ function disp_npcfort() {
 	// 出兵情報の検索 //
 	//----------------//
 	function putSoldierInfo(){
-	
+
 		//----------------------------//
 		// スプレッドシート情報の取得 //
 		//----------------------------//
@@ -15122,11 +15126,11 @@ function disp_npcfort() {
 		else{
 			chkflg4 = execFlag;
 		}
-	
+
 		// スプレッドシート名の加工
 		if( chkflg4.charAt(0) == '1' ){
 			var key = chkflg4.substr(1).replace(/.*[\?&]key=([^&]+).*/, '$1');
-	
+
 			// 出兵情報を取得
 			var battleType = new Array();
 			var target = new Array();
@@ -15163,11 +15167,11 @@ function disp_npcfort() {
 				}
 				count ++;
 			}
-	
+
 			// 出兵データをPOSTする
 		}
 	}
-	
+
 	//----------------//
 	// 領土情報の検索 //
 	//----------------//
@@ -15185,7 +15189,7 @@ function disp_npcfort() {
 		else{
 			ikibaku_flg = 0;
 		}
-	
+
 		//--------------------------------------//
 		// チェックボックスに関する情報をロード //
 		//--------------------------------------//
@@ -15201,7 +15205,7 @@ function disp_npcfort() {
 			else{
 				chkflg1 = execFlag1;
 			}
-	
+
 			// オプションフラグをロード
 			var execFlag2 = loadExecFlag(location.hostname, "FLAG2");
 			if( execFlag2 == "" ){
@@ -15210,7 +15214,7 @@ function disp_npcfort() {
 			else{
 				chkflg2 = execFlag2;
 			}
-	
+
 			// 初回のときは、フラグを保存
 			execFlag = chkflg1 + DELIMIT1_7 + chkflg2;
 			saveExecFlag(location.hostname, "FLAG0", execFlag);
@@ -15221,7 +15225,7 @@ function disp_npcfort() {
 			chkflg1 = loadflg[0];
 			chkflg2 = loadflg[1];
 		}
-	
+
 		// 個人、同盟検索情報をロード
 		var chkflg3 = new Array();
 		execFlag = loadExecFlag(location.hostname, "FLAG3");
@@ -15247,7 +15251,7 @@ function disp_npcfort() {
 			else{
 				chkflg3[2] = execFlag3;
 			}
-	
+
 			// 初回のときは、フラグを保存
 			execFlag = chkflg3[0] + DELIMIT1_7 + chkflg3[1] + DELIMIT1_7 + chkflg3[2];
 			saveExecFlag(location.hostname, "FLAG3", execFlag);
@@ -15255,7 +15259,7 @@ function disp_npcfort() {
 		else{
 			chkflg3 = execFlag.split(DELIMIT1_7);
 		}
-	
+
 		//----------------------//
 		// 処理パラメータの抽出 //
 		//----------------------//
@@ -15276,7 +15280,7 @@ function disp_npcfort() {
 			target[i] = 0;
 			colorNo[i] = 0;
 		}
-	
+
 		// 個人・同盟検索１
 		checkBox1 = $e_7('//*[@id="ckEnable1"]');
 		if( checkBox1.snapshotItem(0).checked == true ){
@@ -15315,7 +15319,7 @@ function disp_npcfort() {
 		else{
 			userName[0] = "";
 		}
-	
+
 		// 個人・同盟検索２
 		checkBox1 = $e_7('//*[@id="ckEnable2"]');
 		if( checkBox1.snapshotItem(0).checked == true ){
@@ -15354,7 +15358,7 @@ function disp_npcfort() {
 		else{
 			userName[1] = "";
 		}
-	
+
 		// 個人・同盟検索３
 		checkBox1 = $e_7('//*[@id="ckEnable3"]');
 		if( checkBox1.snapshotItem(0).checked == true ){
@@ -15393,7 +15397,7 @@ function disp_npcfort() {
 		else{
 			userName[2] = "";
 		}
-	
+
 		//-- 資源判別ONのとき、資源表示 --//
 		var res_mode;
 		var areaNo;
@@ -15405,18 +15409,18 @@ function disp_npcfort() {
 		else{
 			res_mode = 0;
 		}
-	
+
 		// 強調表示選択値を取得
 		areaNo = parseInt(chkflg2.substr(FLAG2_STRONG_AREANO,3));
 		areaNo2 = parseInt(chkflg2.substr(FLAG2_STRONG_AREANO2,3));
 		areaNo3 = parseInt(chkflg2.substr(FLAG2_STRONG_AREANO3,3));
-	
+
 		//------------------//
 		// 画面サイズの取得 //
 		//------------------//
 		var viewSize;
 		viewSize = getViewSize();
-	
+
 		//--------------------------------------------//
 		// 全体表示画面から、画面中央座標を手に入れる //
 		//--------------------------------------------//
@@ -15428,7 +15432,7 @@ function disp_npcfort() {
 		var sy;
 		var ex;
 		var ey;
-	
+
 		//--------------//
 		// ホスト名判別 //
 		//--------------//
@@ -15437,7 +15441,7 @@ function disp_npcfort() {
 			&& (location.hostname.indexOf("legend") == -1) ){
 			hosttype = "0";
 		}
-	
+
 		//------------------//
 		// 左上座標を求める //
 		//------------------//
@@ -15453,14 +15457,14 @@ function disp_npcfort() {
 			sx = parseInt(bx) - 10;
 			sy = parseInt(by) + 10;
 		}
-	
+
 		//----------------------//
 		// レーダーマップの描画 //
 		//----------------------//
 		var mapdata = new Array();
 		var smallmapdv = $e_7('//*[@id="smallmap_dv"]');
 		smallmapdv.snapshotItem(0).style.display = "inline";
-	
+
 		//--------------------------------------//
 		// マップデータからレーダーマップを作る //
 		//--------------------------------------//
@@ -15469,7 +15473,7 @@ function disp_npcfort() {
 		var areacls = document.evaluate('//*[@id="mapsAll"]//img/@class',
 			document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 		var smallmap = $e_7('//*[@id="smallmap"]');
-	
+
 		// マップの作成
 		for(var i = 0; i < 21; i++ ){
 			mapdata[i] = new Array();
@@ -15479,7 +15483,7 @@ function disp_npcfort() {
 				mapdata[j][i] = 'blank';
 			}
 		}
-	
+
 		var ck = $e_7('//*[@id="OldDesign"]');
 		for (var i=0; i < areacls.snapshotLength-1; i++) {
 			// 施設情報を全てリスト
@@ -15488,7 +15492,7 @@ function disp_npcfort() {
 			var clsText = areacls.snapshotItem(i).textContent;
 			clsText = clsText.replace(/^mapAll0*/,'');
 			var clsNo = parseInt(clsText) - 1;
-	
+
 			var areaimg;
 			if( clsNo < 9 ){
 				areaimg = $x_7('//div[@id="mapsAll"]//img[@class="mapAll0' + clsText + '"]');
@@ -15496,7 +15500,7 @@ function disp_npcfort() {
 			else{
 				areaimg = $x_7('//div[@id="mapsAll"]//img[@class="mapAll' + clsText + '"]');
 			}
-	
+
 			var oldName = "";
 			if( (areaimg != undefined) && (areaimg != null) ){
 				oldName = areaimg.getAttribute("old");
@@ -15504,10 +15508,10 @@ function disp_npcfort() {
 					rowTextA = oldName;
 				}
 			}
-	
+
 			var x = clsNo % viewSize;
 			var y = Math.floor(clsNo / viewSize);
-	
+
 			// 城の情報をチェック
 			if( rowTextA.indexOf('_bk_') >= 0 ){
 				mapdata[y][x] = 'black';
@@ -15528,7 +15532,7 @@ function disp_npcfort() {
 			}else if( rowTextA.indexOf('blanc') >= 0 ){
 				mapdata[y][x] = 'wall';
 			}
-	
+
 			// 51x51モードが実装されており、かつ旧マップ使用が有効
 			if( hosttype == "0" ){
 				if( (oldName != null) && (oldName != undefined) && (oldName != "")){
@@ -15536,7 +15540,7 @@ function disp_npcfort() {
 				}
 			}
 		}
-	
+
 		// 51x51モードが実装されており、かつ旧マップ使用が有効
 		if( hosttype == "0" ){
 			for( y = 0; y < viewSize; y++ ){
@@ -15549,7 +15553,7 @@ function disp_npcfort() {
 						else{
 							classNo = parseInt(y*viewSize + x + 1);
 						}
-	
+
 						var ex = $x_7('//div[@id="mapsAll"]//img[@add="1"]');
 						if( (ex != undefined) && (ex != null) ){
 							var ex2_p = ex.parentNode;
@@ -15559,7 +15563,7 @@ function disp_npcfort() {
 				}
 			}
 		}
-	
+
 		// オプションオンのときだけレーダー描画
 		if( chkflg2.charAt(FLAG2_RADER) == '1' ){
 			// テキストボックスサイズの修正
@@ -15581,7 +15585,7 @@ function disp_npcfort() {
 				smallmap.snapshotItem(0).style.marginLeft = '-10px';
 				smallmap.snapshotItem(0).style.marginTop = '300px';
 			}
-	
+
 			// 画像の設置
 			var areaText = '';
 			for( i = 0; i < viewSize; i++ ){
@@ -15627,7 +15631,7 @@ function disp_npcfort() {
 			var smallmapdv = $e_7('//*[@id="smallmap_dv"]');
 			smallmapdv.snapshotItem(0).style.display = "none";
 		}
-	
+
 		//----------------------------------------//
 		// 全体表示画面から、領土情報を手に入れる //
 		//----------------------------------------//
@@ -15636,14 +15640,14 @@ function disp_npcfort() {
 		var mouseout = $e_7('//*[@id="mapOverlayMap"]//area/@onmouseout');
 		var href = $e_7('//*[@id="mapOverlayMap"]//area/@href');
 		var textArea = $e_7('//*[@id="castleInfoText"]');
-	
+
 		var putText = "";
-	
+
 		//------------------//
 		// 全領土を検索する //
 		//------------------//
 		for (var i=0; i<areas.snapshotLength; i++) {
-	
+
 			// 取得した領土の情報を抽出
 			var rowText = areas.snapshotItem(i).textContent;
 			var rowText2 = href.snapshotItem(i).textContent;
@@ -15658,13 +15662,13 @@ function disp_npcfort() {
 			valueA[1] = valueA[1].replace(/==uZer==/,"/");
 			var userTxt = '<b><font color="green">' + valueA[1] + '</font></b>';
 			var groupTxt = '<b><font color="green">' + valueA[4] + '</font></b>';
-	
+
 			var pictImg = '<a href="' + rowText2 + '">'
 					  + '<img src="/20100705-01/img/common/sidebar/icon_base.gif" onmouseover="' //ac22
 					  + areas.snapshotItem(i).textContent + '" onmouseout="'
 					  + mouseout.snapshotItem(i).textContent + '" ></a>';
 			var linkText = '/' + pictImg + '<a href="' + rowText2 +  '" style="text-decoration: none"><font color="#00BFFF"><b>' + valueA[3] + '</b></font></a>' + '/距離' + valueA[6];
-	
+
 			// マップ座標の取得
 			var rowText3 = valueA[3];
 			rowText3 = rowText3.replace(/\(/,"");
@@ -15673,7 +15677,7 @@ function disp_npcfort() {
 			valueB = rowText3.split(',');
 			var cx = parseInt(valueB[0]);
 			var cy = parseInt(valueB[1]);
-	
+
 			// 資源数をカウント
 			var max;
 			var maxtype;
@@ -15697,12 +15701,12 @@ function disp_npcfort() {
 					maxtype = 0;
 				}
 			}
-	
+
 			//----------------------//
 			// 個人・同盟検索の判定 //
 			//----------------------//
 			var matchcase = -1;	// マッチしたパターン
-	
+
 			// 個人・同盟マッチチェック
 			for( var j = 0; j < 3; j++ ){
 				for( var k = 0; k < userName[j].length; k++ ){
@@ -15740,11 +15744,11 @@ function disp_npcfort() {
 					break;
 				}
 			}
-	
+
 			if( mapdata[Math.abs(cx-sx)][Math.abs(cy-sy)] == 'black' ){
 				matchcase = -1;
 			}
-	
+
 			//--------------//
 			// 資源強調判定 //
 			//--------------//
@@ -15754,7 +15758,7 @@ function disp_npcfort() {
 				var stars = valueA[5].match(/<img/g);
 				landLevel = stars.length;
 			}
-	
+
 			var strongflg = 0;
 			if( res_mode == 1 ){
 				// 資源一致判定
@@ -15780,7 +15784,7 @@ function disp_npcfort() {
 					strongflg = 3;
 				}
 			}
-	
+
 			//-----------------//
 			// NPC砦の検索判定 //
 			//-----------------//
@@ -15796,21 +15800,21 @@ function disp_npcfort() {
 				else{
 					putText = putText + '<b><font color="purple">ＮＰＣ</font></b>/' + valueA[0] + '/' + groupTxt + '/' + userTxt + linkText + '/' + valueA[5];
 				}
-	
+
 				if( res_mode == 0 ){
 					disp_AreaIcon(cx,cy,valueA[5].length,viewSize,0);
 				}
 			}
-	
+
 			//------------------------------------------//
 			// 領土検索、または個人・同盟領土の検索判定 //
 			//------------------------------------------//
 			if( valueA[1] != '' ){
 				// 領地化されている土地
-	
+
 				if( (matchcase == -1) && (chkflg2.charAt(FLAG2_LAND) == '1') ){
 					// 個人・同盟検索に該当せず、領土検索がオンの場合
-	
+
 					// ☆数による絞り込み
 					if(	((chkflg1.charAt(FLAG1_LV1) == '1') && (landLevel == 1))
 						|| ((chkflg1.charAt(FLAG1_LV2) == '1') && (landLevel == 2))
@@ -15821,7 +15825,7 @@ function disp_npcfort() {
 						|| ((chkflg1.charAt(FLAG1_LV7) == '1') && (landLevel == 7))
 						|| ((chkflg1.charAt(FLAG1_LV8) == '1') && (landLevel == 8))
 						|| ((chkflg1.charAt(FLAG1_LV9) == '1') && (landLevel == 9)) ){
-	
+
 						// 領土情報は検索結果に反映
 						if( putText != "" ){
 							putText = putText + "\n";
@@ -15838,7 +15842,7 @@ function disp_npcfort() {
 						else{
 							putText = putText + groupTxt + '領土/' + userTxt + '<b><font color="#FF0000">拠点</font></b>/' + valueA[0] + '/人口' + valueA[2] + linkText;
 						}
-	
+
 						// 資源表示の有無で関数が変わる
 						if( res_mode == 0 ){
 							// パステルカラー表示
@@ -15852,10 +15856,10 @@ function disp_npcfort() {
 				}
 				else if( matchcase != -1 ){
 					// 個人・同盟検索結果がマッチ
-	
+
 					if( nodisp[matchcase] == 0 ){
 						// 画面に☆数を出す場合
-	
+
 						// ☆数による絞り込み
 						if(	((chkflg1.charAt(FLAG1_LV1) == '1') && (landLevel == 1))
 							|| ((chkflg1.charAt(FLAG1_LV2) == '1') && (landLevel == 2))
@@ -15866,7 +15870,7 @@ function disp_npcfort() {
 							|| ((chkflg1.charAt(FLAG1_LV7) == '1') && (landLevel == 7))
 							|| ((chkflg1.charAt(FLAG1_LV8) == '1') && (landLevel == 8))
 							|| ((chkflg1.charAt(FLAG1_LV9) == '1') && (landLevel == 9)) ){
-	
+
 							// 領土情報は検索結果に反映
 							if( putText != "" ){
 								putText = putText + "\n";
@@ -15883,7 +15887,7 @@ function disp_npcfort() {
 							else{
 								putText = putText + groupTxt + '領土/' + userTxt + '<b><font color="#FF0000">拠点</font></b>/' + valueA[0] + '/人口' + valueA[2] + linkText;
 							}
-	
+
 							// 資源表示の有無で関数が変わる
 							if( res_mode == 0 ){
 								// パステルカラー表示
@@ -15901,13 +15905,13 @@ function disp_npcfort() {
 					}
 					else{
 						// 画面に☆数を出さない（領土の着色のみ行う）
-	
+
 						// 枠のみつける
 						disp_AreaIcon(cx,cy,landLevel,viewSize,colorNo[matchcase]);
 					}
 				}
 			}
-	
+
 			// 空き地検索結果
 			if( (chkflg2.charAt(FLAG2_EMPTY) == '1') && (valueA[1] == '') ){
 				// 空き地(空き地同時検索を除き、個人/同盟領土検索時は出さない)
@@ -15930,7 +15934,7 @@ function disp_npcfort() {
 					else{
 						putText = putText + '空き地★' + landLevel + linkText + '/木' + valueA[7] + '/石' + valueA[8] + '/鉄' + valueA[9] + '/糧' + valueA[10];
 					}
-	
+
 					var drawColor;
 					if( chkflg2.charAt(FLAG2_EMPTY_DRAW) == "1" ){
 						// 空き地着色モード有効時
@@ -15939,7 +15943,7 @@ function disp_npcfort() {
 					else{
 						drawColor = 0;
 					}
-	
+
 					drawColor = drawColor + 100 + strongflg*1000;	// drawColor > 100で着色
 					if( res_mode == 0 ){
 						disp_AreaIcon(cx,cy,landLevel,viewSize,drawColor);
@@ -15951,28 +15955,28 @@ function disp_npcfort() {
 				else if( chkflg2.charAt(FLAG2_EMPTY_DRAW) == "1" ){
 					// 空き地着色モード有効時
 					drawColor = parseInt(chkflg2.charAt(FLAG2_EMPTY_DRAW_COLOR)) + 1;
-	
+
 					disp_AreaIcon(cx,cy,valueA[5].length,viewSize,drawColor);
 				}
 			}
 			else if( (chkflg2.charAt(FLAG2_EMPTY_DRAW) == "1") && (valueA[1] == '') ){
 				// 空き地着色モード有効時
 				drawColor = parseInt(chkflg2.charAt(FLAG2_EMPTY_DRAW_COLOR)) + 1;
-	
+
 				disp_AreaIcon(cx,cy,valueA[5].length,viewSize,drawColor);
 			}
 		}
-	
+
 		// 結果をTextAreaに表示
 		textArea.snapshotItem(0).innerHTML = putText;
-	
+
 		//------------------//
 		// 本拠地一覧の描画 //
 		//------------------//
 		if( chkflg2.charAt(FLAG2_OWNER) == '1' ){
 			var baseinfodv = $e_7('//*[@id="baseinfo_dv"]');
 			baseinfodv.snapshotItem(0).style.display = "inline";
-	
+
 			//----------------------------------//
 			// マップデータから本拠地一覧を作る //
 			//----------------------------------//
@@ -15981,7 +15985,7 @@ function disp_npcfort() {
 			var areacls = document.evaluate('//*[@id="mapsAll"]//img/@class',
 				document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 			var baseText = $e_7('//*[@id="baseInfoText"]');
-	
+
 			var blank = '					  ';
 			var outTextLine = new Array();
 			var outLineMax = 0;
@@ -15996,12 +16000,12 @@ function disp_npcfort() {
 				var clsText = areacls.snapshotItem(i).textContent;
 				clsText = clsText.replace(/^mapAll0*/,'');
 				var clsNo = parseInt(clsText) - 1;
-	
+
 				// 城の情報をチェック
 				if( rowTextA.substr(0,7) == 'capital' ){
 					// テキストデータ
 					var text = areas.snapshotItem(clsNo).textContent;
-	
+
 					// 城の情報を抽出
 					var rowText = areas.snapshotItem(clsNo).textContent;
 					var rowText2 = href.snapshotItem(clsNo).textContent;
@@ -16014,10 +16018,10 @@ function disp_npcfort() {
 					var valueA = new Array();
 					valueA = rowText.split('/');
 					valueA[1] = valueA[1].replace(/==uZer==/,"/");
-	
+
 					if( valueA[11] != '1' ){
 						// NPC砦ではない
-	
+
 						// マップ座標の取得
 						var rowText3 = valueA[3];
 						rowText3 = rowText3.replace(/\(/,"");
@@ -16026,12 +16030,12 @@ function disp_npcfort() {
 						valueB = rowText3.split(',');
 						var cx = parseInt(valueB[0]);
 						var cy = parseInt(valueB[1]);
-	
+
 						// テキストの生成
 						var data2 = '(' + formatRightNumber(cx,4) + ',' +  formatRightNumber(cy,4) + ') ';
 						if( rowTextA.substr(0,9) == 'capital_r' ){
 							// 他同盟
-							data2 = data2 + '<font color="red"   >'
+							data2 = data2 + '<font color="red"	 >'
 						}else if( rowTextA.substr(0,9) == 'capital_g' ){
 							// 自同盟
 							data2 = data2 + '<font color="green" >'
@@ -16073,7 +16077,7 @@ function disp_npcfort() {
 				}
 				outText = outText + outTextLine[i];
 			}
-	
+
 			if( outText != '' ){
 				baseText.snapshotItem(0).innerHTML = '<font color="brown"><b>本拠地リスト</b></font><br>' + outText;
 			}
@@ -16082,14 +16086,14 @@ function disp_npcfort() {
 			var baseinfodv = $e_7('//*[@id="baseinfo_dv"]');
 			baseinfodv.snapshotItem(0).style.display = "none";
 		}
-	
+
 		//----------------//
 		// 方位表示の描画 //
 		//----------------//
 		if( chkflg2.charAt(FLAG2_DIRECTION) == '1' ){
 			var dv2;
 			var img;
-	
+
 			// 方位アイコン（東）
 			img = 'data:image/png;base64,'+
 					'iVBORw0KGgoAAAANSUhEUgAAACAAAAAiCAYAAAA+stv/AAAABnRSTlMAwADAAMCNeLu6AAABIUlEQVR42tWXaw6EIAyEtydbj86eTOMmNezY'+
@@ -16105,7 +16109,7 @@ function disp_npcfort() {
 			dv2.id = "icon_east";
 			dv2.innerHTML = '<img src="' + img + '">';
 			$d("datas").parentNode.appendChild(dv2);
-	
+
 			// 方位アイコン（西）
 			img = 'data:image/png;base64,'+
 					'iVBORw0KGgoAAAANSUhEUgAAACIAAAAgCAYAAAB3j6rJAAAABnRSTlMAwADAAMCNeLu6AAAA9klEQVR42u2YYQ7DIAiF58nWo7uTubjMhlJA'+
@@ -16120,7 +16124,7 @@ function disp_npcfort() {
 			dv2.id = "icon_west";
 			dv2.innerHTML = '<img src="' + img + '">';
 			$d("datas").parentNode.appendChild(dv2);
-	
+
 			// 方位アイコン（南）
 			img = 'data:image/png;base64,'+
 					'iVBORw0KGgoAAAANSUhEUgAAACIAAAAiCAYAAAA6RwvCAAAABnRSTlMAwADAAMCNeLu6AAABAUlEQVR42u2XaxLCIAyE5WT26HiyOnUmHVzz'+
@@ -16136,7 +16140,7 @@ function disp_npcfort() {
 			dv2.id = "icon_south";
 			dv2.innerHTML = '<img src="' + img + '">';
 			$d("datas").parentNode.appendChild(dv2);
-	
+
 			// 方位アイコン（南）
 			img = 'data:image/png;base64,'+
 					'iVBORw0KGgoAAAANSUhEUgAAACIAAAAgCAYAAAB3j6rJAAAABnRSTlMAwADAAMCNeLu6AAABAElEQVR42u3WXQ7DIAgA4HGy9ejuZDZLZovI'+
@@ -16153,13 +16157,13 @@ function disp_npcfort() {
 			dv2.innerHTML = '<img src="' + img + '">';
 			$d("datas").parentNode.appendChild(dv2);
 		}
-	
+
 		//--------------//
 		// 出兵情報共有 //
 		//--------------//
 		unionAttackInfo();
 	}
-	
+
 	//----------------//
 	// 領土情報の検索 //
 	//----------------//
@@ -16180,7 +16184,7 @@ function disp_npcfort() {
 			else{
 				chkflg1 = execFlag1;
 			}
-	
+
 			// オプションフラグをロード
 			var execFlag2 = loadExecFlag(location.hostname, "FLAG2");
 			if( execFlag2 == "" ){
@@ -16189,7 +16193,7 @@ function disp_npcfort() {
 			else{
 				chkflg2 = execFlag2;
 			}
-	
+
 			// 初回のときは、フラグを保存
 			execFlag = chkflg1 + DELIMIT1_7 + chkflg2;
 			saveExecFlag(location.hostname, "FLAG0", execFlag);
@@ -16200,7 +16204,7 @@ function disp_npcfort() {
 			chkflg1 = loadflg[0];
 			chkflg2 = loadflg[1];
 		}
-	
+
 		// 個人、同盟検索情報をロード
 		var chkflg3 = new Array();
 		execFlag = loadExecFlag(location.hostname, "FLAG3");
@@ -16226,7 +16230,7 @@ function disp_npcfort() {
 			else{
 				chkflg3[2] = execFlag3;
 			}
-	
+
 			// 初回のときは、フラグを保存
 			execFlag = chkflg3[0] + DELIMIT1_7 + chkflg3[1] + DELIMIT1_7 + chkflg3[2];
 			saveExecFlag(location.hostname, "FLAG3", execFlag);
@@ -16234,15 +16238,15 @@ function disp_npcfort() {
 		else{
 			chkflg3 = execFlag.split(DELIMIT1_7);
 		}
-	
+
 		//-------------------------------------------------//
 		// 51x51モード未使用設定の場合、なにもしないで戻る //
 		//-------------------------------------------------//
 		if( chkflg2.charAt(FLAG2_NOEXEC51) == '1' ){
 			return;
 		}
-	
-	
+
+
 		//----------------------//
 		// 処理パラメータの抽出 //
 		//----------------------//
@@ -16263,7 +16267,7 @@ function disp_npcfort() {
 			target[i] = 0;
 			colorNo[i] = 0;
 		}
-	
+
 		// 個人・同盟検索１
 		checkBox1 = $e_7('//*[@id="ckEnable1"]');
 		if( checkBox1.snapshotItem(0).checked == true ){
@@ -16302,7 +16306,7 @@ function disp_npcfort() {
 		else{
 			userName[0] = "";
 		}
-	
+
 		// 個人・同盟検索２
 		checkBox1 = $e_7('//*[@id="ckEnable2"]');
 		if( checkBox1.snapshotItem(0).checked == true ){
@@ -16341,7 +16345,7 @@ function disp_npcfort() {
 		else{
 			userName[1] = "";
 		}
-	
+
 		// 個人・同盟検索３
 		checkBox1 = $e_7('//*[@id="ckEnable3"]');
 		if( checkBox1.snapshotItem(0).checked == true ){
@@ -16380,7 +16384,7 @@ function disp_npcfort() {
 		else{
 			userName[2] = "";
 		}
-	
+
 		//-- 資源判別ONのとき、資源表示 --//
 		var res_mode;
 		var areaNo;
@@ -16392,23 +16396,23 @@ function disp_npcfort() {
 		else{
 			res_mode = 0;
 		}
-	
+
 		// 強調表示選択値を取得
 		areaNo = parseInt(chkflg2.substr(FLAG2_STRONG_AREANO,3));
 		areaNo2 = parseInt(chkflg2.substr(FLAG2_STRONG_AREANO2,3));
 		areaNo3 = parseInt(chkflg2.substr(FLAG2_STRONG_AREANO3,3));
-	
+
 		//------------------//
 		// 画面サイズの取得 //
 		//------------------//
 		var viewSize = 51;
-	
+
 		//-------------------------//
 		// 51x51モードへの設定反映 //
 		//-------------------------//
 		// 処理データの取得
 		var href = $e_7('//*[@id="map51-content"]//div/a');
-	
+
 		var redrawX = new Array();
 		var redrawY = new Array();
 		if( drawflag == 1 ){
@@ -16417,11 +16421,11 @@ function disp_npcfort() {
 				redrawX[0] = autoroute_f[0];
 				redrawY[0] = autoroute_f[1];
 			}
-	
+
 			// 終点を配列に保存
 			redrawX[1] = autoroute_l[0];
 			redrawY[1] = autoroute_l[1];
-	
+
 			// ルート構築ビューの中身を配列に保存
 			var pos = 2;
 			var baseText = $e_7('//*[@id="routeInfoText"]');
@@ -16439,7 +16443,7 @@ function disp_npcfort() {
 				}
 			}
 		}
-	
+
 		var maxcount;
 		if( drawflag == 0 ){
 			maxcount = href.snapshotLength;
@@ -16466,7 +16470,7 @@ function disp_npcfort() {
 			var land = "";
 			var landLevel = 0;
 			var space = 0;
-	
+
 			// いま設定されている着色指定を解除
 			if( text.indexOf("font") >= 0 ){
 				text = text.substr(text.indexOf("</font>")-1,1);
@@ -16477,7 +16481,7 @@ function disp_npcfort() {
 					text = autoroute_l[2];
 				}
 			}
-	
+
 			// 砦などの表示を英字に変更
 			if( text == "村" ){
 				text = "V";
@@ -16486,12 +16490,12 @@ function disp_npcfort() {
 			} else if( text == "城" ){
 				text = "C";
 			}
-	
+
 			//----------------------//
 			// 個人・同盟検索の判定 //
 			//----------------------//
 			var matchcase = -1;	// マッチしたパターン
-	
+
 			// 同盟名、個人名の取得
 			p = dt.parentNode.innerHTML.match(/君主名<\/dt><dd>(.*)<\/dd><dt>座標/);
 			if( p != undefined ){
@@ -16594,19 +16598,19 @@ function disp_npcfort() {
 					break;
 				}
 			}
-	
+
 			//-----------------//
 			// cssデータの作成 //
 			//-----------------//
 			var css = "";
 			var strong = 0;		// 太字にするか
-	
+
 			if( space == 0 ){
 				// 領地化されている土地
-	
+
 				if( (matchcase == -1) && (chkflg2.charAt(FLAG2_LAND) == '1') ){
 					// 個人・同盟検索に該当せず、領土検索がオンの場合
-	
+
 					// ☆数による絞り込み
 					if(	((chkflg1.charAt(FLAG1_LV1) == '1') && (landLevel == 1))
 						|| ((chkflg1.charAt(FLAG1_LV2) == '1') && (landLevel == 2))
@@ -16617,7 +16621,7 @@ function disp_npcfort() {
 						|| ((chkflg1.charAt(FLAG1_LV7) == '1') && (landLevel == 7))
 						|| ((chkflg1.charAt(FLAG1_LV8) == '1') && (landLevel == 8))
 						|| ((chkflg1.charAt(FLAG1_LV9) == '1') && (landLevel == 9)) ){
-	
+
 						// レベル表示指定のとき、太字にする
 						strong = 1;
 					}
@@ -16634,17 +16638,17 @@ function disp_npcfort() {
 					|| ((chkflg1.charAt(FLAG1_LV7) == '1') && (landLevel == 7))
 					|| ((chkflg1.charAt(FLAG1_LV8) == '1') && (landLevel == 8))
 					|| ((chkflg1.charAt(FLAG1_LV9) == '1') && (landLevel == 9)) ){
-	
+
 					// レベル表示指定のとき、太字にする
 					strong = 1;
 				}
 			}
-	
+
 			// 個人・同盟マッチ判定
 			if( matchcase != -1 ){
 				// 枠着色CSSの追加
 				css = css + 'border-style: solid; border-color: ' + cname_en[colorNo[matchcase]-1] + '; background-color: white; ';
-	
+
 				if( nodisp[matchcase] == 0 ){
 					if(	((chkflg1.charAt(FLAG1_LV1) == '1') && (landLevel == 1))
 						|| ((chkflg1.charAt(FLAG1_LV2) == '1') && (landLevel == 2))
@@ -16660,7 +16664,7 @@ function disp_npcfort() {
 					}
 				}
 			}
-	
+
 			// 太字処理
 			if( (strong == 1) && (landLevel > 0) ){
 				// 太字化CSSの追加 資源判別オンのときのみ
@@ -16672,7 +16676,7 @@ function disp_npcfort() {
 				// 拠点以外の場合、灰色化CSSの追加
 				css = css + 'color: transparent; ';
 			}
-	
+
 			// 資源判別(太字処理のときのみ)
 			if( (strong == 1) && (res_mode == 1) ){
 				p = dt.parentNode.innerHTML.match(/.*木(\d+)&amp;nbsp;岩(\d+)&amp;nbsp;鉄(\d+)&amp;nbsp;糧(\d+).*/);
@@ -16691,7 +16695,7 @@ function disp_npcfort() {
 							multi = 1;
 						}
 					}
-	
+
 					var col;
 					if( multi == 1 ){
 						col = "white";
@@ -16708,12 +16712,12 @@ function disp_npcfort() {
 					else if( maxpos == 4 ){
 						col = "yellow";
 					}
-	
+
 					// 資源判別CSSの追加
 					css = css + 'color: ' + col + '; ';
 				}
 			}
-	
+
 			//---------------------------------//
 			// 生成したCSSをマップデータに反映 //
 			//---------------------------------//
@@ -16732,11 +16736,11 @@ function disp_npcfort() {
 				dt.innerHTML = newText;
 			}
 		}
-	
+
 		return;
 	}
-	
-	
+
+
 	//--------------//
 	// 出兵情報共有 //
 	//--------------//
@@ -16747,16 +16751,16 @@ function disp_npcfort() {
 		//--------------//
 		// チェック情報
 		var checkBox = $e_7('//*[@id="ckUnion"]');
-	
+
 		// 画面サイズの取得
 		var viewSize;
 		viewSize = getViewSize();
 		if( viewSize == 51 ){
 			// 51x51だといまのとこなにもできないので戻る
-	
+
 			return;
 		}
-	
+
 		// 全体表示画面から、画面中央座標を手に入れる //
 		var codx = $e_7('//div[@id="datas"]/input[@id=\"x\"]');
 		var cody = $e_7('//div[@id="datas"]/input[@id=\"y\"]');
@@ -16766,7 +16770,7 @@ function disp_npcfort() {
 		var sy;
 		var ex;
 		var ey;
-	
+
 		// 左上座標を求める
 		if( viewSize == 11 ){
 			sx = parseInt(bx) - 5;
@@ -16782,7 +16786,7 @@ function disp_npcfort() {
 		}
 		ex = parseInt(sx) + (parseInt(viewSize) - 1)
 		ey = parseInt(sy) - (parseInt(viewSize) - 1)
-	
+
 		// chromeでクロスドメイン処理がうまくいかないので、とりあえずFireFox限定
 		if( /*(browserType != "Chrome") &&*/ (checkBox.snapshotItem(0).checked == true) && (spreadsheet != "") ){	//faraway コメントにしてある
 			GM_xmlhttpRequest({
@@ -16790,9 +16794,9 @@ function disp_npcfort() {
 				url:spreadsheet,
 				onload:function(x){
 					var rollover = $d("rollover");
-	
+
 					var textline = x.responseText.split('\n');
-	
+
 					var pos = -1;
 					var user = -1;
 					var pd = -1;
@@ -16812,14 +16816,14 @@ function disp_npcfort() {
 							com = j;
 						}
 					}
-	
+
 					// サーバー時間の取得
 					var svdata = document.evaluate('//span[@id="server_time"]',
 						document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 					var time_text = svdata.snapshotItem(0).textContent;
 					var day = time_text.match(/(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)/);
 					var servertime = new Date(parseInt(day[1],10),parseInt(day[2],10)-1,parseInt(day[3],10),parseInt(day[4],10),parseInt(day[5],10),parseInt(day[6],10),0);
-	
+
 					if( (pos >= 0) && (user >=0) && (pd >= 0) ){
 						var stack = new Array();
 						for( var i = 1; i < textline.length; i++ ){
@@ -16829,12 +16833,12 @@ function disp_npcfort() {
 								// 画面外
 								continue;
 							}
-	
+
 							stack[0] = posv[1];
 							stack[1] = posv[2];
 							stack[2] = data[user];
 							stack[3] = data[pd];
-	
+
 							var flagWill = false;	//other
 							// 終了時間の取得
 							day = stack[3].match(/(\d+)[\/-](\d+)[\/-](\d+) +(\d+):(\d+):(\d+)/);
@@ -16843,7 +16847,7 @@ function disp_npcfort() {
 							}
 							if(!flagWill) {
 								var endtime = new Date(parseInt(day[1],10),parseInt(day[2],10)-1,parseInt(day[3],10),parseInt(day[4],10),parseInt(day[5],10),parseInt(day[6],10),0);
-	
+
 								var waittime = endtime.getTime() - servertime.getTime();
 								if( waittime < 0 ){
 									continue;
@@ -16855,7 +16859,7 @@ function disp_npcfort() {
 								area_pos = $x_7("//map[@id=\"mapOverlayMap\"]//area[@href=\"land.php?x=" + posv[1] + "&y=" + posv[2] + "\"]");
 							}
 							var list3 = area_pos.getAttribute("onmouseover").match(/'(\d+)px', '(\d+)px/);
-	
+
 							var puttext = !flagWill ? "　" + stack[2] + "　" + stack[3] : '　予定ルート';
 							if( com != -1 ){
 								if( data[com] != undefined ){
@@ -16864,14 +16868,14 @@ function disp_npcfort() {
 							}
 							area_pos.title = area_pos.alt;
 							area_pos.title += puttext;
-	
+
 							// クリックしたポイントに画像を埋め込む
 							var img = d_7.createElement("img");
 							img.style.position = "absolute";
-	
+
 							img.style.left = list3[1] + "px";
 							img.style.top = list3[2] + "px";
-	
+
 							// アイコンの決定
 							if(flagWill) {
 								img.name = "RootIcon";
@@ -16900,8 +16904,8 @@ function disp_npcfort() {
 			});
 		}
 	}
-	
-	
+
+
 	//------------------------//
 	// 文字列の長さをチェック //
 	//------------------------//
@@ -16919,7 +16923,7 @@ function disp_npcfort() {
 	   }
 	   return len;
 	}
-	
+
 	//----------//
 	// 桁数整形 //
 	//----------//
@@ -16927,7 +16931,7 @@ function disp_npcfort() {
 		var fix = '	  ';
 		var str;
 		var result = '';
-	
+
 		str = num.toString(10);
 		if( str.length < length ){
 			result = fix.substr(0,length - str.length) + str;
@@ -16935,10 +16939,10 @@ function disp_npcfort() {
 		else{
 			result = str;
 		}
-	
+
 		return result;
 	}
-	
+
 	//--------------------------------//
 	// アイコン表示（レベル表示のみ） //
 	//--------------------------------//
@@ -16948,17 +16952,17 @@ function disp_npcfort() {
 		if( area_pos == null ){
 			area_pos = $x_7("//map[@id=\"mapOverlayMap\"]//area[@href=\"land.php?x=" + cx + "&y=" + cy + "\"]");
 		}
-	
+
 		var dat = area_pos.getAttribute("onmouseover");
 		dat = dat.replace(/^.*overOperation/, "setArea");
 		dat = dat.replace(/\);.*$/, '');
 		dat = dat + ',' + num + ',' + viewSize + ',' + group_flg + ');';
 		eval(dat);
-	
+
 		function setArea(act, x, y, num, viewSize, group_flg)
 		{
 			var rollover = $d("rollover");
-	
+
 			//--------------//
 			// ホスト名判別 //
 			//--------------//
@@ -16967,7 +16971,7 @@ function disp_npcfort() {
 				&& (location.hostname.indexOf("legend") == -1) ){
 				hosttype = "0";
 			}
-	
+
 			//------------------//
 			// 旧マップ使用判定 //
 			//------------------//
@@ -16976,12 +16980,12 @@ function disp_npcfort() {
 				// 100より大きい場合は☆数表示あり
 				var img = d_7.createElement("img");
 				img.style.position = "absolute";
-	
+
 				img.style.left = x;
 				var t = (y.substr(0,y.length-2));
-	
+
 				img.name = "viewIcon";
-	
+
 				if( viewSize == 15 ){
 					img.src = icon_c_7[1][num];
 					img.style.zIndex = 226;
@@ -16997,21 +17001,21 @@ function disp_npcfort() {
 				}
 				rollover.parentNode.insertBefore(img, rollover.nextSibling);
 			}
-	
+
 			if( (group_flg % 100) > 0 ){
 				// カラー指定があるばあいは、枠を表示
 				var img2 = d_7.createElement("img");
 				img2.style.position = "absolute";
-	
+
 				img2.name = "viewIcon";
-	
+
 				var iconNo = group_flg % 100;
 				if( viewSize == 15 ){
 					img2.src = icon_2[iconNo];
 					img2.style.width = "44px";
 					img2.style.height = "44px";
 					img2.style.zIndex = 226;
-	
+
 					if( (hosttype == "0") && (old != true) ){
 						img2.style.left = x;
 						img2.style.top = parseInt(y.substr(0,y.length-2)) + 2 + "px";
@@ -17025,7 +17029,7 @@ function disp_npcfort() {
 					img2.style.width = "33px";
 					img2.style.height = "33px";
 					img2.style.zIndex = 443;
-	
+
 					if( (hosttype == "0") && (old != true) ){
 						img2.style.left = parseInt(x.substr(0,x.length-2)) + 1 + "px";
 						img2.style.top = parseInt(y.substr(0,y.length-2)) + 4 + "px";
@@ -17039,7 +17043,7 @@ function disp_npcfort() {
 					img2.style.width = "60px";
 					img2.style.height = "60px";
 					img2.style.zIndex = 122;
-	
+
 					if( (hosttype == "0") && (old != true) ){
 						img2.style.left = parseInt(x.substr(0,x.length-2)) + 1 + "px";
 						img2.style.top = parseInt(y.substr(0,y.length-2)) + 2 + "px";
@@ -17052,9 +17056,9 @@ function disp_npcfort() {
 				rollover.parentNode.insertBefore(img2, rollover.nextSibling);
 			}
 		}
-	
+
 	}
-	
+
 	//----------------------------//
 	// アイコン表示（資源モード） //
 	//----------------------------//
@@ -17069,11 +17073,11 @@ function disp_npcfort() {
 		dat = dat.replace(/\);.*$/, '');
 		dat = dat + ',' + num + ',' + viewSize + ',' + group_flg + ',' + maxtype + ');';
 		eval(dat);
-	
+
 		function setArea(act, x, y, num, viewSize, group_flg, maxtype)
 		{
 			var rollover = $d("rollover");
-	
+
 			//--------------//
 			// ホスト名判別 //
 			//--------------//
@@ -17082,18 +17086,18 @@ function disp_npcfort() {
 				&& (location.hostname.indexOf("legend") == -1) ){
 				hosttype = "0";
 			}
-	
+
 			var old = false;
 			if( group_flg % 1000 >= 100 ){
 				// 100より大きい場合は☆数表示あり
 				var img = d_7.createElement("img");
 				img.style.position = "absolute";
-	
+
 				img.style.left = x;
 				var t = (y.substr(0,y.length-2));
-	
+
 				img.name = "viewIcon";
-	
+
 				if( viewSize == 15 ){
 					img.src = icon_cs[1][num*5+maxtype];
 					img.style.zIndex = 226;
@@ -17109,21 +17113,21 @@ function disp_npcfort() {
 				}
 				rollover.parentNode.insertBefore(img, rollover.nextSibling);
 			}
-	
+
 			if( (group_flg % 100) > 0 ){
 				// カラー指定があるばあいは、枠を表示
 				var img2 = d_7.createElement("img");
 				img2.style.position = "absolute";
-	
+
 				img2.name = "viewIcon";
-	
+
 				var iconNo = group_flg % 100;
 				if( viewSize == 15 ){
 					img2.src = icon_2[iconNo];
 					img2.style.width = "44px";
 					img2.style.height = "44px";
 					img2.style.zIndex = 226;
-	
+
 					if( (hosttype == "0") && (old != true) ){
 						img2.style.left = x;
 						img2.style.top = parseInt(y.substr(0,y.length-2)) + 2 + "px";
@@ -17137,7 +17141,7 @@ function disp_npcfort() {
 					img2.style.width = "33px";
 					img2.style.height = "33px";
 					img2.style.zIndex = 443;
-	
+
 					if( (hosttype == "0") && (old != true) ){
 						img2.style.left = parseInt(x.substr(0,x.length-2)) + 1 + "px";
 						img2.style.top = parseInt(y.substr(0,y.length-2)) + 4 + "px";
@@ -17151,7 +17155,7 @@ function disp_npcfort() {
 					img2.style.width = "60px";
 					img2.style.height = "60px";
 					img2.style.zIndex = 122;
-	
+
 					if( (hosttype == "0") && (old != true) ){
 						img2.style.left = parseInt(x.substr(0,x.length-2)) + 1 + "px";
 						img2.style.top = parseInt(y.substr(0,y.length-2)) + 2 + "px";
@@ -17167,12 +17171,12 @@ function disp_npcfort() {
 				// 強調指定があるばあいは、強調★を表示
 				var img3 = d_7.createElement("img");
 				img3.style.position = "absolute";
-	
+
 				img3.style.left = x;
 				var t = (y.substr(0,y.length-2));
-	
+
 				img3.name = "viewIcon";
-	
+
 				var pow = Math.floor(group_flg / 1000) - 1;
 				if( viewSize == 15 ){
 					img3.src = icon_3[pow*3+2];
@@ -17196,34 +17200,34 @@ function disp_npcfort() {
 				rollover.parentNode.insertBefore(img3, rollover.nextSibling);
 			}
 		}
-	
+
 	}
-	
+
 	//--------------//
 	// データロード //
 	//--------------//
 	function loadExecFlag(hostname, key) {
 		var datakey = new String();
 		datakey = hostname + VERSION_KEY + key;
-	
+
 		var ret = new String();
 		var src = CookieRead(datakey);
 		if (src == "") return ret;
-	
+
 		return src;
 	}
-	
+
 	//--------------//
 	// データセーブ //
 	//--------------//
 	function saveExecFlag(hostname, key, data) {
-	
+
 		var datakey = new String();
 		datakey = hostname + VERSION_KEY + key;
-	
+
 		CookieWrite(datakey, data, 30);
 	}
-	
+
 	//----------------------//
 	// クッキーへの書き込み //
 	//----------------------//
@@ -17233,13 +17237,13 @@ function disp_npcfort() {
 			alert("クッキーへの書き込みができません");
 			return;
 		}
-	
+
 		sday = new Date();
 		sday.setTime(sday.getTime() + (kday * 1000 * 60 * 60 * 24));
 		s2day = sday.toGMTString();
 		document.cookie = kword + "=" + escape(kdata) + ";expires=" + s2day;
 	}
-	
+
 	//----------------------//
 	// クッキーから読み込み //
 	//----------------------//
@@ -17248,7 +17252,7 @@ function disp_npcfort() {
 		if(typeof(kword) == "undefined"){	// キーワードなし
 			return "";	// 何もしないで戻る
 		}
-	
+
 		kword = kword + "=";
 		kdata = "";
 		scookie = document.cookie + ";";	// クッキー情報を読み込む
@@ -17258,23 +17262,23 @@ function disp_npcfort() {
 			end = scookie.indexOf(";", start);	// 情報の末尾位置を検索
 			kdata = unescape(scookie.substring(start + kword.length, end));	// データ取り出し
 		}
-	
+
 		return kdata;
 	}
-	
+
 	//------------//
 	// HTMLの生成 //
 	//------------//
 	function addHtml_7() {
 		var dv;
 		var dv2;
-	
+
 		var body = $e_7('//body');
 		if( body.snapshotLength > 0 ){
 			body.snapshotItem(0).addEventListener("mousedown", function(e) {if(e.button == 2){checkData(e);}}, true);
 			body.snapshotItem(0).innerHTML = body.snapshotItem(0).innerHTML.replace(/\u2028/g," ");
 		}
-	
+
 		//----------------//
 		// コンテナの取得 //
 		//----------------//
@@ -17285,7 +17289,7 @@ function disp_npcfort() {
 		} else {
 			container = mapbox.snapshotItem(0);
 		}
-	
+
 		//--------------------------------------//
 		// チェックボックスに関する情報をロード //
 		//--------------------------------------//
@@ -17301,7 +17305,7 @@ function disp_npcfort() {
 			else{
 				chkflg1 = execFlag1;
 			}
-	
+
 			// オプションフラグをロード
 			var execFlag2 = loadExecFlag(location.hostname, "FLAG2");
 			if( execFlag2 == "" ){
@@ -17310,7 +17314,7 @@ function disp_npcfort() {
 			else{
 				chkflg2 = execFlag2;
 			}
-	
+
 			// 初回のときは、フラグを保存
 			execFlag = chkflg1 + DELIMIT1_7 + chkflg2;
 			saveExecFlag(location.hostname, "FLAG0", execFlag);
@@ -17321,7 +17325,7 @@ function disp_npcfort() {
 			chkflg1 = loadflg[0];
 			chkflg2 = loadflg[1];
 		}
-	
+
 		// 個人、同盟検索情報をロード
 		var chkflg3 = new Array();
 		var execFlag = loadExecFlag(location.hostname, "FLAG3");
@@ -17347,7 +17351,7 @@ function disp_npcfort() {
 			else{
 				chkflg3[2] = execFlag3;
 			}
-	
+
 			// 初回のときは、フラグを保存
 			execFlag = chkflg3[0] + DELIMIT1_7 + chkflg3[1] + DELIMIT1_7 + chkflg3[2];
 			saveExecFlag(location.hostname, "FLAG3", execFlag);
@@ -17355,13 +17359,13 @@ function disp_npcfort() {
 		else{
 			chkflg3 = execFlag.split(DELIMIT1_7);
 		}
-	
+
 		// 出兵情報共有設定
 		var chkflg4;
 		execFlag = loadExecFlag(location.hostname, "FLAG4");
 		if( execFlag == "" ){
 			chkflg4 = new String(FLAG4);  // 初期値
-	
+
 			// 初回のときは、フラグを保存
 			execFlag = chkflg4;
 			saveExecFlag(location.hostname, "FLAG4", execFlag);
@@ -17369,21 +17373,21 @@ function disp_npcfort() {
 		else{
 			chkflg4 = execFlag;
 		}
-	
+
 		//--------------------------------------//
 		// 画面生成							 //
 		//--------------------------------------//
 		var textLabel;
 		var button1;
 		var textArea;
-	
+
 		//----------------//
 		//-- ヘッダー部 --//
 		//----------------//
 		//-- コントロール配置DIV --//
 		var linksDiv = document.createElement("div");
 		container.appendChild(linksDiv);
-	
+
 		//-- ツール名称ラベル --//
 		textLabel = document.createElement("span");
 		textLabel.id = "toolLabel";
@@ -17391,7 +17395,7 @@ function disp_npcfort() {
 		textLabel.innerHTML = "<br><b>NPC砦、領土情報検索ツール Ver." + VERSION_7 + "</b>";
 		textLabel.style.color = "black";
 		linksDiv.appendChild(textLabel);
-	
+
 		//-- 更新ボタン --//
 		button1 = document.createElement("input");
 		button1.type = "button";
@@ -17401,7 +17405,7 @@ function disp_npcfort() {
 		button1.value = "選択した条件で表示を更新";
 		button1.addEventListener("click", function() {updateButtonClicked()}, true);
 		linksDiv.appendChild(button1);
-	
+
 		//-- ★セットボタン --//
 		button1 = document.createElement("input");
 		button1.type = "button";
@@ -17411,7 +17415,7 @@ function disp_npcfort() {
 		button1.value = "★のチェックを付ける";
 		button1.addEventListener("click", function() {checkButtonClicked()}, true);
 		linksDiv.appendChild(button1);
-	
+
 		//-- ★解除ボタン --//
 		button1 = document.createElement("input");
 		button1.type = "button";
@@ -17421,12 +17425,12 @@ function disp_npcfort() {
 		button1.value = "★のチェックを外す";
 		button1.addEventListener("click", function() {uncheckButtonClicked()}, true);
 		linksDiv.appendChild(button1);
-	
+
 		//-- (改行) --//
 		textLabel = document.createElement("span");
 		textLabel.innerHTML = "<br>";
 		linksDiv.appendChild(textLabel);
-	
+
 		//--------------------//
 		//-- 検索オプション --//
 		//--------------------//
@@ -17437,7 +17441,7 @@ function disp_npcfort() {
 		var colorNo;
 		var areaNo;
 		var img;
-	
+
 		var optionPre = document.createElement("pre");
 		optionPre.style.fontSize = "14px";
 		optionPre.style.color = "black";
@@ -17448,14 +17452,14 @@ function disp_npcfort() {
 		optionPre.style.padding = "2px";
 		optionPre.style.marginTop = "2px";
 		linksDiv.appendChild(optionPre);
-	
+
 		//-- 検索・表示オプション見出し --//
 		textLabel = document.createElement("span");
 		textLabel.style.fontSize = "14px";
 		textLabel.id = "test";
 		textLabel.innerHTML = "<font color=\"red\"><b>検索対象</b></font>";
 		optionPre.appendChild(textLabel);
-	
+
 		chkbox = document.createElement("input");
 		chkbox.type = "checkbox";
 		chkbox.id = "ckMenu2";
@@ -17465,14 +17469,14 @@ function disp_npcfort() {
 		}
 		chkbox.addEventListener("click", function() {menu2Clicked()}, true);
 		optionPre.appendChild(chkbox);
-	
+
 		// 補助オプション表示切り替え
 		textLabel = document.createElement("span");
 		textLabel.style.marginLeft = "4px";
 		textLabel.style.fontSize = "14px";
 		textLabel.innerHTML = "<font color=\"blue\"><b>補助OPTION表示</b></font>";
 		optionPre.appendChild(textLabel);
-	
+
 		chkbox = document.createElement("input");
 		chkbox.type = "checkbox";
 		chkbox.id = "ckMenu4";
@@ -17482,14 +17486,14 @@ function disp_npcfort() {
 		}
 		chkbox.addEventListener("click", function() {menu4Clicked()}, true);
 		optionPre.appendChild(chkbox);
-	
+
 		// 同盟オプション表示切り替え
 		textLabel = document.createElement("span");
 		textLabel.style.marginLeft = "4px";
 		textLabel.style.fontSize = "14px";
 		textLabel.innerHTML = "<font color=\"blue\"><b>同盟OPTION表示</b></font><br>";
 		optionPre.appendChild(textLabel);
-	
+
 		// 空き地検索
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -17500,12 +17504,12 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "空き地検索";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 領土検索
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -17516,12 +17520,12 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "領土検索";
 		optionPre.appendChild(ckLabel);
-	
+
 		//-- ルート構築モード --//
 		// ルート構築モードチェックボックス
 		chkbox = document.createElement("input");
@@ -17531,24 +17535,24 @@ function disp_npcfort() {
 		chkbox.style.marginLeft = "15px";
 		chkbox.addEventListener("click", function() {routeModeChecked()}, true);
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "<font color=\"green\"><b>ルート構築モード（</b></font>";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 資源情報出力なしチェックボックス
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
 		chkbox.type = "checkbox";
 		chkbox.id = "ckRouteMode2";
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "<font color=\"green\"><b>資源情報なし</b></font>";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 自動ルート構築チェックボックス
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -17557,30 +17561,30 @@ function disp_npcfort() {
 		chkbox.id = "ckAutoRouteMode";
 		chkbox.addEventListener("click", function() {autoRouteModeChecked()}, true);
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "<font color=\"green\"><b>ルート自動構築）</b></font>";
 		optionPre.appendChild(ckLabel);
-	
+
 		// （ギャップ埋め）
 		ckLabel = document.createElement("pre");
 		ckLabel.style.height = "2px";
 		optionPre.appendChild(ckLabel);
-	
+
 		//-- ルート自動構築オプション見出し --//
 		textLabel = document.createElement("pre");
 		textLabel.style.fontSize = "14px";
 		textLabel.style.marginTop = "2px";
 		textLabel.innerHTML = "<font color=\"green\"><b>ルート自動構築条件設定</b></font><br>";
 		optionPre.appendChild(textLabel);
-	
+
 		// 探査レベル
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "15px";
 		ckLabel.innerHTML = "探索レベル";
 		optionPre.appendChild(ckLabel);
-	
+
 		areaNo = parseInt(chkflg2.charAt(FLAG2_SEARCH_LEVEL));
 		listbox = document.createElement("select");
 		listbox.id = "lsRouteLevel";
@@ -17594,13 +17598,13 @@ function disp_npcfort() {
 		listbox.style.marginLeft = "4px";
 		listbox.selectedIndex = areaNo;
 		optionPre.appendChild(listbox);
-	
+
 		// 資源回避レベル
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "14px";
 		ckLabel.innerHTML = "回避資源";
 		optionPre.appendChild(ckLabel);
-	
+
 		areaNo = parseInt(chkflg2.charAt(FLAG2_SKIP_RES));
 		listbox = document.createElement("select");
 		listbox.id = "lsSkipRes";
@@ -17614,7 +17618,7 @@ function disp_npcfort() {
 		listbox.style.marginLeft = "4px";
 		listbox.selectedIndex = areaNo;
 		optionPre.appendChild(listbox);
-	
+
 		// 個人領土回避
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -17625,18 +17629,18 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "個人領地を通過（";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 通過同盟指定
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "個人・同盟";
 		optionPre.appendChild(ckLabel);
-	
+
 		areaNo = parseInt(chkflg2.charAt(FLAG2_SKIP_GROUP));
 		listbox = document.createElement("select");
 		listbox.id = "lsSkipGroup";
@@ -17650,12 +17654,12 @@ function disp_npcfort() {
 		listbox.style.marginLeft = "4px";
 		listbox.selectedIndex = areaNo;
 		optionPre.appendChild(listbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "）";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 可変ルート
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -17666,17 +17670,17 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "可変ルート";
 		optionPre.appendChild(ckLabel);
-	
+
 		// （ギャップ埋め）
 		ckLabel = document.createElement("pre");
 		ckLabel.style.height = "2px";
 		optionPre.appendChild(ckLabel);
-	
+
 		//-- 検索・表示オプション２見出し --//
 		// 項目ラベル
 		textLabel = document.createElement("pre");
@@ -17684,7 +17688,7 @@ function disp_npcfort() {
 		textLabel.style.fontSize = "14px";
 		textLabel.innerHTML = "<font color=\"red\"><b>表示補助</b></font><br>";
 		optionPre.appendChild(textLabel);
-	
+
 		// 資源判別
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -17695,20 +17699,20 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "資源別に着色";
 		ckLabel.id = "Label2-2";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 資源判別（強調表示）
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "0px";
 		ckLabel.innerHTML = "（強調表示";
 		ckLabel.id = "Label2-3";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 強調種別選択１
 		areaNo = parseInt(chkflg2.substr(FLAG2_STRONG_AREANO,3));
 		if( areaNo > season1.length ){
@@ -17726,7 +17730,7 @@ function disp_npcfort() {
 		listbox.style.marginLeft = "4px";
 		listbox.selectedIndex = areaNo;
 		optionPre.appendChild(listbox);
-	
+
 		// 強調種別選択２
 		areaNo = parseInt(chkflg2.substr(FLAG2_STRONG_AREANO2,3));
 		if( areaNo > season1.length ){
@@ -17744,7 +17748,7 @@ function disp_npcfort() {
 		listbox.style.marginLeft = "4px";
 		listbox.selectedIndex = areaNo;
 		optionPre.appendChild(listbox);
-	
+
 		// 強調種別選択３
 		areaNo = parseInt(chkflg2.substr(FLAG2_STRONG_AREANO3,3));
 		if( areaNo > season1.length ){
@@ -17762,7 +17766,7 @@ function disp_npcfort() {
 		listbox.style.marginLeft = "4px";
 		listbox.selectedIndex = areaNo;
 		optionPre.appendChild(listbox);
-	
+
 		// 閉じかっこ
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "0px";
@@ -17770,7 +17774,7 @@ function disp_npcfort() {
 		ckLabel.innerHTML = "）<br>";
 		ckLabel.id = "Label2-4";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 空き地を着色
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -17781,16 +17785,16 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "空き地を着色";
 		ckLabel.id = "Label2-5";
 		optionPre.appendChild(ckLabel);
-	
+
 		// カラー選択
 		colorNo = chkflg2.charAt(FLAG2_EMPTY_DRAW_COLOR);
-	
+
 		listbox = document.createElement("select");
 		listbox.id = "lsEmptyColor";
 		for( var i = 0; i < cname.length; i++ ){
@@ -17803,7 +17807,7 @@ function disp_npcfort() {
 		listbox.style.marginLeft = "4px";
 		listbox.selectedIndex = colorNo;
 		optionPre.appendChild(listbox);
-	
+
 		// レーダー
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -17814,13 +17818,13 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "縮小マップ";
 		ckLabel.id = "Label2-6";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 本拠地一覧
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -17831,13 +17835,13 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "本拠地一覧";
 		ckLabel.id = "Label2-7";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 方位表示
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -17848,13 +17852,13 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "方位表示";
 		ckLabel.id = "Label2-8";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 51x51画面で本ツールを使わない
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -17865,20 +17869,20 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "51x51で使用しない";
 		ckLabel.id = "Label2-9";
 		optionPre.appendChild(ckLabel);
-	
+
 		//-- 表示対象オプション見出し --//
 		textLabel = document.createElement("pre");
 		textLabel.style.fontSize = "14px";
 		textLabel.style.marginTop = "2px";
 		textLabel.innerHTML = "<font color=\"red\"><b>表示する領土の種類</b></font><br>";
 		optionPre.appendChild(textLabel);
-	
+
 		// NPC砦
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -17889,12 +17893,12 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "NPC砦";
 		optionPre.appendChild(ckLabel);
-	
+
 		// ☆1
 		chkbox = document.createElement("input");
 		chkbox.type = "checkbox";
@@ -17904,12 +17908,12 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "☆1";
 		optionPre.appendChild(ckLabel);
-	
+
 		// ☆2
 		chkbox = document.createElement("input");
 		chkbox.type = "checkbox";
@@ -17919,12 +17923,12 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "☆2";
 		optionPre.appendChild(ckLabel);
-	
+
 		// ☆3
 		chkbox = document.createElement("input");
 		chkbox.type = "checkbox";
@@ -17934,12 +17938,12 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "☆3";
 		optionPre.appendChild(ckLabel);
-	
+
 		// ☆4
 		chkbox = document.createElement("input");
 		chkbox.type = "checkbox";
@@ -17949,12 +17953,12 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "☆4";
 		optionPre.appendChild(ckLabel);
-	
+
 		// ☆5
 		chkbox = document.createElement("input");
 		chkbox.type = "checkbox";
@@ -17964,12 +17968,12 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "☆5";
 		optionPre.appendChild(ckLabel);
-	
+
 		// ☆6
 		chkbox = document.createElement("input");
 		chkbox.type = "checkbox";
@@ -17979,12 +17983,12 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "☆6";
 		optionPre.appendChild(ckLabel);
-	
+
 		// ☆7
 		chkbox = document.createElement("input");
 		chkbox.type = "checkbox";
@@ -17994,12 +17998,12 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "☆7";
 		optionPre.appendChild(ckLabel);
-	
+
 		// ☆8
 		chkbox = document.createElement("input");
 		chkbox.type = "checkbox";
@@ -18009,12 +18013,12 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "☆8";
 		optionPre.appendChild(ckLabel);
-	
+
 		// ☆9
 		chkbox = document.createElement("input");
 		chkbox.type = "checkbox";
@@ -18024,24 +18028,24 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "☆9<br>";
 		optionPre.appendChild(ckLabel);
-	
+
 		// （ギャップ埋め）
 		ckLabel = document.createElement("pre");
 		ckLabel.style.height = "2px";
 		optionPre.appendChild(ckLabel);
-	
+
 		//-- 個人・同盟検索オプション見出し --//
 		textLabel = document.createElement("pre");
 		textLabel.style.fontSize = "14px";
 		textLabel.innerHTML = "<font color=\"red\"><b>個人・同盟の検索</b></font><br>";
 		textLabel.id = "Label4-1";
 		optionPre.appendChild(textLabel);
-	
+
 		//-- 個人・同盟検索オプション１ --//
 		// ナンバリング
 		ckLabel = document.createElement("span");
@@ -18050,7 +18054,7 @@ function disp_npcfort() {
 		ckLabel.style.marginLeft = "15px";
 		ckLabel.id = "Label4-2-1";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 有効/無効
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18062,13 +18066,13 @@ function disp_npcfort() {
 		}
 		chkbox.addEventListener("click", function() {enable1Checked()}, true);
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "有効にする";
 		ckLabel.id = "Label4-2";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 個人
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18081,13 +18085,13 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "個人";
 		ckLabel.id = "Label4-3";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 同盟
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18100,13 +18104,13 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "同盟";
 		ckLabel.id = "Label4-4";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 完全一致
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18117,20 +18121,20 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "完全一致";
 		ckLabel.id = "Label4-5";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 個人・同盟名
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "8px";
 		ckLabel.innerHTML = "検索名称";
 		ckLabel.id = "Label4-6";
 		optionPre.appendChild(ckLabel);
-	
+
 		userBox = document.createElement("input");
 		userBox.id = "userBox1";
 		userBox.style.marginLeft = "4px";
@@ -18144,7 +18148,7 @@ function disp_npcfort() {
 		userBox.value = chkflg3[0].substr(FLAG3_NAME);
 		userBox.href = "javascript:void(0);";
 		optionPre.appendChild(userBox);
-	
+
 		// 表示種別での絞り込み
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18155,13 +18159,13 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "領土着色のみ";
 		ckLabel.id = "Label4-7";
 		optionPre.appendChild(ckLabel);
-	
+
 		// カラー選択
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginTop = "1px";
@@ -18169,9 +18173,9 @@ function disp_npcfort() {
 		ckLabel.innerHTML = "枠色";
 		ckLabel.id = "Label4-8";
 		optionPre.appendChild(ckLabel);
-	
+
 		colorNo = chkflg3[0].charAt(FLAG3_COLOR);
-	
+
 		listbox = document.createElement("select");
 		listbox.id = "lsColor1";
 		for( var i = 0; i < cname.length; i++ ){
@@ -18184,13 +18188,13 @@ function disp_npcfort() {
 		listbox.style.marginLeft = "4px";
 		listbox.selectedIndex = colorNo;
 		optionPre.appendChild(listbox);
-	
+
 		// (改行)
 		textLabel = document.createElement("span");
 		textLabel.innerHTML = "<br>";
 		textLabel.id = "Label4-9";
 		optionPre.appendChild(textLabel);
-	
+
 		//-- 個人・同盟検索オプション２ --//
 		// ナンバリング
 		ckLabel = document.createElement("span");
@@ -18199,7 +18203,7 @@ function disp_npcfort() {
 		ckLabel.style.marginLeft = "15px";
 		ckLabel.id = "Label4-2-2";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 有効/無効
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18211,13 +18215,13 @@ function disp_npcfort() {
 		}
 		chkbox.addEventListener("click", function() {enable2Checked()}, true);
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "有効にする";
 		ckLabel.id = "Label4-10";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 個人
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18230,13 +18234,13 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "個人";
 		ckLabel.id = "Label4-11";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 同盟
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18249,13 +18253,13 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "同盟";
 		ckLabel.id = "Label4-12";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 完全一致
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18266,20 +18270,20 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "完全一致";
 		ckLabel.id = "Label4-13";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 個人・同盟名
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "8px";
 		ckLabel.innerHTML = "検索名称";
 		ckLabel.id = "Label4-14";
 		optionPre.appendChild(ckLabel);
-	
+
 		userBox = document.createElement("input");
 		userBox.id = "userBox2";
 		userBox.style.marginLeft = "4px";
@@ -18293,7 +18297,7 @@ function disp_npcfort() {
 		userBox.value = chkflg3[1].substr(FLAG3_NAME);
 		userBox.href = "javascript:void(0);";
 		optionPre.appendChild(userBox);
-	
+
 		// 表示種別での絞り込み
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18304,13 +18308,13 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "領土着色のみ";
 		ckLabel.id = "Label4-15";
 		optionPre.appendChild(ckLabel);
-	
+
 		// カラー選択
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginTop = "1px";
@@ -18318,9 +18322,9 @@ function disp_npcfort() {
 		ckLabel.innerHTML = "枠色";
 		ckLabel.id = "Label4-16";
 		optionPre.appendChild(ckLabel);
-	
+
 		colorNo = chkflg3[1].charAt(FLAG3_COLOR);
-	
+
 		listbox = document.createElement("select");
 		listbox.id = "lsColor2";
 		for( var i = 0; i < cname.length; i++ ){
@@ -18333,13 +18337,13 @@ function disp_npcfort() {
 		listbox.style.marginLeft = "4px";
 		listbox.selectedIndex = colorNo;
 		optionPre.appendChild(listbox);
-	
+
 		// (改行)
 		textLabel = document.createElement("span");
 		textLabel.innerHTML = "<br>";
 		textLabel.id = "Label4-17";
 		optionPre.appendChild(textLabel);
-	
+
 		//-- 個人・同盟検索オプション３ --//
 		// ナンバリング
 		ckLabel = document.createElement("span");
@@ -18348,7 +18352,7 @@ function disp_npcfort() {
 		ckLabel.style.marginLeft = "15px";
 		ckLabel.id = "Label4-2-3";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 有効/無効
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18360,13 +18364,13 @@ function disp_npcfort() {
 		}
 		chkbox.addEventListener("click", function() {enable3Checked()}, true);
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "有効にする";
 		ckLabel.id = "Label4-18";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 個人
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18379,13 +18383,13 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "個人";
 		ckLabel.id = "Label4-19";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 同盟
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18398,13 +18402,13 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "同盟";
 		ckLabel.id = "Label4-20";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 完全一致
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18415,20 +18419,20 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "完全一致";
 		ckLabel.id = "Label4-21";
 		optionPre.appendChild(ckLabel);
-	
+
 		// 個人・同盟名
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "8px";
 		ckLabel.innerHTML = "検索名称";
 		ckLabel.id = "Label4-22";
 		optionPre.appendChild(ckLabel);
-	
+
 		userBox = document.createElement("input");
 		userBox.id = "userBox3";
 		userBox.style.marginLeft = "4px";
@@ -18442,7 +18446,7 @@ function disp_npcfort() {
 		userBox.value = chkflg3[2].substr(FLAG3_NAME);
 		userBox.href = "javascript:void(0);";
 		optionPre.appendChild(userBox);
-	
+
 		// 表示種別での絞り込み
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18453,13 +18457,13 @@ function disp_npcfort() {
 			chkbox.checked = true;
 		}
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "領土着色のみ";
 		ckLabel.id = "Label4-23";
 		optionPre.appendChild(ckLabel);
-	
+
 		// カラー選択
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginTop = "1px";
@@ -18467,9 +18471,9 @@ function disp_npcfort() {
 		ckLabel.innerHTML = "枠色";
 		ckLabel.id = "Label4-24";
 		optionPre.appendChild(ckLabel);
-	
+
 		colorNo = chkflg3[2].charAt(FLAG3_COLOR);
-	
+
 		listbox = document.createElement("select");
 		listbox.id = "lsColor3";
 		for( var i = 0; i < cname.length; i++ ){
@@ -18482,19 +18486,19 @@ function disp_npcfort() {
 		listbox.style.marginLeft = "4px";
 		listbox.selectedIndex = colorNo;
 		optionPre.appendChild(listbox);
-	
+
 		// （ギャップ埋め）
 		ckLabel = document.createElement("pre");
 		ckLabel.style.height = "2px";
 		optionPre.appendChild(ckLabel);
-	
+
 		//-- 出兵情報共有見出し --//
 		textLabel = document.createElement("pre");
 		textLabel.style.fontSize = "14px";
 		textLabel.style.marginTop = "2px";
 		textLabel.innerHTML = "<font color=\"green\"><b>出兵情報共有設定</b></font><br>";
 		optionPre.appendChild(textLabel);
-	
+
 		// 共有フラグ
 		chkbox = document.createElement("input");
 		chkbox.style.marginTop = "1px";
@@ -18506,19 +18510,19 @@ function disp_npcfort() {
 		}
 		chkbox.addEventListener("click", function() {attackIconClear()}, true);
 		optionPre.appendChild(chkbox);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "有効";
 		optionPre.appendChild(ckLabel);
-	
+
 		// シート名
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "8px";
 		ckLabel.innerHTML = "スプレッドシートURL";
 		ckLabel.id = "Label5-1";
 		optionPre.appendChild(ckLabel);
-	
+
 		userBox = document.createElement("input");
 		userBox.id = "userBox4";
 		userBox.style.marginLeft = "4px";
@@ -18526,17 +18530,17 @@ function disp_npcfort() {
 		userBox.value = chkflg4.substr(1);
 		userBox.href = "javascript:void(0);";
 		optionPre.appendChild(userBox);
-	
+
 		// スプレッドシート名の加工
 		if( chkflg4.charAt(0) == '1' ){
 			spreadsheet = userBox.value.replace(/#gid/,"&gid") + "&output=txt";
 		}
-	
+
 		// （ギャップ埋め）
 		ckLabel = document.createElement("pre");
 		ckLabel.style.height = "2px";
 		optionPre.appendChild(ckLabel);
-	
+
 		//----------------------------//
 		// 検索結果のテキスト表示領域 //
 		//----------------------------//
@@ -18553,7 +18557,7 @@ function disp_npcfort() {
 		textArea.style.padding = "2px";
 		textArea.style.marginTop = "-2px";
 		linksDiv.appendChild(textArea);
-	
+
 		//------------------//
 		// 部品描画先の設定 //
 		//------------------//
@@ -18564,12 +18568,12 @@ function disp_npcfort() {
 		else{
 			target = "datas";
 		}
-	
+
 		//--------------//
 		// ホスト名判別 //
 		//--------------//
 		var hosttype = location.hostname.substr(0,1);
-	
+
 		//----------------------------//
 		// 縮小マップ描画エリアの定義 //
 		//----------------------------//
@@ -18578,7 +18582,7 @@ function disp_npcfort() {
 		dv2.style.zIndex = 0;
 		dv2.id = "smallmap_dv";
 		dv2.style.fontSize= "10px";
-	
+
 		// データ描画用
 		textArea = document.createElement("div");
 		textArea.id = "smallmap";
@@ -18599,7 +18603,7 @@ function disp_npcfort() {
 		}
 		dv2.appendChild(textArea);
 		$d(target).appendChild(dv2);
-	
+
 		//----------------------------//
 		// 本拠地情報描画エリアの定義 //
 		//----------------------------//
@@ -18625,19 +18629,19 @@ function disp_npcfort() {
 		dv.style.display = "none";
 		dv.id = "baseinfo_dv";
 		dv.style.zIndex = 500;
-	
+
 		// レイアウト調整用
 		textArea = document.createElement("pre");
 		textArea.innerHTML = "";
 		textArea.style.fontSize = "10px";
 		textArea.innerHTML = "";
 		dv.appendChild(textArea);
-	
+
 		dv2 = d_7.createElement("div");
 		dv2.style.border = "solid 2px";
 		dv2.style.borderColor = "transparent";
 		dv.appendChild(dv2);
-	
+
 		// データ描画用
 		textArea = document.createElement("pre");
 		textArea.id = "baseInfoText";
@@ -18648,7 +18652,7 @@ function disp_npcfort() {
 		textArea.style.margin = "2px";
 		dv2.appendChild(textArea);
 		$d(target).appendChild(dv);
-	
+
 		//------------------//
 		// ルート構築モード //
 		//------------------//
@@ -18661,7 +18665,7 @@ function disp_npcfort() {
 		}
 		else{
 			// 51x51モードがある鯖
-	
+
 			if( location.pathname != "/big_map.php" ){
 				if( location.hostname.substr(0,1) == "m" ){
 					dv2.style.top = "54px";
@@ -18689,12 +18693,12 @@ function disp_npcfort() {
 		dv2.style.display = "none";
 		dv2.id = "routeField";
 		$d(target).parentNode.appendChild(dv2);
-	
+
 		ckLabel = document.createElement("span");
 		ckLabel.style.marginLeft = "4px";
 		ckLabel.innerHTML = "<font color=\"blue\"><b>ルート構築ビュー</b></font>";
 		dv2.appendChild(ckLabel);
-	
+
 		dv2 = d_7.createElement("div");
 		dv2.style.position = "absolute";
 		dv2.style.paddingLeft = "4px";
@@ -18752,12 +18756,12 @@ function disp_npcfort() {
 		dv2.style.display = "none";
 		dv2.id = "routeField2";
 		$d(target).parentNode.appendChild(dv2);
-	
+
 		ckLabel = document.createElement("text");
 		ckLabel.id = "routeInfoText";
 		ckLabel.innerHTML = "";
 		dv2.appendChild(ckLabel);
-	
+
 		//-- 全選択ボタン --//
 		var button1 = document.createElement("input");
 		button1.style.position = "absolute";
@@ -18798,7 +18802,7 @@ function disp_npcfort() {
 		button1.id = "routeField5";
 		button1.addEventListener("click", function() {routeSelectButtonClicked()}, true);
 		$d(target).parentNode.appendChild(button1);
-	
+
 		//-- クリアボタン --//
 		button1 = document.createElement("input");
 		button1.style.position = "absolute";
@@ -18839,7 +18843,7 @@ function disp_npcfort() {
 		button1.id = "routeField3";
 		button1.addEventListener("click", function() {routeClearButtonClicked()}, true);
 		$d(target).parentNode.appendChild(button1);
-	
+
 		// インフォメーションエリア
 		dv2 = d_7.createElement("div");
 		dv2.style.position = "absolute";
@@ -18862,14 +18866,14 @@ function disp_npcfort() {
 		dv2.id = "route_info";
 		dv2.innerHTML = '';
 		$d(target).parentNode.appendChild(dv2);
-	
+
 		//--------------//
 		// メニュー制御 //
 		//--------------//
 		menu2Clicked();
 		menu4Clicked();
 	}
-	
+
 	//----------------//
 	// ルート構築処理 //
 	//----------------//
@@ -18879,7 +18883,7 @@ function disp_npcfort() {
 		var checkBox2 = $e_7('//*[@id="ckRouteMode2"]');
 		var checkBox3 = $e_7('//*[@id="ckAutoRouteMode"]');
 		var baseText = $e_7('//*[@id="routeInfoText"]');
-	
+
 		//------------------//
 		// 画面サイズの取得 //
 		//------------------//
@@ -18891,12 +18895,12 @@ function disp_npcfort() {
 			if( checkBox.snapshotItem(0).checked == true ){
 				// ルート構築モード
 				enf = false;
-	
+
 				if( viewSize == 51 ){
 					// 51x51モードの場合、他とは違う処理をする
 					var elem;
 					var elemhtml = "";
-	
+
 					// マウス直下の情報を取得
 					var el = document.elementFromPoint(e.clientX, e.clientY);
 					if( el != undefined ){
@@ -18911,63 +18915,63 @@ function disp_npcfort() {
 						}
 						elemhtml = elem.innerHTML;
 					}
-	
+
 					// 自動構築モードがOFF
 					if( checkBox3.snapshotItem(0).checked == false ){
 						alert("51x51画面では、自動ルート構築のみ実施可能です。\n自動ルート構築をチェックしてください。");
-	
+
 						return;
 					}
-	
+
 					var list2 = elemhtml.match(/x=([-]*\d+)&amp;y=([-]*\d+)#/);
 					if( (list2 != null) && (list2 != undefined) ){
 						// クリックタイミングにより取れない場合は飛ばすため
-	
+
 						if( (autoroute == AUTO_ROUTE_EDIT_LAST) && (autoroute_f[0] == list2[1]) && (autoroute_f[1] == list2[2]) ){
 							// 終点＝始点の場合、経路情報を削除し、モードを戻す
-	
+
 							// 経路情報を消す
 							getNPCCastleInfo_51(1);
-	
+
 							// モードを戻す
 							autoroute = AUTO_ROUTE_EDIT_FIRST;
-	
+
 							// インフォメーションの更新
 							autoRouteInfo();
 						}
 						else if( (autoroute == AUTO_ROUTE_EDIT_END) && (autoroute_l[0] == list2[1]) && (autoroute_l[1] == list2[2]) ){
 							// 終了後に終点クリックの場合、始点以外を削除し、モードを戻す
-	
+
 							// 経路情報を消す
 							getNPCCastleInfo_51(1);
-	
+
 							// ルートテキストをクリア
 							baseText.snapshotItem(0).innerHTML = "";
-	
+
 							// モードを戻す
 							autoroute = AUTO_ROUTE_EDIT_LAST;
-	
+
 							// インフォメーションの更新
 							autoRouteInfo();
 						}
 						else{
 							var newhtml;
 							var vtext;
-	
+
 							var data = elemhtml.match(/<font.*>(.*)<\/font>/);
-	
+
 							// 座標の登録
 							if( autoroute == AUTO_ROUTE_EDIT_FIRST ){
 								autoroute_f[0] = list2[1];
 								autoroute_f[1] = list2[2];
 								autoroute_f[2] = data[1];
-	
+
 								// 表示テキスト
 								vtext = "S";
-	
+
 								// モード変更
 								autoroute = AUTO_ROUTE_EDIT_LAST;
-	
+
 								// インフォメーションの更新
 								autoRouteInfo();
 							}
@@ -18975,17 +18979,17 @@ function disp_npcfort() {
 								autoroute_l[0] = list2[1];
 								autoroute_l[1] = list2[2];
 								autoroute_l[2] = data[1];
-	
+
 								// 表示テキスト
 								vtext = "E";
-	
+
 								// モード変更
 								autoroute = AUTO_ROUTE_EDIT_END;
-	
+
 								// インフォメーションの更新
 								autoRouteInfo();
 							}
-	
+
 							// テキスト設定
 							if( elemhtml.indexOf("<b>") >= 0 ){
 								newhtml = elemhtml.replace(/<b>.*<\/b>/,"<font style=\"text-shadow: -1px -1px 0 #FFF, 1px -1px 0 #FFF, -1px 1px 0 #FFF, 1px 1px 0 #FFF; color:red; border-style: solid; border-color: cyan; background-color:cyan;\">" + vtext + "</font>");
@@ -18993,30 +18997,30 @@ function disp_npcfort() {
 							else{
 								newhtml = elemhtml.replace(/<font.*>.*<\/font>/,"<font style=\"text-shadow: -1px -1px 0 #FFF, 1px -1px 0 #FFF, -1px 1px 0 #FFF, 1px 1px 0 #FFF; border-style: solid; border-color: cyan; color:red; background-color:cyan;\">" + vtext + "</font>");
 							}
-	
+
 							// マークを画面上に表示
 							elem.innerHTML = newhtml;
-	
+
 							if( autoroute == AUTO_ROUTE_EDIT_END ){
 								// 始点、終点の設定がおわった
-	
+
 								// ルート構築チェック(引数"1"はルートチェック)
 								if( makeAutoRoute_51("1") == false ){
 									alert("目的地に到達するルートには到達できません。条件を見直してください。");
-	
+
 									// 経路情報を消す
 									getNPCCastleInfo_51(1);
-	
+
 									// モードを戻す
 									autoroute = AUTO_ROUTE_EDIT_LAST;
-	
+
 									// インフォメーションの更新
 									autoRouteInfo();
-	
+
 									return;
 								}
-	
-	
+
+
 								// 確認
 								if( window.confirm("この座標からルートを構築します") ){
 									// ルート構築
@@ -19025,17 +19029,17 @@ function disp_npcfort() {
 								else{
 									// 経路情報を消す
 									getNPCCastleInfo_51(1);
-	
+
 									// モードを戻す
 									autoroute = AUTO_ROUTE_EDIT_LAST;
-	
+
 									// インフォメーションの更新
 									autoRouteInfo();
 								}
 							}
 						}
 					}
-	
+
 					// コンテキストメニュー制御
 					var body = $e_7('//body');
 					if( body.snapshotLength > 0 ){
@@ -19046,10 +19050,10 @@ function disp_npcfort() {
 							body.snapshotItem(0).setAttribute("onContextmenu","return true;");
 						}
 					}
-	
+
 					return;
 				}
-	
+
 				//---------------------------------//
 				// 51x51モードでないルート構築処理 //
 				//---------------------------------//
@@ -19058,7 +19062,7 @@ function disp_npcfort() {
 					//----------------//
 					// 手動ルート構築 //
 					//----------------//
-	
+
 					var obj = $e_7('//*[@id="x_y"]');
 					var obj2 = $e_7('//*[@id="power"]');
 					var obj3 = $e_7('//*[@id="material"]');
@@ -19072,20 +19076,20 @@ function disp_npcfort() {
 						var list2 = data.match(/^.([-]*\d+),([-]*\d+)/);
 						if( list2 != null ){
 							// クリックタイミングにより取れない場合は飛ばすため
-	
+
 							//----------------------//
 							// クリックデータの処理 //
 							//----------------------//
 							// ルート構築テキストの取得
 							var text = baseText.snapshotItem(0).innerHTML;
-	
+
 							// areaデータを取ってみる
 							var area_pos = $x_7("//map[@id=\"mapOverlayMap\"]//area[@href=\"land.php?x=" + list2[1] + "&y=" + list2[2] + "#ptop\"]");
 							if( area_pos == null ){
 								area_pos = $x_7("//map[@id=\"mapOverlayMap\"]//area[@href=\"land.php?x=" + list2[1] + "&y=" + list2[2] + "\"]");
 							}
 							var list3 = area_pos.getAttribute("onmouseover").match(/'(\d+)px', '(\d+)px/);
-	
+
 							// すでに画像が登録されてるか調べる
 							var ex = $e_7('//*[@id="' + list2[1] + '_' + list2[2] + '"]');
 							if( ex.snapshotLength > 0 ){
@@ -19093,7 +19097,7 @@ function disp_npcfort() {
 								var ex2 = $x_7('//*[@id="' + list2[1] + '_' + list2[2] + '"]');
 								var ex2_p = ex2.parentNode;
 								ex2_p.removeChild(ex2);
-	
+
 								var fp = text.indexOf(list2[0]);
 								var ep = text.indexOf("<br>",fp);
 								if( ep == -1 ){
@@ -19108,7 +19112,7 @@ function disp_npcfort() {
 									text = text.substr(0,fp) + text.substr(ep+4);
 								}
 								baseText.snapshotItem(0).innerHTML = text;
-	
+
 								// ルートチェックの再実行
 								routeCheckButtonClicked();
 							}
@@ -19122,7 +19126,7 @@ function disp_npcfort() {
 									landLevel = stars.length;
 									list = data3.match(/Forest (\d+) Clay (\d+) Iron (\d+) Crop (\d+)/);
 								}
-	
+
 								// 直前のルートからの距離を求める
 								var errf = false;
 								if( text != "" ){
@@ -19135,7 +19139,7 @@ function disp_npcfort() {
 									else{
 										pos = text.match(/^\(([-]*\d+),([-]*\d+)/);
 									}
-	
+
 									var dx = Math.abs(parseInt(pos[1]) - parseInt(list2[1]));
 									var dy = Math.abs(parseInt(pos[2]) - parseInt(list2[2]));
 									if( (dx >= 2) || (dy >= 2) || (p2 != -1) ){
@@ -19143,7 +19147,7 @@ function disp_npcfort() {
 										errf = true;
 									}
 								}
-	
+
 								// テキストの更新
 								if( text != "" ){
 									text = text + "<br>";
@@ -19173,14 +19177,14 @@ function disp_npcfort() {
 									text = text + '<b><font color="red">×</font></b>';
 								}
 								baseText.snapshotItem(0).innerHTML = text;
-	
+
 								// クリックしたポイントに画像を埋め込む
 								var img = d_7.createElement("img");
 								img.style.position = "absolute";
-	
+
 								img.style.left = list3[1] + "px";
 								img.style.top = list3[2] + "px";
-	
+
 								// アイコンの決定
 								if( errf == false ){
 									img.src = ricon;
@@ -19188,7 +19192,7 @@ function disp_npcfort() {
 								else{
 									img.src = ricon_e;
 								}
-	
+
 								if( viewSize == 15 ){
 									img.style.width = "44px";
 									img.style.height = "44px";
@@ -19205,7 +19209,7 @@ function disp_npcfort() {
 								img.name = "routeIcon";
 								img.id = list2[1] + "_" + list2[2];	// 座標をイメージのIDにする
 								rollover.parentNode.insertBefore(img, rollover.nextSibling);
-	
+
 								// スクロールバーを最下段に移動する
 								baseText.snapshotItem(0).parentNode.scrollTop = baseText.snapshotItem(0).parentNode.scrollHeight;
 							}
@@ -19223,7 +19227,7 @@ function disp_npcfort() {
 						var list2 = data.match(/^.([-]*\d+),([-]*\d+)/);
 						if( (list2 != null) && (list2 != undefined) ){
 							// クリックタイミングにより取れない場合は飛ばすため
-	
+
 							//----------------------//
 							// クリックデータの処理 //
 							//----------------------//
@@ -19233,27 +19237,27 @@ function disp_npcfort() {
 								area_pos = $x_7("//map[@id=\"mapOverlayMap\"]//area[@href=\"land.php?x=" + list2[1] + "&y=" + list2[2] + "\"]");
 							}
 							var list3 = area_pos.getAttribute("onmouseover").match(/'(\d+)px', '(\d+)px/);
-	
+
 							var ex = $e_7('//*[@id="' + list2[1] + '_' + list2[2] + '"]');
 							if( (autoroute == AUTO_ROUTE_EDIT_LAST) && (ex.snapshotLength > 0)
 								&& (autoroute_f[0] == list2[1]) && (autoroute_f[1] == list2[2]) ){
 								// 終点＝始点の場合、登録済み画像を削除し、モードを戻す
-	
+
 								// 画像がいたら消す
 								var ex2 = $x_7('//*[@id="' + list2[1] + '_' + list2[2] + '"]');
 								var ex2_p = ex2.parentNode;
 								ex2_p.removeChild(ex2);
-	
+
 								// モードを戻す
 								autoroute = AUTO_ROUTE_EDIT_FIRST;
-	
+
 								// インフォメーションの更新
 								autoRouteInfo();
 							}
 							else if( (autoroute == AUTO_ROUTE_EDIT_END) && (ex.snapshotLength > 0)
 								&& (autoroute_l[0] == list2[1]) && (autoroute_l[1] == list2[2]) ){
 								// 終了後に終点クリックの場合、始点以外を削除し、モードを戻す
-	
+
 								// 始点以外の画像を全部消す
 								var en = $e_7('//*[@name="routeIcon"]');
 								if( en.snapshotLength > 0 ){
@@ -19265,13 +19269,13 @@ function disp_npcfort() {
 										}
 									}
 								}
-	
+
 								// ルートテキストをクリア
 								baseText.snapshotItem(0).innerHTML = "";
-	
+
 								// モードを戻す
 								autoroute = AUTO_ROUTE_EDIT_LAST;
-	
+
 								// インフォメーションの更新
 								autoRouteInfo();
 							}
@@ -19279,10 +19283,10 @@ function disp_npcfort() {
 								// クリックしたポイントに画像を埋め込む
 								var img = d_7.createElement("img");
 								img.style.position = "absolute";
-	
+
 								img.style.left = list3[1] + "px";
 								img.style.top = list3[2] + "px";
-	
+
 								// アイコンの決定
 								if( autoroute == AUTO_ROUTE_EDIT_FIRST ){
 									img.src = ricon_f;
@@ -19290,7 +19294,7 @@ function disp_npcfort() {
 								else if( autoroute == AUTO_ROUTE_EDIT_LAST ){
 									img.src = ricon_l;
 								}
-	
+
 								if( viewSize == 15 ){
 									img.style.width = "44px";
 									img.style.height = "44px";
@@ -19307,47 +19311,47 @@ function disp_npcfort() {
 								img.name = "routeIcon";
 								img.id = list2[1] + "_" + list2[2];	// 座標をイメージのIDにする
 								rollover.parentNode.insertBefore(img, rollover.nextSibling);
-	
+
 								// 座標の登録
 								if( autoroute == AUTO_ROUTE_EDIT_FIRST ){
 									autoroute_f[0] = list2[1];
 									autoroute_f[1] = list2[2];
-	
+
 									// モード変更
 									autoroute = AUTO_ROUTE_EDIT_LAST;
-	
+
 									// インフォメーションの更新
 									autoRouteInfo();
 								}
 								else if( autoroute == AUTO_ROUTE_EDIT_LAST ){
 									autoroute_l[0] = list2[1];
 									autoroute_l[1] = list2[2];
-	
+
 									// モード変更
 									autoroute = AUTO_ROUTE_EDIT_END;
-	
+
 									// インフォメーションの更新
 									autoRouteInfo();
-	
+
 									// ルート構築チェック(引数"1"はルートチェック)
 									if( makeAutoRoute("1") == false ){
 										alert("目的地に到達するルートには到達できません。条件を見直してください。");
-	
+
 										// 画像の削除とモードの戻し
 										var ex2 = $x_7('//*[@id="' + list2[1] + '_' + list2[2] + '"]');
 										var ex2_p = ex2.parentNode;
 										ex2_p.removeChild(ex2);
-	
+
 										// モードを戻す
 										autoroute = AUTO_ROUTE_EDIT_LAST;
-	
+
 										// インフォメーションの更新
 										autoRouteInfo();
-	
+
 										return;
 									}
-	
-	
+
+
 									// 確認
 									if( window.confirm("この座標からルートを構築します") ){
 										// ルート構築
@@ -19358,10 +19362,10 @@ function disp_npcfort() {
 										var ex2 = $x_7('//*[@id="' + list2[1] + '_' + list2[2] + '"]');
 										var ex2_p = ex2.parentNode;
 										ex2_p.removeChild(ex2);
-	
+
 										// モードを戻す
 										autoroute = AUTO_ROUTE_EDIT_LAST;
-	
+
 										// インフォメーションの更新
 										autoRouteInfo();
 									}
@@ -19372,7 +19376,7 @@ function disp_npcfort() {
 				}
 			}
 		}
-	
+
 		// コンテキストメニュー制御
 		var body = $e_7('//body');
 		if( body.snapshotLength > 0 ){
@@ -19384,15 +19388,15 @@ function disp_npcfort() {
 			}
 		}
 	}
-	
+
 	//--------------//
 	// リロード処理 //
 	//--------------//
 	function reloadNext(){
-	
+
 		// マップに埋め込んだマーク画像を全部消す
 		var rollover = $d("rollover");
-	
+
 		// すでに画像が登録されてるか調べる
 		var en = $e_7('//*[@name="viewIcon"]');
 		if( en.snapshotLength > 0 ){
@@ -19403,7 +19407,7 @@ function disp_npcfort() {
 				ex_p.removeChild(ex);
 			}
 		}
-	
+
 		en = $e_7('//*[@name="atkIcon"]');
 		if( en.snapshotLength > 0 ){
 			// 画像がいたら消す
@@ -19413,7 +19417,7 @@ function disp_npcfort() {
 				ex_p.removeChild(ex);
 			}
 		}
-	
+
 		en = $e_7('//*[@id="icon_east"]');
 		if( en.snapshotLength > 0 ){
 			// 画像がいたら消す
@@ -19442,7 +19446,7 @@ function disp_npcfort() {
 			var ex_p = ex.parentNode;
 			ex_p.removeChild(ex);
 		}
-	
+
 		// 画面更新
 		if( getViewSize() != 51 ){
 			getNPCCastleInfo();
@@ -19451,7 +19455,7 @@ function disp_npcfort() {
 			getNPCCastleInfo_51(0);		// 0:通常再描画
 		}
 	}
-	
+
 	//------------------------//
 	// 更新ボタン押下処理処理 //
 	//------------------------//
@@ -19460,7 +19464,7 @@ function disp_npcfort() {
 		var userbox;
 		var listbox;
 		var colorNo;
-	
+
 		//--------------------------------------//
 		// チェックボックスに関する情報をロード //
 		//--------------------------------------//
@@ -19476,7 +19480,7 @@ function disp_npcfort() {
 			else{
 				chkflg1 = execFlag1;
 			}
-	
+
 			// オプションフラグをロード
 			var execFlag2 = loadExecFlag(location.hostname, "FLAG2");
 			if( execFlag2 == "" ){
@@ -19485,7 +19489,7 @@ function disp_npcfort() {
 			else{
 				chkflg2 = execFlag2;
 			}
-	
+
 			// 初回のときは、フラグを保存
 			execFlag = chkflg1 + DELIMIT1_7 + chkflg2;
 			saveExecFlag(location.hostname, "FLAG0", execFlag);
@@ -19496,7 +19500,7 @@ function disp_npcfort() {
 			chkflg1 = loadflg[0];
 			chkflg2 = loadflg[1];
 		}
-	
+
 		// 個人、同盟検索情報をロード
 		var chkflg3 = new Array();
 		var execFlag = loadExecFlag(location.hostname, "FLAG3");
@@ -19522,7 +19526,7 @@ function disp_npcfort() {
 			else{
 				chkflg3[2] = execFlag3;
 			}
-	
+
 			// 初回のときは、フラグを保存
 			execFlag = chkflg3[0] + DELIMIT1_7 + chkflg3[1] + DELIMIT1_7 + chkflg3[2];
 			saveExecFlag(location.hostname, "FLAG3", execFlag);
@@ -19530,12 +19534,12 @@ function disp_npcfort() {
 		else{
 			chkflg3 = execFlag.split(DELIMIT1_7);
 		}
-	
+
 		var chkflg4;
 		execFlag = loadExecFlag(location.hostname, "FLAG4");
 		if( execFlag == "" ){
 			chkflg4 = new String(FLAG4);  // 初期値
-	
+
 			// 初回のときは、フラグを保存
 			execFlag = chkflg4;
 			saveExecFlag(location.hostname, "FLAG4", execFlag);
@@ -19543,109 +19547,109 @@ function disp_npcfort() {
 		else{
 			chkflg4 = execFlag;
 		}
-	
+
 		//--------------------//
 		// 空き地検索チェック //
 		//--------------------//
 		checkBox = $e_7('//*[@id="ckEmpty"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg2 = '0' + chkflg2.substr(1);
 		}
 		else{
 			chkflg2 = '1' + chkflg2.substr(1);
 		}
-	
+
 		//------------------//
 		// 領土検索チェック //
 		//------------------//
 		checkBox = $e_7('//*[@id="ckLand"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg2 = chkflg2.substr(0,1) + '0' + chkflg2.substr(2);
 		}
 		else{
 			chkflg2 = chkflg2.substr(0,1) + '1' + chkflg2.substr(2);
 		}
-	
+
 		//------------------//
 		// 資源表示チェック //
 		//------------------//
 		checkBox = $e_7('//*[@id="ckAnalyze"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg2 = chkflg2.substr(0,2) + '0' + chkflg2.substr(3);
 		}
 		else{
 			chkflg2 = chkflg2.substr(0,2) + '1' + chkflg2.substr(3);
 		}
-	
+
 		//----------------------//
 		// レーダー表示チェック //
 		//----------------------//
 		checkBox = $e_7('//*[@id="ckRader"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg2 = chkflg2.substr(0,3) + '0' + chkflg2.substr(4);
 		}
 		else{
 			chkflg2 = chkflg2.substr(0,3) + '1' + chkflg2.substr(4);
 		}
-	
+
 		//------------------------//
 		// 本拠地一覧表示チェック //
 		//------------------------//
 		checkBox = $e_7('//*[@id="ckOwnerList"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg2 = chkflg2.substr(0,4) + '0' + chkflg2.substr(5);
 		}
 		else{
 			chkflg2 = chkflg2.substr(0,4) + '1' + chkflg2.substr(5);
 		}
-	
+
 		//--------------------//
 		// 空き地着色チェック //
 		//--------------------//
 		checkBox = $e_7('//*[@id="ckEmptyDraw"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg2 = chkflg2.substr(0,5) + '0' + chkflg2.substr(6);
 		}
 		else{
 			chkflg2 = chkflg2.substr(0,5) + '1' + chkflg2.substr(6);
 		}
-	
+
 		// 枠色
 		listBox = $e_7('//*[@id="lsEmptyColor"]');
 		colorNo = listBox.snapshotItem(0).selectedIndex;
 		chkflg2 = chkflg2.substr(0,6) + colorNo + chkflg2.substr(7);
-	
+
 		//--------------//
 		// 強調表示指定 //
 		//--------------//
 		checkBox = $e_7('//*[@id="ckEmptyDraw"]');
-	
+
 		// 選択領土１
 		listBox = $e_7('//*[@id="lsArea"]');
 		areaNo = listBox.snapshotItem(0).selectedIndex;
 		chkflg2 = chkflg2.substr(0,7) + formatRightNumber(areaNo,3) + chkflg2.substr(10);
-	
+
 		// 選択領土２
 		listBox = $e_7('//*[@id="lsArea2"]');
 		areaNo = listBox.snapshotItem(0).selectedIndex;
 		chkflg2 = chkflg2.substr(0,10) + formatRightNumber(areaNo,3) + chkflg2.substr(13);
-	
+
 		// 選択領土３
 		listBox = $e_7('//*[@id="lsArea3"]');
 		areaNo = listBox.snapshotItem(0).selectedIndex;
 		chkflg2 = chkflg2.substr(0,13) + formatRightNumber(areaNo,3) + chkflg2.substr(16);
-	
+
 		//----------------------//
 		// メニュー表示チェック //
 		//----------------------//
 		checkBox = $e_7('//*[@id="ckMenu2"]');
-	
+
 		// メニュー２
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg2 = chkflg2.substr(0,16) + '0' + chkflg2.substr(17);
@@ -19653,17 +19657,17 @@ function disp_npcfort() {
 		else{
 			chkflg2 = chkflg2.substr(0,16) + '1' + chkflg2.substr(17);
 		}
-	
+
 		// メニュー４
 		checkBox = $e_7('//*[@id="ckMenu4"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg2 = chkflg2.substr(0,17) + '0' + chkflg2.substr(18);
 		}
 		else{
 			chkflg2 = chkflg2.substr(0,17) + '1' + chkflg2.substr(18);
 		}
-	
+
 		//--------------------------//
 		// ルート自動構築オプション //
 		//--------------------------//
@@ -19672,12 +19676,12 @@ function disp_npcfort() {
 		listBox = $e_7('//*[@id="lsRouteLevel"]');
 		var level = listBox.snapshotItem(0).selectedIndex;
 		chkflg2 = chkflg2.substr(0,19) + level + chkflg2.substr(20);
-	
+
 		// 資源回避レベル
 		listBox = $e_7('//*[@id="lsSkipRes"]');
 		var level = listBox.snapshotItem(0).selectedIndex;
 		chkflg2 = chkflg2.substr(0,20) + level + chkflg2.substr(21);
-	
+
 		// 個人領土回避
 		checkBox = $e_7('//*[@id="ckRouteUser"]');
 		if( checkBox.snapshotItem(0).checked == false ){
@@ -19686,12 +19690,12 @@ function disp_npcfort() {
 		else{
 			chkflg2 = chkflg2.substr(0,21) + '1' + chkflg2.substr(22);
 		}
-	
+
 		// 通過同盟指定
 		listBox = $e_7('//*[@id="lsSkipGroup"]');
 		var level = listBox.snapshotItem(0).selectedIndex;
 		chkflg2 = chkflg2.substr(0,22) + level + chkflg2.substr(23);
-	
+
 		// 可変ルート
 		checkBox = $e_7('//*[@id="ckRouteRandom"]');
 		if( checkBox.snapshotItem(0).checked == false ){
@@ -19700,7 +19704,7 @@ function disp_npcfort() {
 		else{
 			chkflg2 = chkflg2.substr(0,23) + '1' + chkflg2.substr(24);
 		}
-	
+
 		//-- 表示オプション追加 --//
 		// 方位表示
 		checkBox = $e_7('//*[@id="ckDirection"]');
@@ -19710,10 +19714,10 @@ function disp_npcfort() {
 		else{
 			chkflg2 = chkflg2.substr(0,24) + '1' + chkflg2.substr(25);
 		}
-	
+
 		//-- 旧マップモード --//
 		chkflg2 = chkflg2.substr(0,25) + '0' + chkflg2.substr(26);
-	
+
 		//-- 51x51で使わない --//
 		checkBox = $e_7('//*[@id="ckNoExec51"]');
 		if( checkBox.snapshotItem(0).checked == false ){
@@ -19722,132 +19726,132 @@ function disp_npcfort() {
 		else{
 			chkflg2 = chkflg2.substr(0,26) + '1' + chkflg2.substr(27);
 		}
-	
+
 		//---------------//
 		// NPC砦チェック //
 		//---------------//
 		checkBox = $e_7('//*[@id="ckNPC"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg1 = '0' + chkflg1.substr(1);
 		}
 		else{
 			chkflg1 = '1' + chkflg1.substr(1);
 		}
-	
+
 		//---------------//
 		// ☆1砦チェック //
 		//---------------//
 		checkBox = $e_7('//*[@id="ckLevel1"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg1 = chkflg1.substr(0,1) + '0' + chkflg1.substr(2);
 		}
 		else{
 			chkflg1 = chkflg1.substr(0,1) + '1' + chkflg1.substr(2);
 		}
-	
+
 		//---------------//
 		// ☆2砦チェック //
 		//---------------//
 		checkBox = $e_7('//*[@id="ckLevel2"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg1 = chkflg1.substr(0,2) + '0' + chkflg1.substr(3);
 		}
 		else{
 			chkflg1 = chkflg1.substr(0,2) + '1' + chkflg1.substr(3);
 		}
-	
+
 		//---------------//
 		// ☆3砦チェック //
 		//---------------//
 		checkBox = $e_7('//*[@id="ckLevel3"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg1 = chkflg1.substr(0,3) + '0' + chkflg1.substr(4);
 		}
 		else{
 			chkflg1 = chkflg1.substr(0,3) + '1' + chkflg1.substr(4);
 		}
-	
+
 		//---------------//
 		// ☆4砦チェック //
 		//---------------//
 		checkBox = $e_7('//*[@id="ckLevel4"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg1 = chkflg1.substr(0,4) + '0' + chkflg1.substr(5);
 		}
 		else{
 			chkflg1 = chkflg1.substr(0,4) + '1' + chkflg1.substr(5);
 		}
-	
+
 		//---------------//
 		// ☆5砦チェック //
 		//---------------//
 		checkBox = $e_7('//*[@id="ckLevel5"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg1 = chkflg1.substr(0,5) + '0' + chkflg1.substr(6);
 		}
 		else{
 			chkflg1 = chkflg1.substr(0,5) + '1' + chkflg1.substr(6);
 		}
-	
+
 		//---------------//
 		// ☆6砦チェック //
 		//---------------//
 		checkBox = $e_7('//*[@id="ckLevel6"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg1 = chkflg1.substr(0,6) + '0' + chkflg1.substr(7);
 		}
 		else{
 			chkflg1 = chkflg1.substr(0,6) + '1' + chkflg1.substr(7);
 		}
-	
+
 		//---------------//
 		// ☆7砦チェック //
 		//---------------//
 		checkBox = $e_7('//*[@id="ckLevel7"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg1 = chkflg1.substr(0,7) + '0' + chkflg1.substr(8);
 		}
 		else{
 			chkflg1 = chkflg1.substr(0,7) + '1' + chkflg1.substr(8);
 		}
-	
+
 		//---------------//
 		// ☆8砦チェック //
 		//---------------//
 		checkBox = $e_7('//*[@id="ckLevel8"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg1 = chkflg1.substr(0,8) + '0' + chkflg1.substr(9);
 		}
 		else{
 			chkflg1 = chkflg1.substr(0,8) + '1' + chkflg1.substr(9);
 		}
-	
+
 		//---------------//
 		// ☆9砦チェック //
 		//---------------//
 		checkBox = $e_7('//*[@id="ckLevel9"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			chkflg1 = chkflg1.substr(0,9) + '0';
 		}
 		else{
 			chkflg1 = chkflg1.substr(0,9) + '1';
 		}
-	
+
 		//--------------------//
 		// 個人／同盟１の処理 //
 		//--------------------//
 		userBox = $e_7('//*[@id="userBox1"]');
-	
+
 		// 有効/無効
 		checkBox = $e_7('//*[@id="ckEnable1"]');
 		if( checkBox.snapshotItem(0).checked == false ){
@@ -19858,7 +19862,7 @@ function disp_npcfort() {
 			chkflg3[0] = '1' + chkflg3[0].substr(1);
 			userBox.disabled = false;
 		}
-	
+
 		// 個人/同盟
 		checkBox = $e_7('//*[@id="ckType1"]');
 		if( checkBox.snapshotItem(0).checked == true ){
@@ -19869,7 +19873,7 @@ function disp_npcfort() {
 			// 同盟
 			chkflg3[0] = chkflg3[0].substr(0,1) + '01' + chkflg3[0].substr(3);
 		}
-	
+
 		// 完全一致
 		checkBox = $e_7('//*[@id="ckFullMatch1"]');
 		if( checkBox.snapshotItem(0).checked == false ){
@@ -19878,7 +19882,7 @@ function disp_npcfort() {
 		else{
 			chkflg3[0] = chkflg3[0].substr(0,3) + '1' + chkflg3[0].substr(4);
 		}
-	
+
 		// 絞り込み
 		checkBox = $e_7('//*[@id="ckLevelSearch1"]');
 		if( checkBox.snapshotItem(0).checked == false ){
@@ -19887,20 +19891,20 @@ function disp_npcfort() {
 		else{
 			chkflg3[0] = chkflg3[0].substr(0,4) + '1' + chkflg3[0].substr(5);
 		}
-	
+
 		// ユーザー名を更新
 		chkflg3[0] = chkflg3[0].substr(0,FLAG3_NAME) + userBox.snapshotItem(0).value;
-	
+
 		// 枠色
 		listBox = $e_7('//*[@id="lsColor1"]');
 		colorNo = listBox.snapshotItem(0).selectedIndex;
 		chkflg3[0] = chkflg3[0].substr(0,5) + colorNo + chkflg3[0].substr(6);
-	
+
 		//--------------------//
 		// 個人／同盟２の処理 //
 		//--------------------//
 		userBox = $e_7('//*[@id="userBox2"]');
-	
+
 		// 有効/無効
 		checkBox = $e_7('//*[@id="ckEnable2"]');
 		if( checkBox.snapshotItem(0).checked == false ){
@@ -19911,7 +19915,7 @@ function disp_npcfort() {
 			chkflg3[1] = '1' + chkflg3[1].substr(1);
 			userBox.disabled = false;
 		}
-	
+
 		// 個人/同盟
 		checkBox = $e_7('//*[@id="ckType2"]');
 		if( checkBox.snapshotItem(0).checked == true ){
@@ -19922,7 +19926,7 @@ function disp_npcfort() {
 			// 同盟
 			chkflg3[1] = chkflg3[1].substr(0,1) + '01' + chkflg3[1].substr(3);
 		}
-	
+
 		// 完全一致
 		checkBox = $e_7('//*[@id="ckFullMatch2"]');
 		if( checkBox.snapshotItem(0).checked == false ){
@@ -19931,7 +19935,7 @@ function disp_npcfort() {
 		else{
 			chkflg3[1] = chkflg3[1].substr(0,3) + '1' + chkflg3[1].substr(4);
 		}
-	
+
 		// 絞り込み
 		checkBox = $e_7('//*[@id="ckLevelSearch2"]');
 		if( checkBox.snapshotItem(0).checked == false ){
@@ -19940,20 +19944,20 @@ function disp_npcfort() {
 		else{
 			chkflg3[1] = chkflg3[1].substr(0,4) + '1' + chkflg3[1].substr(5);
 		}
-	
+
 		// ユーザー名を更新
 		chkflg3[1] = chkflg3[1].substr(0,FLAG3_NAME) + userBox.snapshotItem(0).value;
-	
+
 		// 枠色
 		listBox = $e_7('//*[@id="lsColor2"]');
 		colorNo = listBox.snapshotItem(0).selectedIndex;
 		chkflg3[1] = chkflg3[1].substr(0,5) + colorNo + chkflg3[1].substr(6);
-	
+
 		//--------------------//
 		// 個人／同盟３の処理 //
 		//--------------------//
 		userBox = $e_7('//*[@id="userBox3"]');
-	
+
 		// 有効/無効
 		checkBox = $e_7('//*[@id="ckEnable3"]');
 		if( checkBox.snapshotItem(0).checked == false ){
@@ -19964,7 +19968,7 @@ function disp_npcfort() {
 			chkflg3[2] = '1' + chkflg3[2].substr(1);
 			userBox.disabled = false;
 		}
-	
+
 		// 個人/同盟
 		checkBox = $e_7('//*[@id="ckType3"]');
 		if( checkBox.snapshotItem(0).checked == true ){
@@ -19975,7 +19979,7 @@ function disp_npcfort() {
 			// 同盟
 			chkflg3[2] = chkflg3[2].substr(0,1) + '01' + chkflg3[2].substr(3);
 		}
-	
+
 		// 完全一致
 		checkBox = $e_7('//*[@id="ckFullMatch3"]');
 		if( checkBox.snapshotItem(0).checked == false ){
@@ -19984,7 +19988,7 @@ function disp_npcfort() {
 		else{
 			chkflg3[2] = chkflg3[2].substr(0,3) + '1' + chkflg3[2].substr(4);
 		}
-	
+
 		// 絞り込み
 		checkBox = $e_7('//*[@id="ckLevelSearch3"]');
 		if( checkBox.snapshotItem(0).checked == false ){
@@ -19993,20 +19997,20 @@ function disp_npcfort() {
 		else{
 			chkflg3[2] = chkflg3[2].substr(0,4) + '1' + chkflg3[2].substr(5);
 		}
-	
+
 		// ユーザー名を更新
 		chkflg3[2] = chkflg3[2].substr(0,FLAG3_NAME) + userBox.snapshotItem(0).value;
-	
+
 		// 枠色
 		listBox = $e_7('//*[@id="lsColor3"]');
 		colorNo = listBox.snapshotItem(0).selectedIndex;
 		chkflg3[2] = chkflg3[2].substr(0,5) + colorNo + chkflg3[2].substr(6);
-	
+
 		//----------------------//
 		// スプレッド連携の処理 //
 		//----------------------//
 		userBox = $e_7('//*[@id="userBox4"]');
-	
+
 		// 有効/無効
 		checkBox = $e_7('//*[@id="ckUnion"]');
 		if( checkBox.snapshotItem(0).checked == false ){
@@ -20017,10 +20021,10 @@ function disp_npcfort() {
 			chkflg4 = '1' + chkflg4.substr(1);
 			userBox.disabled = false;
 		}
-	
+
 		// ユーザー名を更新
 		chkflg4 = chkflg4.substr(0,1) + userBox.snapshotItem(0).value;
-	
+
 		//----------------------//
 		// 更新したフラグを保存 //
 		//----------------------//
@@ -20029,18 +20033,18 @@ function disp_npcfort() {
 		execFlag = chkflg3[0] + DELIMIT1_7 + chkflg3[1] + DELIMIT1_7 + chkflg3[2];
 		saveExecFlag(location.hostname, "FLAG3", execFlag);
 		saveExecFlag(location.hostname, "FLAG4", chkflg4);
-	
+
 		//----------//
 		// リロード //
 		//----------//
 		reloadNext();
 	}
-	
+
 	//------------------------------//
 	// ★のチェックを付ける押下処理 //
 	//------------------------------//
 	function checkButtonClicked() {
-	
+
 		// チェックボックスのチェックを外す //
 		var checkBox1 = $e_7('//*[@id="ckLevel1"]');
 		var checkBox2 = $e_7('//*[@id="ckLevel2"]');
@@ -20051,7 +20055,7 @@ function disp_npcfort() {
 		var checkBox7 = $e_7('//*[@id="ckLevel7"]');
 		var checkBox8 = $e_7('//*[@id="ckLevel8"]');
 		var checkBox9 = $e_7('//*[@id="ckLevel9"]');
-	
+
 		checkBox1.snapshotItem(0).checked = true;
 		checkBox2.snapshotItem(0).checked = true;
 		checkBox3.snapshotItem(0).checked = true;
@@ -20062,12 +20066,12 @@ function disp_npcfort() {
 		checkBox8.snapshotItem(0).checked = true;
 		checkBox9.snapshotItem(0).checked = true;
 	}
-	
+
 	//----------------------------//
 	// ★のチェックを外す押下処理 //
 	//----------------------------//
 	function uncheckButtonClicked() {
-	
+
 		// チェックボックスのチェックを外す //
 		var checkBox1 = $e_7('//*[@id="ckLevel1"]');
 		var checkBox2 = $e_7('//*[@id="ckLevel2"]');
@@ -20078,7 +20082,7 @@ function disp_npcfort() {
 		var checkBox7 = $e_7('//*[@id="ckLevel7"]');
 		var checkBox8 = $e_7('//*[@id="ckLevel8"]');
 		var checkBox9 = $e_7('//*[@id="ckLevel9"]');
-	
+
 		checkBox1.snapshotItem(0).checked = false;
 		checkBox2.snapshotItem(0).checked = false;
 		checkBox3.snapshotItem(0).checked = false;
@@ -20089,15 +20093,15 @@ function disp_npcfort() {
 		checkBox8.snapshotItem(0).checked = false;
 		checkBox9.snapshotItem(0).checked = false;
 	}
-	
+
 	//----------------------------------//
 	// 有効チェックボックスチェック処理 //
 	//----------------------------------//
 	function enable1Checked() {
-	
+
 		var userBox = $e_7('//*[@id="userBox1"]');
 		var checkBox = $e_7('//*[@id="ckEnable1"]');
-	
+
 		// ユーザー指定のフラグを反転
 		if( checkBox.snapshotItem(0).checked == false ){
 			userBox.snapshotItem(0).disabled = true;
@@ -20106,12 +20110,12 @@ function disp_npcfort() {
 			userBox.snapshotItem(0).disabled = false;
 		}
 	}
-	
+
 	function enable2Checked() {
-	
+
 		var userBox = $e_7('//*[@id="userBox2"]');
 		var checkBox = $e_7('//*[@id="ckEnable2"]');
-	
+
 		// ユーザー指定のフラグを反転
 		if( checkBox.snapshotItem(0).checked == false ){
 			userBox.snapshotItem(0).disabled = true;
@@ -20120,12 +20124,12 @@ function disp_npcfort() {
 			userBox.snapshotItem(0).disabled = false;
 		}
 	}
-	
+
 	function enable3Checked() {
-	
+
 		var userBox = $e_7('//*[@id="userBox3"]');
 		var checkBox = $e_7('//*[@id="ckEnable3"]');
-	
+
 		// ユーザー指定のフラグを反転
 		if( checkBox.snapshotItem(0).checked == false ){
 			userBox.snapshotItem(0).disabled = true;
@@ -20134,7 +20138,7 @@ function disp_npcfort() {
 			userBox.snapshotItem(0).disabled = false;
 		}
 	}
-	
+
 	//------------------//
 	// ルート構築モード //
 	//------------------//
@@ -20146,7 +20150,7 @@ function disp_npcfort() {
 		var routeField3 = $e_7('//*[@id="routeField3"]');
 		var routeField5 = $e_7('//*[@id="routeField5"]');
 		var baseField = $e_7('//*[@id="baseField"]');
-	
+
 		// ユーザー指定のフラグを反転
 		if( checkBox.snapshotItem(0).checked == false ){
 			if( baseField.snapshotLength > 0 ){
@@ -20156,7 +20160,7 @@ function disp_npcfort() {
 			routeField2.snapshotItem(0).style.display = "none";
 			routeField3.snapshotItem(0).style.display = "none";
 			routeField5.snapshotItem(0).style.display = "none";
-	
+
 			// メニュー解除されたらクリアボタンクリックを実行
 			routeClearButtonClicked()
 		}
@@ -20168,25 +20172,25 @@ function disp_npcfort() {
 			routeField2.snapshotItem(0).style.display = "inline";
 			routeField3.snapshotItem(0).style.display = "inline";
 			routeField5.snapshotItem(0).style.display = "inline";
-	
+
 			if( checkBox2.snapshotItem(0).checked == true ){
 				// 自動構築モードがすでにチェックされてたら警告処理
 				autoRouteModeChecked();
 			}
 		}
-	
+
 		// インフォメーションの更新
 		autoRouteInfo();
 	}
-	
+
 	//----------------------//
 	// 自動ルート構築モード //
 	//----------------------//
 	function autoRouteModeChecked() {
-	
+
 		var checkBox = $e_7('//*[@id="ckRouteMode"]');
 		var checkBox2 = $e_7('//*[@id="ckAutoRouteMode"]');
-	
+
 		// 自動構築のチェック
 		if( (checkBox.snapshotItem(0).checked == true) && (checkBox2.snapshotItem(0).checked == true) ){
 			if( window.confirm("作成中のルートが破棄されますがよろしいですか？") ){
@@ -20203,24 +20207,24 @@ function disp_npcfort() {
 			autoroute = AUTO_ROUTE_NONE;
 			routeClearButtonClicked();
 		}
-	
+
 		// インフォメーションの更新
 		autoRouteInfo();
 	}
-	
+
 	//------------------------------------------//
 	// 自動ルート構築モードの指示メッセージ表示 //
 	//------------------------------------------//
 	function autoRouteInfo(){
 		var routeField = $e_7('//*[@id="route_info"]');
 		var checkBox = $e_7('//*[@id="ckRouteMode"]');
-	
+
 		if( checkBox.snapshotItem(0).checked == false ){
 			// ルート構築モードがオフのときはメッセージをださない
 			routeField.snapshotItem(0).innerHTML = '';
 			return;
 		}
-	
+
 		if( location.pathname != "/big_map.php" ){
 			if( autoroute == AUTO_ROUTE_EDIT_FIRST ){
 				routeField.snapshotItem(0).innerHTML = '<font color="red"><b>ルート起点を<br>右クリックして下さい</b></font>';
@@ -20250,17 +20254,17 @@ function disp_npcfort() {
 			}
 		}
 	}
-	
+
 	//--------------------//
 	// ルート全選択ボタン //
 	//--------------------//
 	function routeSelectButtonClicked() {
 		// 構築ルート情報の選択
 		var routeText = $x_7('//*[@id="routeInfoText"]');
-	
+
 		var objs = routeText.firstChild;
 		var obje = routeText.lastChild;
-	
+
 		var range = document.createRange();
 		range.setStart(objs,0);
 		range.setEnd(obje,obje.textContent.length);
@@ -20268,36 +20272,36 @@ function disp_npcfort() {
 		sel.removeAllRanges();
 		sel.addRange(range);
 	}
-	
+
 	//--------------------//
 	// ルートクリアボタン //
 	//--------------------//
 	function routeClearButtonClicked() {
 		var routeText = $e_7('//*[@id="routeInfoText"]');
 		var checkBox = $e_7('//*[@id="ckAutoRouteMode"]');
-	
+
 		if( location.pathname == "/big_map.php" ){
 			// 51x51画面では対象座標再描画で対応
 			autoroute = AUTO_ROUTE_NONE;
-	
+
 			getNPCCastleInfo_51(1);
-	
+
 			routeText.snapshotItem(0).innerHTML = "";
-	
+
 			// ルート自動構築中ならフラグを初期化
 			if( checkBox.snapshotItem(0).checked == true ){
 				autoroute = AUTO_ROUTE_EDIT_FIRST;
 			}
-	
+
 			return;
 		}
-	
+
 		// 構築ルート情報のクリア
 		routeText.snapshotItem(0).innerHTML = "";
-	
+
 		// マップに埋め込んだマーク画像を全部消す
 		var rollover = $d("rollover");
-	
+
 		// すでに画像が登録されてるか調べる
 		var en = $e_7('//*[@name="routeIcon"]');
 		if( en.snapshotLength > 0 ){
@@ -20308,13 +20312,13 @@ function disp_npcfort() {
 				ex_p.removeChild(ex);
 			}
 		}
-	
+
 		// ルート自動構築中ならフラグを初期化
 		if( checkBox.snapshotItem(0).checked == true ){
 			autoroute = AUTO_ROUTE_EDIT_FIRST;
 		}
 	}
-	
+
 	//------------------//
 	// ルート検証ボタン //
 	//------------------//
@@ -20322,10 +20326,10 @@ function disp_npcfort() {
 		var rollover = $d("rollover");
 		var checkBox = $e_7('//*[@id="ckRouteMode"]');
 		var checkBox2 = $e_7('//*[@id="ckRouteMode2"]');
-	
+
 		// マップに埋め込んだマーク画像を拾う
 		var rollover = $d("rollover");
-	
+
 		// すでに画像が登録されてるか調べる
 		var cx = 0;
 		var cy = 0;
@@ -20353,11 +20357,11 @@ function disp_npcfort() {
 						ex.src = ricon;
 					}
 				}
-	
+
 				cx = parseInt(list[1]);
 				cy = parseInt(list[2]);
 			}
-	
+
 			if( errf == true ){
 				var baseText = $e_7('//*[@id="routeInfoText"]');
 				var text = baseText.snapshotItem(0).innerHTML;
@@ -20379,26 +20383,26 @@ function disp_npcfort() {
 				baseText.snapshotItem(0).innerHTML = text;
 			}
 		}
-	
+
 	}
-	
+
 	//----------------------//
 	// 表示補助メニュー制御 //
 	//----------------------//
 	function menu2Clicked() {
-	
+
 		var checkBox = $e_7('//*[@id="ckMenu2"]');
 		var label;
 		var chkbox;
 		var listbox;
-	
+
 		// コントロールの表示切り替え
 		if( checkBox.snapshotItem(0).checked == false ){
 			for( var i = 1; i <= 9; i++ ){
 				label = $e_7('//*[@id="Label2-' + i + '"]');
 				label.snapshotItem(0).style.display = "none";
 			}
-	
+
 			checkbox = $e_7('//*[@id="ckAnalyze"]');
 			checkbox.snapshotItem(0).style.display = "none";
 			checkbox = $e_7('//*[@id="ckEmptyDraw"]');
@@ -20411,7 +20415,7 @@ function disp_npcfort() {
 			checkbox.snapshotItem(0).style.display = "none";
 			checkbox = $e_7('//*[@id="ckNoExec51"]');
 			checkbox.snapshotItem(0).style.display = "none";
-	
+
 			listbox = $e_7('//*[@id="lsArea"]');
 			listbox.snapshotItem(0).style.display = "none";
 			listbox = $e_7('//*[@id="lsArea2"]');
@@ -20426,7 +20430,7 @@ function disp_npcfort() {
 				label = $e_7('//*[@id="Label2-' + i + '"]');
 				label.snapshotItem(0).style.display = "inline";
 			}
-	
+
 			checkbox = $e_7('//*[@id="ckAnalyze"]');
 			checkbox.snapshotItem(0).style.display = "inline";
 			checkbox = $e_7('//*[@id="ckEmptyDraw"]');
@@ -20439,7 +20443,7 @@ function disp_npcfort() {
 			checkbox.snapshotItem(0).style.display = "inline";
 			checkbox = $e_7('//*[@id="ckNoExec51"]');
 			checkbox.snapshotItem(0).style.display = "inline";
-	
+
 			listbox = $e_7('//*[@id="lsArea"]');
 			listbox.snapshotItem(0).style.display = "inline";
 			listbox = $e_7('//*[@id="lsArea2"]');
@@ -20450,7 +20454,7 @@ function disp_npcfort() {
 			listbox.snapshotItem(0).style.display = "inline";
 		}
 	}
-	
+
 	//----------------------//
 	// 同盟検索メニュー制御 //
 	//----------------------//
@@ -20460,19 +20464,19 @@ function disp_npcfort() {
 		var chkbox;
 		var listbox;
 		var userbox;
-	
+
 		// コントロールの表示切り替え
 		if( checkBox.snapshotItem(0).checked == false ){
 			for( var i = 1; i <= 24; i++ ){
 				label = $e_7('//*[@id="Label4-' + i + '"]');
 				label.snapshotItem(0).style.display = "none";
 			}
-	
+
 			for( var i = 1; i <= 3; i++ ){
 				label = $e_7('//*[@id="Label4-2-' + i + '"]');
 				label.snapshotItem(0).style.display = "none";
 			}
-	
+
 			for( var i = 1; i <=3; i++ ){
 				checkbox = $e_7('//*[@id="ckEnable' + i + '"]');
 				checkbox.snapshotItem(0).style.display = "none";
@@ -20483,10 +20487,10 @@ function disp_npcfort() {
 				checkbox.snapshotItem(0).style.display = "none";
 				checkbox = $e_7('//*[@id="ckLevelSearch' + i + '"]');
 				checkbox.snapshotItem(0).style.display = "none";
-	
+
 				userbox = $e_7('//*[@id="userBox' + i + '"]');
 				userbox.snapshotItem(0).style.display = "none";
-	
+
 				listbox = $e_7('//*[@id="lsColor' + i + '"]');
 				listbox.snapshotItem(0).style.display = "none";
 			}
@@ -20496,12 +20500,12 @@ function disp_npcfort() {
 				label = $e_7('//*[@id="Label4-' + i + '"]');
 				label.snapshotItem(0).style.display = "inline";
 			}
-	
+
 			for( var i = 1; i <= 3; i++ ){
 				label = $e_7('//*[@id="Label4-2-' + i + '"]');
 				label.snapshotItem(0).style.display = "inline";
 			}
-	
+
 			for( var i = 1; i <=3; i++ ){
 				checkbox = $e_7('//*[@id="ckEnable' + i + '"]');
 				checkbox.snapshotItem(0).style.display = "inline";
@@ -20512,16 +20516,16 @@ function disp_npcfort() {
 				checkbox.snapshotItem(0).style.display = "inline";
 				checkbox = $e_7('//*[@id="ckLevelSearch' + i + '"]');
 				checkbox.snapshotItem(0).style.display = "inline";
-	
+
 				userbox = $e_7('//*[@id="userBox' + i + '"]');
 				userbox.snapshotItem(0).style.display = "inline";
-	
+
 				listbox = $e_7('//*[@id="lsColor' + i + '"]');
 				listbox.snapshotItem(0).style.display = "inline";
 			}
 		}
 	}
-	
+
 	//----------//
 	// 空白除去 //
 	//----------//
@@ -20530,15 +20534,15 @@ function disp_npcfort() {
 		if (str == undefined) return "";
 		return str.replace(/^[ 　\t\r\n]+|[ 　\t\r\n]+$/g, "");
 	}
-	
-	
+
+
 	//------------------//
 	// 画面サイズの取得 //
 	//------------------//
 	function getViewSize()
 	{
 		var viewSize;
-	
+
 		if( $x_7("//div[@id=\"changemapscale\"]/ul/li[@class=\"sort15 now\"]") ){
 			viewSize = 15;	// 15x15
 		}
@@ -20557,10 +20561,10 @@ function disp_npcfort() {
 		else{
 			viewSize = 11;	// 11x11
 		}
-	
+
 		return viewSize;
 	}
-	
+
 	//----------------//
 	// 自動ルート構築 //
 	//----------------//
@@ -20574,13 +20578,13 @@ function disp_npcfort() {
 		var MAP_WALL  = -3;	// 壁
 		var MAP_START = 0;	 // 起点
 		var MAP_END   = -999;  // 目的地
-	
+
 		//------------------//
 		// 画面サイズの取得 //
 		//------------------//
 		var viewSize;
 		viewSize = getViewSize();
-	
+
 		//--------------------------//
 		// 同盟検索オプションの取得 //
 		//--------------------------//
@@ -20593,7 +20597,7 @@ function disp_npcfort() {
 			fullmatch[i] = 0;
 			target[i] = 0;
 		}
-	
+
 		// 個人・同盟検索１
 		checkBox1 = $e_7('//*[@id="ckEnable1"]');
 		if( checkBox1.snapshotItem(0).checked == true ){
@@ -20621,7 +20625,7 @@ function disp_npcfort() {
 		else{
 			userName[0] = "";
 		}
-	
+
 		// 個人・同盟検索２
 		checkBox1 = $e_7('//*[@id="ckEnable2"]');
 		if( checkBox1.snapshotItem(0).checked == true ){
@@ -20649,7 +20653,7 @@ function disp_npcfort() {
 		else{
 			userName[1] = "";
 		}
-	
+
 		// 個人・同盟検索３
 		checkBox1 = $e_7('//*[@id="ckEnable3"]');
 		if( checkBox1.snapshotItem(0).checked == true ){
@@ -20677,7 +20681,7 @@ function disp_npcfort() {
 		else{
 			userName[2] = "";
 		}
-	
+
 		//--------------------------------------------//
 		// 全体表示画面から、画面中央座標を手に入れる //
 		//--------------------------------------------//
@@ -20685,7 +20689,7 @@ function disp_npcfort() {
 		var cody = $e_7('//div[@id="datas"]/input[@id=\"y\"]');
 		var bx = codx.snapshotItem(0).value;
 		var by = cody.snapshotItem(0).value;
-	
+
 		// 左上座標を求める
 		if( viewSize == 11 ){
 			bx = parseInt(bx) - 5;
@@ -20699,13 +20703,13 @@ function disp_npcfort() {
 			bx = parseInt(bx) - 10;
 			by = parseInt(by) + 10;
 		}
-	
+
 		// 始点、終点座標を求める
 		var sx = Math.abs(parseInt(autoroute_f[0]) - parseInt(bx));
 		var sy = Math.abs(parseInt(autoroute_f[1]) - parseInt(by));
 		var ex = Math.abs(parseInt(autoroute_l[0]) - parseInt(bx));
 		var ey = Math.abs(parseInt(autoroute_l[1]) - parseInt(by));
-	
+
 		//------------------//
 		// 探査レベルの取得 //
 		//------------------//
@@ -20715,7 +20719,7 @@ function disp_npcfort() {
 		var limit = listBox.snapshotItem(0).selectedIndex + 1;
 		var skipres = listBox2.snapshotItem(0).selectedIndex;
 		var skipgrp = listBox3.snapshotItem(0).selectedIndex;
-	
+
 		//------------------------------//
 		// マップデータをマトリックス化 //
 		//------------------------------//
@@ -20736,12 +20740,12 @@ function disp_npcfort() {
 				}
 			}
 		}
-	
+
 		//----------------//
 		// 領土情報の取得 //
 		//----------------//
 		var areas = $e_7('//*[@id="mapOverlayMap"]//area/@onmouseover');
-	
+
 		//--------------------------------//
 		// 領土の情報をマトリックスに反映 //
 		//--------------------------------//
@@ -20757,7 +20761,7 @@ function disp_npcfort() {
 			var valueA = new Array();
 			valueA = rowText.split('/');
 			valueA[1] = valueA[1].replace(/==uZer==/,"/");
-	
+
 			// マップ座標の取得
 			var rowText3 = valueA[3];
 			rowText3 = rowText3.replace(/\(/,"");
@@ -20766,7 +20770,7 @@ function disp_npcfort() {
 			valueB = rowText3.split(',');
 			var x = parseInt(valueB[0]);
 			var y = parseInt(valueB[1]);
-	
+
 			// 資源レベル
 			var landLevel = valueA[5].length;
 			if( valueA[5].substr(0,4) == '<img' ){
@@ -20774,20 +20778,20 @@ function disp_npcfort() {
 				var stars = valueA[5].match(/<img/g);
 				landLevel = stars.length;
 			}
-	
+
 			//--------------------------------//
 			// マトリックス上のオフセット計算 //
 			//--------------------------------//
 			var px = Math.abs(parseInt(x) - parseInt(bx));
 			var py = Math.abs(parseInt(y) - parseInt(by));
-	
+
 			//--------------------//
 			// 各種情報の埋め込み //
 			//--------------------//
 			if( valueA[11] == '1' ){
 				// NPC砦
 				mapdata[px][py] = MAP_NPC;
-	
+
 				// リソース情報
 				resdata[px][py] = "★" + landLevel + "&nbsp;(" + valueA[0] + ")";
 			}
@@ -20796,14 +20800,14 @@ function disp_npcfort() {
 				if( (ckUser.snapshotItem(0).checked == false) || ((ckUser.snapshotItem(0).checked == true) && (landLevel == 0)) ){
 					mapdata[px][py] = MAP_WALL;   // 個人領土を対象外、あるいは対象かつ拠点の場合、壁とみなす
 				}
-	
+
 				// 同盟指定
 				if( (ckUser.snapshotItem(0).checked == true) && (skipgrp > 0) ){
 					// 同盟指定ありの場合、指定条件にマッチしない領土は壁とみなす
-	
+
 					var matchcase = false;	// マッチしたパターン
 					var groupNo = skipgrp - 1;
-	
+
 					// 個人・同盟マッチチェック
 					for( var k = 0; k < userName[groupNo].length; k++ ){
 						// 検索有効時 username に値が入る
@@ -20841,7 +20845,7 @@ function disp_npcfort() {
 						mapdata[px][py] = MAP_WALL;
 					}
 				}
-	
+
 				// リソース情報
 				if( landLevel != 0 ){
 					resdata[px][py] = '★' + landLevel + '&nbsp;(' + valueA[7] + ',' + valueA[8] + ',' + valueA[9] + ',' + valueA[10] + ')';
@@ -20854,7 +20858,7 @@ function disp_npcfort() {
 				// リソース情報
 				resdata[px][py] = '★' + landLevel + '&nbsp;(' + valueA[7] + ',' + valueA[8] + ',' + valueA[9] + ',' + valueA[10] + ')';
 			}
-	
+
 			//----------------//
 			// ルート特殊処理 //
 			//----------------//
@@ -20863,7 +20867,7 @@ function disp_npcfort() {
 				// レベル超過の土地とNPC砦は壁扱いとする
 				mapdata[px][py] = MAP_WALL;   // 壁扱い
 			}
-			
+
 			// 資源回避での判定
 			if(	(season1[cchkres[skipres]][1] == valueA[7])
 				&& (season1[cchkres[skipres]][2] == valueA[8])
@@ -20872,27 +20876,27 @@ function disp_npcfort() {
 				// 回避条件に一致する資源は壁扱いとする
 				mapdata[px][py] = MAP_WALL;   // 壁扱い
 			}
-	
+
 			// 始点、終点特例
 			if( ((px == sx) && (py == sy)) || ((px == ex) && (py == ey)) ){
 				mapdata[px][py] = MAP_NONE;   // 始点と目的地はルートに加える
 			}
 		}
-	
+
 		//--------------------//
 		// 始点情報の埋め込み //
 		//--------------------//
 		mapdata[sx][sy] = MAP_START;
-	
+
 		// 探索情報設定
 		var posdata = new Array();
 		var maxpos = 0;
 		posdata[0] = parseInt(sy) * 21 + parseInt(sx);
-	
+
 		for( var i = 0; i <= maxpos; i++ ){
 			var cx = parseInt(posdata[i]) % 21;
 			var cy = Math.floor(parseInt(posdata[i]) / 21);
-	
+
 			for( var j = 0; j < chkptn.length; j++ ){
 				var lx = parseInt(cx) + parseInt(chkptn[j][0]);
 				if( (parseInt(lx) < 0) || (parseInt(lx) >= viewSize) ){
@@ -20902,14 +20906,14 @@ function disp_npcfort() {
 				if( (parseInt(ly) < 0) || (parseInt(ly) >= viewSize) ){
 					continue;
 				}
-	
+
 				// 現座標からの移動距離＋１を求める
 				var dist = parseInt(mapdata[cx][cy]) + 1;
 				// 編集可能？
 				if( (mapdata[lx][ly] == MAP_NONE) || (mapdata[lx][ly] == MAP_NPC) ){
 					// 距離更新
 					mapdata[lx][ly] = dist;
-	
+
 					// 座標登録
 					maxpos = maxpos + 1;
 					posdata[maxpos] = parseInt(ly) * 21 + parseInt(lx);
@@ -20917,14 +20921,14 @@ function disp_npcfort() {
 				else if( (mapdata[lx][ly] > 0) && (parseInt(mapdata[lx][ly])) > dist ){
 					// 距離更新
 					mapdata[lx][ly] = dist;
-	
+
 					// 座標登録
 					maxpos = maxpos + 1;
 					posdata[maxpos] = parseInt(ly) * 21 + parseInt(lx);
 				}
 			}
 		}
-	
+
 		// 事前チェックオンのとき、結果だけ返す
 		if( checkmode == "1" ){
 			if( mapdata[ex][ey] < 0 ){
@@ -20934,27 +20938,27 @@ function disp_npcfort() {
 				return true;
 			}
 		}
-	
+
 		// 終点にたどりつけたか？
 		if( mapdata[ex][ey] < 0 ){
 			alert("目的地に到達するルートを構築できませんでした。構築条件を見直してください。");
 			return false;
 		}
-	
+
 		//--------------------//
 		// サーチルート逆探査 //
 		//--------------------//
 		posdata[0] = parseInt(ey) * 21 + parseInt(ex);
 		maxpos = 0;
-	
+
 		for( var i = 0; i <= maxpos; i++ ){
 			var cx = parseInt(posdata[i]) % 21;
 			var cy = Math.floor(parseInt(posdata[i]) / 21);
-	
+
 			if( (cx == sx) && (cy == sy) ){
 				break;
 			}
-	
+
 			// コースとして通過可能な最小資源の土地を調べる
 			var lowLevel = 9;
 			for( var j = 0; j < chkptn.length; j++ ){
@@ -20966,7 +20970,7 @@ function disp_npcfort() {
 				if( (parseInt(ly) < 0) || (parseInt(ly) >= viewSize) ){
 					continue;
 				}
-	
+
 				// 現座標からの移動距離－１を求める
 				var dist = parseInt(mapdata[cx][cy]) - 1;
 				// 該当する座標？
@@ -20980,7 +20984,7 @@ function disp_npcfort() {
 					}
 				}
 			}
-	
+
 			//--------------------------//
 			// 固定・ランダム構築の分岐 //
 			//--------------------------//
@@ -20989,7 +20993,7 @@ function disp_npcfort() {
 				//--------------------//
 				// ランダムルート構築 //
 				//--------------------//
-	
+
 				// パターン乱数の算出
 				var pattern;
 				var rptn = new Array(2);
@@ -20997,7 +21001,7 @@ function disp_npcfort() {
 				if( pattern < 24 ){
 					// 十字優先のパターン(80%の確率でこちら)
 					rptn[0] = pattern;
-	
+
 					// 後半4パターンの決定
 					pattern = Math.floor(Math.random() * 24);
 					rptn[1] = pattern + 24;
@@ -21006,12 +21010,12 @@ function disp_npcfort() {
 					// ×字優先のパターン(20%の確率でこちら)
 					pattern = Math.floor(Math.random() * 24);
 					rptn[1] = pattern;
-	
+
 					// 前半4パターンの決定
 					pattern = Math.floor(Math.random() * 24);
 					rptn[0] = pattern + 24;
 				}
-	
+
 				// ルート探索
 				for( var j = 0; j < 8; j++ ){
 					var rno;
@@ -21024,7 +21028,7 @@ function disp_npcfort() {
 						rno = rptn[1];
 						offset = j - 4;
 					}
-	
+
 					var lx = parseInt(cx) + parseInt(chkptn_r[rno*4 + offset][0]);
 					if( (parseInt(lx) < 0) || (parseInt(lx) >= viewSize) ){
 						continue;
@@ -21033,20 +21037,20 @@ function disp_npcfort() {
 					if( (parseInt(ly) < 0) || (parseInt(ly) >= viewSize) ){
 						continue;
 					}
-	
+
 					// 現座標からの移動距離－１を求める
 					var dist = parseInt(mapdata[cx][cy]) - 1;
 					var level = resdata[lx][ly].substr(resdata[lx][ly].indexOf("★")+1,1);
 					if( resdata[lx][ly].indexOf("個人本拠地/拠点") >= 0 ){
 						level = 0;
 					}
-	
+
 					// 該当する座標？
 					if( (mapdata[lx][ly] >= 0) && (parseInt(mapdata[lx][ly]) == dist) && (level == lowLevel) ){
 						// 座標登録
 						maxpos = maxpos + 1;
 						posdata[maxpos] = parseInt(ly) * 21 + parseInt(lx);
-	
+
 						break;
 					}
 				}
@@ -21065,26 +21069,26 @@ function disp_npcfort() {
 					if( (parseInt(ly) < 0) || (parseInt(ly) >= viewSize) ){
 						continue;
 					}
-	
+
 					// 現座標からの移動距離－１を求める
 					var dist = parseInt(mapdata[cx][cy]) - 1;
 					var level = resdata[lx][ly].substr(resdata[lx][ly].indexOf("★")+1,1);
 					if( resdata[lx][ly].indexOf("個人本拠地/拠点") >= 0 ){
 						level = 0;
 					}
-	
+
 					// 該当する座標？
 					if( (mapdata[lx][ly] >= 0) && (parseInt(mapdata[lx][ly]) == dist) && (level == lowLevel) ){
 						// 座標登録
 						maxpos = maxpos + 1;
 						posdata[maxpos] = parseInt(ly) * 21 + parseInt(lx);
-	
+
 						break;
 					}
 				}
 			}
 		}
-	
+
 		//----------------//
 		// ルート情報表示 //
 		//----------------//
@@ -21095,25 +21099,25 @@ function disp_npcfort() {
 		for( var i = maxpos; i >= 0; i-- ){
 			var cx = parseInt(posdata[i]) % 21;
 			var cy = Math.floor(parseInt(posdata[i]) / 21);
-	
+
 			// areaデータを取ってみる
 			var area_pos = $x_7("//map[@id=\"mapOverlayMap\"]//area[@href=\"land.php?x=" + (parseInt(bx) + cx) + "&y=" + (parseInt(by) - cy) + "#ptop\"]");
 			if( area_pos == null ){
 				area_pos = $x_7("//map[@id=\"mapOverlayMap\"]//area[@href=\"land.php?x=" + (parseInt(bx) + cx) + "&y=" + (parseInt(by) - cy) + "\"]");
 			}
 			var list3 = area_pos.getAttribute("onmouseover").match(/'(\d+)px', '(\d+)px/);
-	
+
 			// クリックしたポイントに画像を埋め込む
 			var img = d_7.createElement("img");
 			img.style.position = "absolute";
-	
+
 			img.style.left = list3[1] + "px";
 			img.style.top = list3[2] + "px";
-	
+
 			// アイコンの決定
 			if( (i != 0) && (i != maxpos) ){
 				img.src = ricon;
-	
+
 				if( viewSize == 15 ){
 					img.style.width = "44px";
 					img.style.height = "44px";
@@ -21131,11 +21135,11 @@ function disp_npcfort() {
 				img.id = (parseInt(bx) + cx) + "_" + (parseInt(by) - cy);	// 座標をイメージのIDにする
 				rollover.parentNode.insertBefore(img, rollover.nextSibling);
 			}
-	
+
 			if( text != '' ){
 				text = text + '<br>';
 			}
-	
+
 			// 資源表示での出力切り替え
 			if( checkBox1.snapshotItem(0).checked == false ){
 				// 資源出力あり
@@ -21152,17 +21156,17 @@ function disp_npcfort() {
 				}
 			}
 		}
-	
+
 		// ルート表の表示
 		baseText.snapshotItem(0).innerHTML = text;
-	
+
 		// ルートを記憶
 		autoroute_path[autoroute_maxpaths] = text;
 		autoroute_maxpaths = autoroute_maxpaths + 1;
-	
+
 		return true;
 	}
-	
+
 	//-----------------------//
 	// 自動ルート構築(51x51) //
 	//-----------------------//
@@ -21176,7 +21180,7 @@ function disp_npcfort() {
 		var MAP_WALL  = -3;	// 壁
 		var MAP_START = 0;	 // 起点
 		var MAP_END   = -999;  // 目的地
-	
+
 		//------------------//
 		// 画面サイズの取得 //
 		//------------------//
@@ -21185,7 +21189,7 @@ function disp_npcfort() {
 		if( viewSize != 51 ){
 			return false;
 		}
-	
+
 		//--------------------------//
 		// 同盟検索オプションの取得 //
 		//--------------------------//
@@ -21198,7 +21202,7 @@ function disp_npcfort() {
 			fullmatch[i] = 0;
 			target[i] = 0;
 		}
-	
+
 		// 個人・同盟検索１
 		checkBox1 = $e_7('//*[@id="ckEnable1"]');
 		if( checkBox1.snapshotItem(0).checked == true ){
@@ -21226,7 +21230,7 @@ function disp_npcfort() {
 		else{
 			userName[0] = "";
 		}
-	
+
 		// 個人・同盟検索２
 		checkBox1 = $e_7('//*[@id="ckEnable2"]');
 		if( checkBox1.snapshotItem(0).checked == true ){
@@ -21254,7 +21258,7 @@ function disp_npcfort() {
 		else{
 			userName[1] = "";
 		}
-	
+
 		// 個人・同盟検索３
 		checkBox1 = $e_7('//*[@id="ckEnable3"]');
 		if( checkBox1.snapshotItem(0).checked == true ){
@@ -21282,26 +21286,26 @@ function disp_npcfort() {
 		else{
 			userName[2] = "";
 		}
-	
+
 		//--------------------------------------------//
 		// 全体表示画面から、画面中央座標を手に入れる //
 		//--------------------------------------------//
 		var ckUser = $e_7('//*[@id="ckRouteUser"]');
-	
+
 		// 処理データの取得
 		var href = $e_7('//*[@id="map51-content"]//li');
 		var list2 = href.snapshotItem(1300).innerHTML.match(/x=([-]*\d+)&amp;y=([-]*\d+)#/);
-	
+
 		// 左上座標を求める
 		var bx = parseInt(list2[1]) - 25;
 		var by = parseInt(list2[2]) + 25;
-	
+
 		// 始点、終点座標を求める
 		var sx = Math.abs(parseInt(autoroute_f[0]) - parseInt(bx));
 		var sy = Math.abs(parseInt(autoroute_f[1]) - parseInt(by));
 		var ex = Math.abs(parseInt(autoroute_l[0]) - parseInt(bx));
 		var ey = Math.abs(parseInt(autoroute_l[1]) - parseInt(by));
-	
+
 		//------------------//
 		// 探査レベルの取得 //
 		//------------------//
@@ -21311,7 +21315,7 @@ function disp_npcfort() {
 		var limit = listBox.snapshotItem(0).selectedIndex + 1;
 		var skipres = listBox2.snapshotItem(0).selectedIndex;
 		var skipgrp = listBox3.snapshotItem(0).selectedIndex;
-	
+
 		//------------------------------//
 		// マップデータをマトリックス化 //
 		//------------------------------//
@@ -21332,28 +21336,28 @@ function disp_npcfort() {
 				}
 			}
 		}
-	
+
 		//--------------------------------//
 		// 領土の情報をマトリックスに反映 //
 		//--------------------------------//
 		for (var i = 0; i < href.snapshotLength; i++) {
 			var elem = href.snapshotItem(i);
-	
+
 			list2 = elem.innerHTML.match(/x=([-]*\d+)&amp;y=([-]*\d+)#/);
 			if( (list2 == null) || (list2 == undefined) ){
 				continue;
 			}
-	
+
 			// マトリックス上のオフセット計算
 			var px = Math.abs(parseInt(list2[1]) - parseInt(bx));
 			var py = Math.abs(parseInt(list2[2]) - parseInt(by));
-	
+
 			// 座標の取得
 			var list = elem.innerHTML.match(/x=([-]*\d+)&amp;y=([-]*\d+)#/);
 			if( (list == null) || (list == undefined) ){
 				continue;
 			}
-	
+
 			// 土地レベルの取得
 			var p = elem.innerHTML.match(/戦力<\/dt><dd>(.*)<\/dd><dt class=/);
 			if( p != undefined ){
@@ -21370,7 +21374,7 @@ function disp_npcfort() {
 					landLevel = 0;
 				}
 			}
-	
+
 			// 空き地状態の取得
 			var space = 0;
 			if( elem.innerHTML.indexOf(">空き地<") >= 0 ){
@@ -21379,7 +21383,7 @@ function disp_npcfort() {
 			else if( elem.innerHTML.indexOf("&gt;空き地&lt;") >= 0 ){
 				space = 1;
 			}
-	
+
 			// 同盟名、個人名の取得
 			var user;
 			var group;
@@ -21423,7 +21427,7 @@ function disp_npcfort() {
 					group = p[1];
 				}
 			}
-	
+
 			// 資源の取得
 			var res = elem.innerHTML.match(/.*木(\d+)&amp;nbsp;岩(\d+)&amp;nbsp;鉄(\d+)&amp;nbsp;糧(\d+).*/);
 			if( res == undefined){
@@ -21433,7 +21437,7 @@ function disp_npcfort() {
 				res[3] = 0;
 				res[4] = 0;
 			}
-	
+
 			//----------------//
 			// 領地のチェック //
 			//----------------//
@@ -21444,10 +21448,10 @@ function disp_npcfort() {
 				if( (casname == null) || (casname == undefined) ){
 					casname = elem.innerHTML.match(/bigmap-caption&quot;&gt;(.*)&lt;\/dt&gt;&lt;dd class=/);
 				}
-	
+
 				// NPC砦
 				mapdata[px][py] = MAP_NPC;
-	
+
 				// リソース情報
 				resdata[px][py] = "★" + landLevel + "&nbsp;(" + casname[1] + ")";
 			}
@@ -21456,14 +21460,14 @@ function disp_npcfort() {
 				if( (ckUser.snapshotItem(0).checked == false) || ((ckUser.snapshotItem(0).checked == true) && (landLevel == 0)) ){
 					mapdata[px][py] = MAP_WALL;   // 個人領土を対象外、あるいは対象かつ拠点の場合、壁とみなす
 				}
-	
+
 				// 同盟指定
 				if( (ckUser.snapshotItem(0).checked == true) && (skipgrp > 0) ){
 					// 同盟指定ありの場合、指定条件にマッチしない領土は壁とみなす
-	
+
 					var matchcase = false;	// マッチしたパターン
 					var groupNo = skipgrp - 1;
-	
+
 					// 個人・同盟マッチチェック
 					for( var k = 0; k < userName[groupNo].length; k++ ){
 						// 検索有効時 username に値が入る
@@ -21501,7 +21505,7 @@ function disp_npcfort() {
 						mapdata[px][py] = MAP_WALL;
 					}
 				}
-	
+
 				// リソース情報
 				if( landLevel != 0 ){
 					resdata[px][py] = '★' + landLevel + '&nbsp;(' + res[1] + ',' + res[2] + ',' + res[3] + ',' + res[4] + ')';
@@ -21514,7 +21518,7 @@ function disp_npcfort() {
 				// リソース情報
 				resdata[px][py] = '★' + landLevel + '&nbsp;(' + res[1] + ',' + res[2] + ',' + res[3] + ',' + res[4] + ')';
 			}
-	
+
 			//----------------//
 			// ルート特殊処理 //
 			//----------------//
@@ -21523,7 +21527,7 @@ function disp_npcfort() {
 				// レベル超過の土地とNPC砦は壁扱いとする
 				mapdata[px][py] = MAP_WALL;   // 壁扱い
 			}
-			
+
 			// 資源回避での判定
 			if(	(season1[cchkres[skipres]][1] == res[1])
 				&& (season1[cchkres[skipres]][2] == res[2])
@@ -21532,27 +21536,27 @@ function disp_npcfort() {
 				// 回避条件に一致する資源は壁扱いとする
 				mapdata[px][py] = MAP_WALL;   // 壁扱い
 			}
-	
+
 			// 始点、終点特例
 			if( ((px == sx) && (py == sy)) || ((px == ex) && (py == ey)) ){
 				mapdata[px][py] = MAP_NONE;   // 始点と目的地はルートに加える
 			}
 		}
-	
+
 		//--------------------//
 		// 始点情報の埋め込み //
 		//--------------------//
 		mapdata[sx][sy] = MAP_START;
-	
+
 		// 探索情報設定
 		var posdata = new Array();
 		var maxpos = 0;
 		posdata[0] = parseInt(sy) * 51 + parseInt(sx);
-	
+
 		for( var i = 0; i <= maxpos; i++ ){
 			var cx = parseInt(posdata[i]) % 51;
 			var cy = Math.floor(parseInt(posdata[i]) / 51);
-	
+
 			for( var j = 0; j < chkptn.length; j++ ){
 				var lx = parseInt(cx) + parseInt(chkptn[j][0]);
 				if( (parseInt(lx) < 0) || (parseInt(lx) >= viewSize) ){
@@ -21562,14 +21566,14 @@ function disp_npcfort() {
 				if( (parseInt(ly) < 0) || (parseInt(ly) >= viewSize) ){
 					continue;
 				}
-	
+
 				// 現座標からの移動距離＋１を求める
 				var dist = parseInt(mapdata[cx][cy]) + 1;
 				// 編集可能？
 				if( (mapdata[lx][ly] == MAP_NONE) || (mapdata[lx][ly] == MAP_NPC) ){
 					// 距離更新
 					mapdata[lx][ly] = dist;
-	
+
 					// 座標登録
 					maxpos = maxpos + 1;
 					posdata[maxpos] = parseInt(ly) * 51 + parseInt(lx);
@@ -21577,14 +21581,14 @@ function disp_npcfort() {
 				else if( (mapdata[lx][ly] > 0) && (parseInt(mapdata[lx][ly])) > dist ){
 					// 距離更新
 					mapdata[lx][ly] = dist;
-	
+
 					// 座標登録
 					maxpos = maxpos + 1;
 					posdata[maxpos] = parseInt(ly) * 51 + parseInt(lx);
 				}
 			}
 		}
-	
+
 		// 事前チェックオンのとき、結果だけ返す
 		if( checkmode == "1" ){
 			if( mapdata[ex][ey] < 0 ){
@@ -21594,27 +21598,27 @@ function disp_npcfort() {
 				return true;
 			}
 		}
-	
+
 		// 終点にたどりつけたか？
 		if( mapdata[ex][ey] < 0 ){
 			alert("目的地に到達するルートを構築できませんでした。構築条件を見直してください。");
 			return false;
 		}
-	
+
 		//--------------------//
 		// サーチルート逆探査 //
 		//--------------------//
 		posdata[0] = parseInt(ey) * 51 + parseInt(ex);
 		maxpos = 0;
-	
+
 		for( var i = 0; i <= maxpos; i++ ){
 			var cx = parseInt(posdata[i]) % 51;
 			var cy = Math.floor(parseInt(posdata[i]) / 51);
-	
+
 			if( (cx == sx) && (cy == sy) ){
 				break;
 			}
-	
+
 			// コースとして通過可能な最小資源の土地を調べる
 			var lowLevel = 9;
 			for( var j = 0; j < chkptn.length; j++ ){
@@ -21626,7 +21630,7 @@ function disp_npcfort() {
 				if( (parseInt(ly) < 0) || (parseInt(ly) >= viewSize) ){
 					continue;
 				}
-	
+
 				// 現座標からの移動距離－１を求める
 				var dist = parseInt(mapdata[cx][cy]) - 1;
 				// 該当する座標？
@@ -21640,7 +21644,7 @@ function disp_npcfort() {
 					}
 				}
 			}
-	
+
 			//--------------------------//
 			// 固定・ランダム構築の分岐 //
 			//--------------------------//
@@ -21649,7 +21653,7 @@ function disp_npcfort() {
 				//--------------------//
 				// ランダムルート構築 //
 				//--------------------//
-	
+
 				// パターン乱数の算出
 				var pattern;
 				var rptn = new Array(2);
@@ -21657,7 +21661,7 @@ function disp_npcfort() {
 				if( pattern < 24 ){
 					// 十字優先のパターン(80%の確率でこちら)
 					rptn[0] = pattern;
-	
+
 					// 後半4パターンの決定
 					pattern = Math.floor(Math.random() * 24);
 					rptn[1] = pattern + 24;
@@ -21666,12 +21670,12 @@ function disp_npcfort() {
 					// ×字優先のパターン(20%の確率でこちら)
 					pattern = Math.floor(Math.random() * 24);
 					rptn[1] = pattern;
-	
+
 					// 前半4パターンの決定
 					pattern = Math.floor(Math.random() * 24);
 					rptn[0] = pattern + 24;
 				}
-	
+
 				// ルート探索
 				for( var j = 0; j < 8; j++ ){
 					var rno;
@@ -21684,7 +21688,7 @@ function disp_npcfort() {
 						rno = rptn[1];
 						offset = j - 4;
 					}
-	
+
 					var lx = parseInt(cx) + parseInt(chkptn_r[rno*4 + offset][0]);
 					if( (parseInt(lx) < 0) || (parseInt(lx) >= viewSize) ){
 						continue;
@@ -21693,20 +21697,20 @@ function disp_npcfort() {
 					if( (parseInt(ly) < 0) || (parseInt(ly) >= viewSize) ){
 						continue;
 					}
-	
+
 					// 現座標からの移動距離－１を求める
 					var dist = parseInt(mapdata[cx][cy]) - 1;
 					var level = resdata[lx][ly].substr(resdata[lx][ly].indexOf("★")+1,1);
 					if( resdata[lx][ly].indexOf("個人本拠地/拠点") >= 0 ){
 						level = 0;
 					}
-	
+
 					// 該当する座標？
 					if( (mapdata[lx][ly] >= 0) && (parseInt(mapdata[lx][ly]) == dist) && (level == lowLevel) ){
 						// 座標登録
 						maxpos = maxpos + 1;
 						posdata[maxpos] = parseInt(ly) * 51 + parseInt(lx);
-	
+
 						break;
 					}
 				}
@@ -21725,26 +21729,26 @@ function disp_npcfort() {
 					if( (parseInt(ly) < 0) || (parseInt(ly) >= viewSize) ){
 						continue;
 					}
-	
+
 					// 現座標からの移動距離－１を求める
 					var dist = parseInt(mapdata[cx][cy]) - 1;
 					var level = resdata[lx][ly].substr(resdata[lx][ly].indexOf("★")+1,1);
 					if( resdata[lx][ly].indexOf("個人本拠地/拠点") >= 0 ){
 						level = 0;
 					}
-	
+
 					// 該当する座標？
 					if( (mapdata[lx][ly] >= 0) && (parseInt(mapdata[lx][ly]) == dist) && (level == lowLevel) ){
 						// 座標登録
 						maxpos = maxpos + 1;
 						posdata[maxpos] = parseInt(ly) * 51 + parseInt(lx);
-	
+
 						break;
 					}
 				}
 			}
 		}
-	
+
 		//----------------//
 		// ルート情報表示 //
 		//----------------//
@@ -21754,10 +21758,10 @@ function disp_npcfort() {
 		for( var i = maxpos; i >= 0; i-- ){
 			var cx = parseInt(posdata[i]) % 51;
 			var cy = Math.floor(parseInt(posdata[i]) / 51);
-	
+
 			// areaデータを取ってみる
 			var elem = $x_7("//div[@id=\"map51-content\"]//a[@href=\"/land.php?x=" + (parseInt(bx) + cx) + "&y=" + (parseInt(by) - cy) + "#ptop\"]");
-	
+
 			// アイコン表示
 			var newhtml;
 			if( elem.innerHTML.indexOf("<b>") >= 0 ){
@@ -21772,11 +21776,11 @@ function disp_npcfort() {
 				}
 			}
 			elem.innerHTML = newhtml;
-	
+
 			if( text != '' ){
 				text = text + '<br>';
 			}
-	
+
 			// 資源表示での出力切り替え
 			if( checkBox1.snapshotItem(0).checked == false ){
 				// 資源出力あり
@@ -21793,23 +21797,23 @@ function disp_npcfort() {
 				}
 			}
 		}
-	
+
 		// ルート表の表示
 		baseText.snapshotItem(0).innerHTML = text;
-	
+
 		return true;
 	}
-	
+
 	//--------------------//
 	// 出兵アイコンクリア //
 	//--------------------//
 	function attackIconClear() {
 		// 出兵アイコンのクリア
 		var checkBox = $e_7('//*[@id="ckUnion"]');
-	
+
 		// マップに埋め込んだマーク画像を全部消す
 		var rollover = $d("rollover");
-	
+
 		// 無効なら画像を消す
 		if( checkBox.snapshotItem(0).checked == false ){
 			// すでに画像が登録されてるか調べる
@@ -21835,7 +21839,7 @@ function disp_npcfort() {
 //================================================================================
 //8.右クリック拡張
 //================================================================================
-function disp_rightclick() {	
+function disp_rightclick() {
 	/**
 	 * gettextっぽい感じのやつ
 	 * @param {String} message
@@ -22506,7 +22510,7 @@ function disp_rightclick() {
 			].forEach(function(methodName) {
 				var resName = methodName.substr(3);
 				result[resName] = false;
-				
+
 				if (Object.prototype.hasOwnProperty.call(this, methodName) && existsAPI(this[methodName])) {
 					result[resName] = true;
 				}
@@ -22530,7 +22534,7 @@ function disp_rightclick() {
 				}
 			};
 		}
-		
+
 		/**
 		 * GM_setValue
 		 * @param {String} name storage key
@@ -22674,7 +22678,7 @@ function disp_rightclick() {
 						requestParam[event](responseState);
 					};
 				});
-		
+
 				try {
 					req.open(requestParam.method ? requestParam.method : 'GET', requestParam.url, true);
 				}
@@ -22691,26 +22695,26 @@ function disp_rightclick() {
 					}
 					return null;
 				}
-		
+
 				if ('headers' in requestParam && typeof requestParam.headers == 'object') {
 					for ( var name in requestParam.headers) {
 						req.setRequestHeader(name, requestParam.headers[name]);
 					}
 				}
-		
+
 				req.send(('data' in requestParam) ? requestParam.data : null);
 				return req;
 			};
 		}
 	}
-}	
+}
 
 //faraway 8.右クリック拡張のソース(b3rclick.user.js)終了
 
 //-----------------------------------------
 // 同盟レベル画面改善ツール
 //-----------------------------------------
-function disp_alliancelevel() {	
+function disp_alliancelevel() {
 	if(location.pathname != "/alliance/level.php") return;
 
 /* レベル/人数/寄付総額/最大人数/必要寄付額/次レベル最大人数 */
@@ -22719,13 +22723,13 @@ function disp_alliancelevel() {
 	cl[1].innerHTML+=' <span style="color:red">(空き枠:'+(parseInt(cl[3].innerHTML)-parseInt(cl[1].innerHTML))+')</span>';
 	cl[2].innerHTML+=' <br><span style="color:red">(次まで:'+(np)+'／1人あたり:'+Math.round(np/parseInt(cl[1].innerHTML))+')</span>';
 	cl[3].innerHTML+=' <span style="color:red">(次で+'+(parseInt(cl[5].innerHTML)-parseInt(cl[3].innerHTML))+')</span>';
-}	
+}
 
 //--------------------------------
 // ミス防止補助ツール
 //--------------------------------
-function disp_mistakeprevention() {	
-if (location.pathname != "/facility/facility.php" && location.pathname != "/facility/castle_send_troop.php")  return;	
+function disp_mistakeprevention() {
+if (location.pathname != "/facility/facility.php" && location.pathname != "/facility/castle_send_troop.php")  return;
 
 	var chkFight='fighting_units';
 	var dispatchOfTroops='btn_send';
@@ -22809,7 +22813,7 @@ if (location.pathname != "/facility/facility.php" && location.pathname != "/faci
 		str=str.match('[0-9]*$');
 		document.title='['+str+']'+document.title;
 	}
-}	
+}
 
 //faraway 10.ミス防止補助ツールのソース(3594warning.user.js)終了
 
@@ -22864,7 +22868,7 @@ function disp_lettertransmission() {
 		}
 	}
 
-}	
+}
 
 //送信したアドレスのフラグを消す。
 function OneAddressFlgDel(){
@@ -23433,9 +23437,9 @@ a.form.appendChild(hid);
 //---------------------------------------
 // 書簡同胞リンク
 //---------------------------------------
-function disp_letterbroadcast() {	
+function disp_letterbroadcast() {
 
-if (location.pathname != "/message/new.php" ) return;	
+if (location.pathname != "/message/new.php" ) return;
 	var sendTd = xpath('//*[@id="gray02Wrapper"]//table[@class="commonTables"]//tr/td', document);
 
 	var ar = GM_getValue(location.hostname + "CCALLY");
@@ -23454,7 +23458,7 @@ if (location.pathname != "/message/new.php" ) return;
 	bar.id = "statMenu";
 
 	for(var i=0;i<num_12;i++){
-		
+
 		ccLnk[i] = document.createElement("li");
 		ccLnk[i].innerHTML = ALLY[i];
 		(function(){
@@ -23472,7 +23476,7 @@ if (location.pathname != "/message/new.php" ) return;
 
 	sendTd.snapshotItem(0).appendChild(bar);
 
-}	
+}
 
 function xpath(query,targetDoc) {return document.evaluate(query, targetDoc, null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);}
 
@@ -23556,7 +23560,7 @@ function optMenu(){
 	var link = document.createElement("a");
 	link.href = "javascript:void(0)";
 	link.innerHTML = "戻る";
-	link.addEventListener("click", 
+	link.addEventListener("click",
 		function(){
 			location.reload();
 		},
@@ -23602,7 +23606,7 @@ function saveData(){
 //--------------------------------------
 // 書簡保存＆検索ツール
 //--------------------------------------
-function disp_letterpreservation() {	
+function disp_letterpreservation() {
 
 ////////////////////////////////////////////////////////
 // ページ読み込み完了を待たない処理
@@ -23644,7 +23648,7 @@ window.addEventListener("load", function() { pre_main(); }, false);
 ////////////////////////////////////////////////////////
 function pre_main() {
 	addBtnMain();
-	if (opValues["autoCash"]) { 
+	if (opValues["autoCash"]) {
 		syokanCashMain();
 	}
 }
@@ -23722,7 +23726,7 @@ function syokanCashMain() {
 	}
 	if (hrefArray.length <= 0) {
 		if (!opValues["autoCash"]) { alert("新しい保存対象はありません。"); }
-		return; 
+		return;
 	}
 
 	// 実行中表示レイヤー
@@ -23770,7 +23774,7 @@ function loadPage(loadNo, res) {
 			addSyokanCash(loadNo, res);
 		}
 	}
-	GM_xmlhttpRequest(opt); 
+	GM_xmlhttpRequest(opt);
 }
 function addSyokanCash(loadNo, res) {
 	var syokanId = hrefArray[loadNo][0];
@@ -23839,7 +23843,7 @@ function searchModeMain() {
 	var baseEL = d_13.createElement("div");
 		baseEL.id = "bro_view_base";
 		targetNode.appendChild(baseEL);
-		
+
 	addSearchHTML();
 	if (opValues["uneiLimit"]) {
 		addShowTable(uneiSyokanLimit(syokanIdArray));
@@ -23854,7 +23858,7 @@ function addSearchHTML() {
 
 		baseEL.appendChild(d_13.createTextNode("【保存書簡の検索】"));
 		baseEL.appendChild(d_13.createElement("br"));
-		
+
 		var searchBaseEL = d_13.createElement("div");
 			searchBaseEL.id = "search_base";
 			searchBaseEL.appendChild(d_13.createTextNode("検索条件：　"));
@@ -23877,14 +23881,14 @@ function addSearchHTML() {
 			selectEL.appendChild(optionEL.cloneNode(true));
 			searchBaseEL.appendChild(selectEL);
 			searchBaseEL.appendChild(d_13.createTextNode("　書簡を　"));
-			
+
 		var btnEL = d_13.createElement("input");
 			btnEL.type = "button"
 			btnEL.value = "検索する";
 			btnEL.addEventListener("click", searchExe, false);
 			searchBaseEL.appendChild(btnEL);
 			searchBaseEL.appendChild(d_13.createTextNode("　/　"));
-		
+
 		var allBtnEL = d_13.createElement("input");
 			allBtnEL.type = "button"
 			allBtnEL.value = "全件表示";
@@ -23894,7 +23898,7 @@ function addSearchHTML() {
 				searchExe()
 			}, false);
 			searchBaseEL.appendChild(allBtnEL);
-			
+
 		baseEL.appendChild(searchBaseEL);
 		baseEL.appendChild(d_13.createElement("br"));
 }
@@ -23981,7 +23985,7 @@ function addShowTable (show_syokanIdArray, page_index) {
 	var tdEL = d_13.createElement("td");
 	var pargerEL = d_13.createElement("div");
 		pargerEL.id = "search_pager";
-		
+
 		thEL.innerHTML = "No";
 		thEL.style.width = "20px";
 		trEL.appendChild(thEL.cloneNode(true));
@@ -24018,7 +24022,7 @@ function addShowTable (show_syokanIdArray, page_index) {
 		var i_start = page_index * pageUnit;
 		var i_end = i_start + pageUnit;
 		if (i_end >= len) { i_end = len }
-		
+
 		function returnShowSyokan(syokanId) {
 			return function() { showSyokan(syokanId); }
 		}
@@ -24031,7 +24035,7 @@ function addShowTable (show_syokanIdArray, page_index) {
 				searchExe();
 			}
 		}
-		
+
 		for (var i = i_start; i < i_end; i++ ) {
 			var syokanId = show_syokanIdArray[i];
 			var soushinsya = soushinsyaArray[syokanId];
@@ -24040,7 +24044,7 @@ function addShowTable (show_syokanIdArray, page_index) {
 			var nichiji = nichijiArray[syokanId];
 			var honbun = loadSyokanValue(syokanId);
 				honbun = honbun.replace(/<br>/g, "");
-			
+
 			var data_trEL = d_13.createElement("tr");
 			var data_thEL = d_13.createElement("th");
 			var data_tdEL = d_13.createElement("td");
@@ -24050,7 +24054,7 @@ function addShowTable (show_syokanIdArray, page_index) {
 				data_tdBtnEL2.style.backgroundColor = "#ffdfff";
 			var data_tdBtnEL3 = d_13.createElement("td");
 				data_tdBtnEL3.style.backgroundColor = "#dfffff";
-			
+
 				data_thEL.innerHTML = i + 1;
 				data_trEL.appendChild(data_thEL.cloneNode(true));
 				data_tdBtnEL1.innerHTML = soushinsya;
@@ -24068,7 +24072,7 @@ function addShowTable (show_syokanIdArray, page_index) {
 				data_trEL.appendChild(data_tdBtnEL3);
 			tableEL.appendChild(data_trEL);
 		}
-		
+
 		if (len > pageUnit) {
 			var preBtnEL = d_13.createElement("input");
 				preBtnEL.type = "button";
@@ -24084,7 +24088,7 @@ function addShowTable (show_syokanIdArray, page_index) {
 				nextBtnEL.addEventListener("click", function() {
 					addShowTable(show_syokanIdArray, page_index + 1)
 				}, false);
-				
+
 			if (i_start <= 0 ) { preBtnEL.disabled = true; }
 			if (i_end >= len ) { nextBtnEL.disabled = true; }
 			pargerEL.appendChild(preBtnEL);
@@ -24113,7 +24117,7 @@ function showSyokan(syokanId) {
 		baseLayer.style.zIndex = 50000;
 		baseLayer.style.width = "100%";
 		baseLayer.style.height = "100%";
-		
+
 	var mask = d_13.createElement("div");
 		mask.style.backgroundColor = "#202020";
 		mask.style.position = "fixed";
@@ -24124,7 +24128,7 @@ function showSyokan(syokanId) {
 			baseLayer.parentNode.removeChild(baseLayer);
 		}, false);
 		baseLayer.appendChild(mask);
-		
+
 	var explain = d_13.createElement("div");
 		explain.id = "gray02Wrapper";
 		explain.style.position = "absolute";
@@ -24132,7 +24136,7 @@ function showSyokan(syokanId) {
 		explain.style.marginLeft  = "50px";
 		explain.style.padding  = "25px";
 		explain.style.width = "600px";
-		
+
 	baseLayer.appendChild(explain);
 	var targetNode = $xp1('//body', d_13);
 		targetNode.insertBefore(baseLayer, targetNode.firstChild);
@@ -24159,7 +24163,7 @@ function showSyokan(syokanId) {
 	var atesaki = atesakiArray[syokanId];
 	var nichiji = nichijiArray[syokanId];
 	var honbun = loadSyokanValue(syokanId);
-		
+
 		trEL.innerHTML = null;
 		tdEL.innerHTML = soushinsya;
 		trEL.appendChild(tdEL.cloneNode(true));
@@ -24194,15 +24198,15 @@ function showSyokan(syokanId) {
 function addOpMain() {
 	var targetNode = $xp1('//div[@id="gray02Wrapper"]', d_13);
 		targetNode.innerHTML = null;
-		
+
 	var baseEL = d_13.createElement("div");
 		baseEL.id = "bro_op_base";
-		
+
 		baseEL.appendChild(d_13.createTextNode("【書簡保存・検索　設定】"));
 		baseEL.appendChild(d_13.createElement("br"));
 		baseEL.appendChild(d_13.createElement("br"));
 		baseEL.appendChild(d_13.createTextNode("　１．書簡画面表示時、未保存書簡の自動保存を"));
-		
+
 	var autoCashBtn = d_13.createElement("input");
 		autoCashBtn.type = "button";
 		autoCashBtn.id = "autoCashBtn";
@@ -24225,7 +24229,7 @@ function addOpMain() {
 		baseEL.appendChild(d_13.createElement("br"));
 		baseEL.appendChild(d_13.createElement("br"));
 		baseEL.appendChild(d_13.createTextNode("　２．運営からの書簡を検索結果に"));
-		
+
 	var UneiLimitBtn = d_13.createElement("input");
 		UneiLimitBtn.type = "button";
 		UneiLimitBtn.id = "UneiLimitBtn";
@@ -24248,40 +24252,40 @@ function addOpMain() {
 		baseEL.appendChild(d_13.createElement("br"));
 		baseEL.appendChild(d_13.createElement("br"));
 		baseEL.appendChild(d_13.createTextNode("　３．指定ワールドの保存書簡をだらあああと"));
-		
+
 	var outputBtn = d_13.createElement("input");
 		outputBtn.type = "button";
 		outputBtn.id = "outputBtn";
 		outputBtn.value = "【出力する】";
 		outputBtn.addEventListener("click", function() {
 			outputBtn.disabled = true;
-			
+
 			var key = prompt("現ワールド以外の書簡情報を出力したい場合は、\nホスト名を指定してください。\n※現ワールドのホスト名が初期値で表示されています。", worldKey);
 			if (!key) { outputBtn.disabled = false; return; }
 			key_loadCmValue(key);
 			var len = syokanIdArray.length;
 			if(len <= 0) { alert("指定ワールドの保存書簡は存在しません。"); outputBtn.disabled = false; return; }
-			
+
 			syokanOutput(key);
 		}, false);
 		baseEL.appendChild(outputBtn);
 		baseEL.appendChild(d_13.createElement("br"));
 		baseEL.appendChild(d_13.createElement("br"));
 		baseEL.appendChild(d_13.createTextNode("　４．指定ワールドの保存情報を"));
-		
+
 	var resetBtn = d_13.createElement("input");
 		resetBtn.type = "button";
 		resetBtn.id = "resetBtn";
 		resetBtn.value = "【リセットする】";
 		resetBtn.addEventListener("click", function() {
 			resetBtn.disabled = true;
-			
+
 			var key = prompt("現ワールド以外の書簡情報をリセットしたい場合は、\nホスト名を指定してください。\n※現ワールドのホスト名が初期値で表示されています。", worldKey);
 			if (!key) { resetBtn.disabled = false; return; }
 			key_loadCmValue(key);
 			var len = syokanIdArray.length;
 			if(len <= 0) { alert("指定ワールドの保存書簡は存在しません。"); resetBtn.disabled = false; return; }
-			
+
 			if (confirm("【再確認】ホスト名：" + key + "ワールドの書簡情報のすべてをクリアします。\n※また、処理には相当な時間を要します。気長に待てる時の実行を推奨します。")) {
 				autoCashBtn.disabled = true;
 				UneiLimitBtn.disabled = true;
@@ -24326,13 +24330,13 @@ function syokanOutput(key, page_index) {
 	var textAreaEL = d_13.createElement("textarea");
 		textAreaEL.cols = 95;
 		textAreaEL.rows = 25;
-		
+
 	var len = syokanIdArray.length;
 	pageUnit = 100;
 	var i_start = page_index * pageUnit;
 	var i_end = i_start + pageUnit;
 	if (i_end >= len) { i_end = len }
-		
+
 	for (var i = i_start; i < i_end; i++ ) {
 		var syokanId = syokanIdArray[i];
 		var nichiji = nichijiArray[syokanId];
@@ -24342,7 +24346,7 @@ function syokanOutput(key, page_index) {
 		var honbun = key_loadSyokanValue(key, syokanId);
 			honbun = honbun.replace(/\r\n/g, "");
 			honbun = honbun.replace(/(\n|\r)/g, "");
-		
+
 		textAreaEL.defaultValue = textAreaEL.defaultValue +
 									syokanId + "\t" +
 									nichiji + "\t" +
@@ -24367,7 +24371,7 @@ function syokanOutput(key, page_index) {
 			nextBtnEL.addEventListener("click", function() {
 				syokanOutput(key, page_index + 1)
 			}, false);
-			
+
 		if (i_start <= 0 ) { preBtnEL.disabled = true; }
 		if (i_end >= len ) { nextBtnEL.disabled = true; }
 		baseEL.appendChild(preBtnEL);
@@ -24444,14 +24448,14 @@ function key_loadSyokanValue (key, syokanId) {
 	if (honbun == null) { return "" }
 	return honbun;
 }
-}	
+}
 //faraway 13.書簡保存＆検索ツールのソース(bro3_syokanbox.user.js)終了
 
 //-----------------------------------
 // トレード検索条件記憶
 //-----------------------------------
-function disp_tradingretrieval() {	
-	if(location.pathname != "/card/trade.php") return;	
+function disp_tradingretrieval() {
+	if(location.pathname != "/card/trade.php") return;
 	var sendTd = xpath_14('//*[@id="gray02Wrapper"]//div[@class="ui-tabs-panel"]', document);
 
 	var ar = GM_getValue(location.hostname + "TrdMem");
@@ -24489,7 +24493,7 @@ function disp_tradingretrieval() {
 
 
 	sendTd.snapshotItem(0).insertBefore(bar, sendTd.snapshotItem(0).childNodes[2] );
-}	
+}
 
 function xpath_14(query,targetDoc) {return document.evaluate(query, targetDoc, null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);}
 
@@ -24696,11 +24700,11 @@ function saveData_14(){
 // トレードその後 2014/02/23 運営書簡開封/削除 に表現変更
 //------------------------------------------------------------
 //start
-var c   = 0;
+var c	= 0;
 var url = new Array();
 
-function disp_tradingafter() {	
-	if(location.pathname != "/message/inbox.php") return;	
+function disp_tradingafter() {
+	if(location.pathname != "/message/inbox.php") return;
 	var tableTitle = xpath_15('//*[@id="gray02Wrapper"]//ul[@id="statMenu"]', document);
 	var classRmv = xpath_15('//*[@id="gray02Wrapper"]//ul[@id="statMenu"]/li[@class="last"]', document);
 
@@ -24850,7 +24854,7 @@ function disp_navigationaddition() {
 			}else{
 				li = j$("li:last",base.append("<li><div>" + menuText + "</div></li>"));
 				li.bind("click", mlink2);
-			}			
+			}
 			if( pp == 0 ){
 				li.attr('class','pr');
 				addlink_ch(li,linkArr,i,mtext);
@@ -24940,13 +24944,13 @@ function disp_navigationaddition() {
 			return R_QUEST_URL + "/index.php?list=1&p=1&mode=" + m + "&action=change_mode&sort_1st_item=-1&sort_1st_order=desc&sort_2nd_item=-1&sort_2nd_order=desc&sort_3rd_item=-1&sort_3rd_order=desc&filter_difficult=-1&filter_category=-1&filter_reward=-1";
 		}
 		return R_QUEST_URL + "/index.php?list=1&p=1&mode=0&action=apply_condition" +
-							 "&sort_1st_item=-1&sort_1st_order=desc&sort_2nd_item=-1&sort_2nd_order=desc&sort_3rd_item=-1&sort_3rd_order=desc&" + 
+							 "&sort_1st_item=-1&sort_1st_order=desc&sort_2nd_item=-1&sort_2nd_order=desc&sort_3rd_item=-1&sort_3rd_order=desc&" +
 							 "filter_difficult=-1&filter_category=" + c + "&filter_reward=" + r;
 	}
 
 	function getQIdUrl(id){
-		return R_QUEST_URL + "/index.php?list=1&p=1&mode=0&action=take_quest" + 
-							 "&sort_1st_item=-1&sort_1st_order=desc&sort_2nd_item=-1&sort_2nd_order=desc&sort_3rd_item=-1&sort_3rd_order=desc&" + 
+		return R_QUEST_URL + "/index.php?list=1&p=1&mode=0&action=take_quest" +
+							 "&sort_1st_item=-1&sort_1st_order=desc&sort_2nd_item=-1&sort_2nd_order=desc&sort_3rd_item=-1&sort_3rd_order=desc&" +
 							 "filter_difficult=-1&filter_category=-1&filter_reward=-1&id=" + id
 	}
 
@@ -25130,7 +25134,7 @@ function disp_navigationaddition() {
 			pos2 = result2.indexOf("<dt",pos1);
 			pos1 = result2.indexOf(">",pos2);
 			pos2 = result2.indexOf("</dt>",pos1);
-			labelName[i] =  result2.substring(pos1+1, pos2);
+			labelName[i] =	result2.substring(pos1+1, pos2);
 			pos1 = pos2;
 		}
 
@@ -25282,7 +25286,7 @@ function disp_navigationaddition() {
 			["ブショーダス履歴", R_BUSYODAS_URL + "/busyodas_history.php#ptop"],
 			["合成履歴", R_UNION_URL + "/union_history.php#ptop"]
 		);
-	
+
 		addLink("gnavi_deck", deck);
 	}
 	if( j$("li.gnavi_deck").length > 0 ){
@@ -25433,7 +25437,7 @@ function disp_navigationaddition() {
 	// 運営のロールオーバーを消す
 	j$("div[id|=menu_container]").remove();
 
-	
+
 	//スタイル追加
 	GM_addStyle("\
 		#gNav > ul > li:hover > ul, #gNav ul.ro > li:hover > ul.ro_ch {\
@@ -25482,7 +25486,7 @@ function disp_navigationaddition() {
 // 出兵予約
 //--------------------------------
 function Reservation(){
-	if (!location.pathname.match("/facility/")) {	
+	if (!location.pathname.match("/facility/")) {
    		return ;
 	}
 
@@ -25634,7 +25638,7 @@ checkTroopTime = function() {
 		var h = eval(window.document.getElementById("autoTroop_HH").value);
 		var m = eval(window.document.getElementById("autoTroop_MM").value);
 		var s = eval(window.document.getElementById("autoTroop_SS").value);
-		
+
 		var h2 = (h+100).toString().substr(-2);
 		var m2 = (m+100).toString().substr(-2);
 		var s2 = (s+100).toString().substr(-2);
@@ -25655,7 +25659,7 @@ checkTroopTime = function() {
 			var day2 = tt.match(/(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)/);
 			if( !day2 ) return ;
 			var toh = (day2[4] * 60 * 60) + (day2[5] * 60) + (day2[6]*1);
-			var nowh = (now_h * 60 * 60) + (now_m * 60) + now_s; 
+			var nowh = (now_h * 60 * 60) + (now_m * 60) + now_s;
 			var sasihiki = (toh - nowh);
 			if((toh - nowh)>10800){
 				var html3 = "3jigann";
@@ -25681,13 +25685,13 @@ checkTroopTime = function() {
 		html2 += "</div>";
 		var newObj = document.createElement("p");
 		newObj.innerHTML = html2;
-		obj2.parentNode.insertBefore(newObj, obj2.nextSibling); 
+		obj2.parentNode.insertBefore(newObj, obj2.nextSibling);
 		addOpenLinkHtml();
 
 		// 表示切り替え
 		window.setTimeout(function() { displayTroop();}, 3000);
 
-	} 
+	}
 
 
 	else {
@@ -25699,7 +25703,7 @@ checkTroopTime = function() {
 //---------------------------------------
 // オートビルダー
 //---------------------------------------
-function disp_bro3auto() {	
+function disp_bro3auto() {
 	var doc = document.evaluate('//img[@alt="歴史書"]', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 	if( doc.snapshotLength > 0 ){
 		return;
@@ -25739,7 +25743,7 @@ function disp_bro3auto() {
 
 	}
 	addOpenLinkHtml_17();
-}	
+}
 function setVillageFacility() {
 
 	var cnt=0;
@@ -25793,7 +25797,7 @@ function setVillageFacility() {
 			else if(area_all[i].name.match(/倉庫/)){souko++;}
 			else if(area_all[i].name.match(/銅雀台/)){suzume++;}
 		}
-		
+
 
 		if(heichi>0){ //平地が余っていたら
 			var tmp = heichi;
@@ -25832,7 +25836,7 @@ function setVillageFacility() {
 	var Reload_Flg = 0;
 	for(i=0;i<area.length;i++){
 		var tmpName1 = area[i].name;
-		switch (tmpName1) { 
+		switch (tmpName1) {
 			case "村":
 			case "城":
 			case "砦":
@@ -25862,7 +25866,7 @@ function setVillageFacility() {
 						Reload_Flg = 1;
 						break;
 					}
-					
+
 					Reload_Flg = 0;
 					var Temp = area[i].xy.match(/(-?[0-9]+),(-?[0-9]+)[^0-9]*/);
 					hiro_lvupfacility(RegExp.$1,RegExp.$2,vId);
@@ -25974,7 +25978,7 @@ function nextVillageURL(vId2){
 			}else{
 				nextIndex = 0;
 			}
-			
+
 			break;
 		}
 	}
@@ -26044,7 +26048,7 @@ function addOpenLinkHtml_17() {
 		sidebar = d_17.evaluate('//*[@class="sideBox"]',d_17, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 	if (sidebar.snapshotLength == 0) return;
 		isMixi_17 = false;
-		
+
 	}
 
 	var openLink = d_17.createElement("a");
@@ -26197,7 +26201,7 @@ function addIniBilderHtml() {
 		var msg = d_17.createElement("span");
 		msg.style.fontSize = "15px";
 		msg.style.margin = "3px";//win風のグレー基調faraway110524
-		msg.innerHTML = "インストールありがとうございます。<br>" + 
+		msg.innerHTML = "インストールありがとうございます。<br>" +
 						"まずは、プロフィール画面を開いて<br>" +
 						"拠点情報を取得してください。";
 		td.appendChild(msg);
@@ -26489,7 +26493,7 @@ function addInifacHtml(vId) {
 
 	//市場変換処理用
 	ccreateCheckBox_17(td11, "OPT_ICHIBA", OPT_ICHIBA, " 市場自動変換", "この都市で糧の市場自動変換をします。", 0);
-	ccreateComboBox_17(td11, "OPT_ICHIBA_PA" , OPT_ICHIBA_PATS, OPT_ICHIBA_PA, 
+	ccreateComboBox_17(td11, "OPT_ICHIBA_PA" , OPT_ICHIBA_PATS, OPT_ICHIBA_PA,
 		"変換パターン ","平均変換：糧が一定量になった際に変換指定している一番少ない資源を変換します。   一括変換：糧が一定量になった際に指定してある資源を指定値変換します。   自動割当：少なめの資源を平滑化",5);
 	ccreateTextBox_17(td11, "OPT_RISE_MAX", OPT_RISE_MAX, "糧が右の数量になったら変換する ","自動で糧を他の資源に変換し始める量指定します。", 10, 5);
 	ccreateTextBox_17(td11, "OPT_TO_WOOD", OPT_TO_WOOD, "　木に変換する糧の量 ","自動で木に変換する糧の量を指定します。", 10, 5);
@@ -26566,7 +26570,7 @@ function SaveInifacBox(vId){
 		var opt = $_17("OPT_CHKBOXLV"+i);
 		strtSave2 += cgetTextBoxValue_17(opt) + DELIMIT2_17;
 	}
-	GM_setValue(HOST_17+PGNAME_17+vId+"_LV", strtSave2);	
+	GM_setValue(HOST_17+PGNAME_17+vId+"_LV", strtSave2);
 
 
 }
@@ -26676,12 +26680,12 @@ function saveVillage_17(newData, type) {
 	var exists = false;
 	for (var i = 0; i < allData.length; i++) {
 		var villageData = allData[i];
-		
+
 		//作業リスト更新
 		if (villageData[IDX_XY_17] == newData[IDX_XY_17]) {
 			exists = true;
 			villageData[IDX_BASE_NAME_17] = newData[IDX_BASE_NAME_17];
-			
+
 			var actions = villageData[IDX_ACTIONS_17];
 			for (var j = actions.length - 1; j >= 0; j--) {
 				if (actions[j][IDX2_TYPE_17] != type) continue;
@@ -26691,7 +26695,7 @@ function saveVillage_17(newData, type) {
 			}
 			villageData[IDX_ACTIONS_17] = actions.concat(newData[IDX_ACTIONS_17]);
 		}
-		
+
 		allData[i] = villageData;
 	}
 	if (!exists) allData.push(newData);
@@ -26709,23 +26713,23 @@ function loadVillages_17(hostname) {
 	var villages = src.split(DELIMIT1_17);
 	for (var i = 0; i < villages.length; i++) {
 		var fields = villages[i].split(DELIMIT2_17);
-		
+
 		ret[i] = new Array();
 		ret[i][IDX_XY_17] = fields[IDX_XY_17];
 		ret[i][IDX_BASE_NAME_17] = fields[IDX_BASE_NAME_17];
 		ret[i][IDX_URL_17] = fields[IDX_URL_17];
 		ret[i][IDX_BASE_ID] = fields[IDX_BASE_ID];
-		
+
 		ret[i][IDX_ACTIONS_17] = new Array();
 		if (fields[IDX_ACTIONS_17] == "") continue;
 		var actions = fields[IDX_ACTIONS_17].split(DELIMIT3_17);
 		for (var j = 0; j < actions.length; j++) {
 			ret[i][IDX_ACTIONS_17][j] = new Array();
 			if (actions[j] == "") continue;
-			
+
 			var item = actions[j].split(DELIMIT4_17);
 			if (item[IDX2_TYPE_17] == undefined) item[IDX2_TYPE_17] = "C";
-			
+
 			ret[i][IDX_ACTIONS_17][j][IDX2_STATUS_17] = item[IDX2_STATUS_17];
 			ret[i][IDX_ACTIONS_17][j][IDX2_TIME_17] = item[IDX2_TIME_17];
 			ret[i][IDX_ACTIONS_17][j][IDX2_TYPE_17] = item[IDX2_TYPE_17];
@@ -26743,7 +26747,7 @@ function saveVillages_17(hostname, newData) {
 	for (var i = 0; i < newData.length; i++) {
 		var villageData = newData[i];
 		var actions = villageData[IDX_ACTIONS_17];
-		
+
 		//配列をデリミタ区切り文字列に変換
 		for (var j = 0; j < actions.length; j++) {
 			actions[j] = genDelimitString_17(actions[j], DELIMIT4_17);
@@ -26856,16 +26860,16 @@ function computeTime_17(clock) {
 
 //日時文字列編集（yyyy/mm/dd hh:mm:ss）
 function generateDateString_17(date) {
-	var res = "" + date.getFullYear() + "/" + padZero_17(date.getMonth() + 1) + 
-		"/" + padZero_17(date.getDate()) + " " + padZero_17(date.getHours()) + ":" + 
+	var res = "" + date.getFullYear() + "/" + padZero_17(date.getMonth() + 1) +
+		"/" + padZero_17(date.getDate()) + " " + padZero_17(date.getHours()) + ":" +
 		padZero_17(date.getMinutes()) + ":" + padZero_17(date.getSeconds());
 	return res;
 }
 
 //日時文字列編集2（mm/dd hh:mm:ss）
 function generateDateString2_17(date) {
-	var res = "" + padZero_17(date.getMonth() + 1) + "/" + padZero_17(date.getDate()) + 
-		" " + padZero_17(date.getHours()) + ":" + padZero_17(date.getMinutes()) + 
+	var res = "" + padZero_17(date.getMonth() + 1) + "/" + padZero_17(date.getDate()) +
+		" " + padZero_17(date.getHours()) + ":" + padZero_17(date.getMinutes()) +
 		":" + padZero_17(date.getSeconds());;
 	return res;
 }
@@ -26907,7 +26911,7 @@ function ccreateCheckBoxKai2(container, id, def, text, title, left )
 	var tb = d_17.createElement("input");
 	tb.type = "text";
 	tb.id = id + "LV" + def;
-	tb.value = eval(id  + "LV"  + "[" + def + "]");
+	tb.value = eval(id	+ "LV"	+ "[" + def + "]");
 	tb.size = 2;
 
 	dv.appendChild(cb);
@@ -26971,7 +26975,7 @@ function ccreateCheckBox0(container, id, def, text, title, left )
 	var cb = d_17.createElement("input");
 	cb.type = "checkbox";
 	cb.id = id;
-	cb.checked  = def;
+	cb.checked	= def;
 	container.appendChild(cb);
 	return cb;
 }
@@ -27053,7 +27057,7 @@ function Chek_Sigen(area){
 	RES_NOW.rice -= OPT_CHKBOX_R;
 
 	try {
-		if( costs[area.name].length <= parseInt(area.lv) || // maxinum level reached 
+		if( costs[area.name].length <= parseInt(area.lv) || // maxinum level reached
 			RES_NOW.wood < costs[area.name][parseInt(area.lv)][0] ||
 			RES_NOW.stone< costs[area.name][parseInt(area.lv)][1] ||
 			RES_NOW.iron < costs[area.name][parseInt(area.lv)][2] ||
@@ -27162,7 +27166,7 @@ function ichibaChange() {
 				if(i==0){
 					var toRes = parseInt( (tmpRes1[2] - tmpRes1[0] ) / ( tmpRes1[0] + tmpRes1[1]  + tmpRes1[2] ) * OPT_RISE_MAX * (1 + 2 / 3));
 				}else{
-					var toRes = parseInt( (tmpRes1[2] - tmpRes1[1] ) / ( tmpRes1[0] + tmpRes1[1] +  tmpRes1[2] ) * OPT_RISE_MAX * (1 + 1 / 3)); 
+					var toRes = parseInt( (tmpRes1[2] - tmpRes1[1] ) / ( tmpRes1[0] + tmpRes1[1] +	tmpRes1[2] ) * OPT_RISE_MAX * (1 + 1 / 3));
 				}
 				if(toRes < RES_NOW["rice"] ){
 					changeResorceToResorce(RICE, toRes , OPT_TO_CODE[tmpRes2[i]], ichiba_x, ichiba_y);
@@ -27183,7 +27187,7 @@ function changeResorceToResorce(from, tc, to, x, y) {
 	var data = "form2=&x=" + x + "&y=" + y + "&change_btn=" + encodeURIComponent("はい") + "&st=1&tf_id=" + from + "&tc=" + tc + "&tt_id=" + to;
 	tidMain=setTimeout(function(){
 		GM_xmlhttpRequest({
-			method:"POST", 
+			method:"POST",
 			url:"http://" + HOST_17 + "/facility/facility.php",
 			headers:{"Content-type":"application/x-www-form-urlencoded"},
 			data: data,
@@ -27211,7 +27215,7 @@ function sendDonate(rice) {
 	var data = "contributionForm=&wood=0&stone=0&iron=0&rice=" + rice + "&contribution=1";
 	tidMain=setTimeout(function(){
 		GM_xmlhttpRequest({
-			method:"POST", 
+			method:"POST",
 			url:"http://" + HOST_17 + "/alliance/level.php",
 			headers:{"Content-type":"application/x-www-form-urlencoded"},
 			data: data,
@@ -27224,18 +27228,18 @@ function Auto_Domestic() {
 	if (!OPT_DOME) {return;} //設定してなければ戻る
 	tidMain=setTimeout(function(){
 		GM_xmlhttpRequest({
-			method:"GET", 
+			method:"GET",
 			url:"http://" + HOST_17 + "/card/domestic_setting.php",
 			headers:{"Content-type":"text/html"},
 			overrideMimeType:'text/html; charset=utf-8',
 			onload:function(x){
-				
+
 				var htmldoc = document.createElement("html");
 				htmldoc.innerHTML = x.responseText;
-				
+
 				var skillElem = document.evaluate('//*[@class="skill"]',htmldoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 				if(skillElem.snapshotLength < 1){return;}
-				
+
 				//alert(skillTag);
 				for(i=1;i<skillElem.snapshotLength;i++){
 					var skillTag = trim_17(skillElem.snapshotItem(i).innerHTML);
@@ -27260,7 +27264,7 @@ function Auto_Domestic() {
 							link = link.replace(/&amp;/,"&");
 						}while(link.indexOf("&amp;",0) > 1)
 						GM_xmlhttpRequest({
-								method:"GET", 
+								method:"GET",
 								url:"http://" + HOST_17 + link,
 								headers:{"Content-type":"text/html"},
 								overrideMimeType:'text/html; charset=utf-8',
@@ -27335,7 +27339,7 @@ function disp_change_move_size()
 		//HTML更新
 		updateHtml();
 	}
-}	
+}
 
 //-----------------------//
 // 51x51モードの実装判定 //
@@ -28399,7 +28403,7 @@ function changeBasePos()
 // 桁数整形 //
 //----------//
 function formatRightNumber_18( num, length ){
-	var fix = '      ';
+	var fix = ' 	 ';
 	var str;
 	var result = '';
 
@@ -28461,7 +28465,7 @@ function disp_display_adm_info()
 	else if (location.pathname == "/village.php") {
 		addHtml_19();		//HTML追加
 	}
-}	
+}
 
 //------------------//
 // 内政武将情報取得 //
@@ -28521,7 +28525,7 @@ function getDeckInfo() {
 	for( var i = 0; i < data.snapshotLength; i++ ){
 		text = data.snapshotItem(i).innerHTML;
 		if( text.indexOf("内政セット済") != -1){
-			
+
 			if( text.indexOf("card rarerity_ur") != -1 ){
 				w_rare[ct] = "ur";
 			}
@@ -28949,9 +28953,9 @@ function addHtml_19() {
 		fname[pos] = fname[pos].replace(/illust/, "deck");
 		var gagelen = Math.floor(85 * (parseInt(gage[pos])/500));
 		gView.snapshotItem(0).innerHTML = '<div class="illustMini">' +
-						  '<a href="/card/domestic_setting.php#ptop">' + 
+						  '<a href="/card/domestic_setting.php#ptop">' +
 						  /*'<img src="' + fname[pos] + '"/>' + 画像の大きさが鯖により違うのでサイズを指定したfaraway110530*/
-						  '<img src="' + fname[pos] + '" width="85" height="120"/>' + 
+						  '<img src="' + fname[pos] + '" width="85" height="120"/>' +
 						  '</a>' +
 						  '</div>' +
 						  '<table bgcolor="white" width="85px">' +
@@ -29098,8 +29102,8 @@ function addHtml_19() {
 				fname[pos] = fname[pos].replace(/illust/, "deck");
 				var gagelen = Math.floor(85 * (dispgage/500));
 				gView.snapshotItem(0).innerHTML = '<div class="illustMini">' +
-								  '<a href="/card/domestic_setting.php#ptop">' + 
-								  '<img src="' + fname[pos] + '"/>' + 
+								  '<a href="/card/domestic_setting.php#ptop">' +
+								  '<img src="' + fname[pos] + '"/>' +
 								  '</a>' +
 								  '</div>' +
 								  '<table bgcolor="white" width="85px">' +
@@ -29115,8 +29119,8 @@ function addHtml_19() {
 		// 画像
 		var gView = $e_19('//*[@id="generalView"]');
 		gView.snapshotItem(0).innerHTML = '<div>' +
-						  '<a href="/card/deck.php#ptop">' + 
-						  '<img src="' + icon_m_19 + '"/>' + 
+						  '<a href="/card/deck.php#ptop">' +
+						  '<img src="' + icon_m_19 + '"/>' +
 						  '</a>' +
 						  '</div>';
 	}
@@ -29285,7 +29289,7 @@ function disp_mass_shokan_tool()
   if ( location.href.match(/.*\/message\/new\.php.*/) ) {
 	process();
   }
-}	
+}
 
 //fires on user page
 function process() {
@@ -29358,7 +29362,7 @@ function send_message2(request) {
 	RegRowformend.compile	   (/^.*<\/form[^>]*>.*$/);
 	RegRowinput.compile		 (/^.*<input [^<>]*name=["']([^"']*)["'][^>]*value=["']([^"']*)["'][^>]*>.*$/);
 	RegRowinputbodystart.compile(/^.*<input type=["']hidden["'] name=["']body["'][^>]*value=["']([^"'>]*)$/);
-	RegRowinputbodyend.compile  (/^(.*)["'] +\/>$/);
+	RegRowinputbodyend.compile	(/^(.*)["'] +\/>$/);
 	RegRowsubmit.compile		(/^.*<input [^<>]*type="submit"[^>]*name=["']([^"']*)["'][^>]*>.*$/);
 
 	var resTexts = request.split("\n");
@@ -29375,12 +29379,12 @@ function send_message2(request) {
 				if(flag_form==0){path=RegExp.$1;flag_form=1;}
 				else if(resTexts[i].match(RegRowsubmit))		{flag_submit=1;break;}
 				else if(resTexts[i].match(RegRowinput))		 {postdatas[RegExp.$1]=RegExp.$2;}
-				else if(resTexts[i].match(RegRowinputbodystart)){postdatas["body"]  =  RegExp.$1+"\n";flag_body=1;}
-				else if(flag_body==1 && resTexts[i].match(RegRowinputbodyend))  {postdatas["body"] += RegExp.$1;flag_body=0;}
+				else if(resTexts[i].match(RegRowinputbodystart)){postdatas["body"]	=  RegExp.$1+"\n";flag_body=1;}
+				else if(flag_body==1 && resTexts[i].match(RegRowinputbodyend))	{postdatas["body"] += RegExp.$1;flag_body=0;}
 				else if(flag_body==1)						   {postdatas["body"] +=  resTexts[i]+"\n";}
 				else if(resTexts[i].match(RegRowformend))	   {flag_form=0;break;}
 			}
-		} 
+		}
 	}
 
 	wrapHttpReq("http://" + location.hostname + "/message/new.php",
@@ -29396,7 +29400,7 @@ function send_message2(request) {
 //----------------------------------------------------------------------------------
 // 武将カード分類ツール
 //----------------------------------------------------------------------------------
-function disp_deck_tool()	
+function disp_deck_tool()
 {
 	jQuery.noConflict();
 var d_21 = document;
@@ -29416,7 +29420,7 @@ var tableMode = "skill";			// 一覧表示キー
 var hrefArray_21 = [];					// ページ読み込みURL
 var currentDeckCardList = [];		// デッキ内カードリスト
 var fileCardList = [];				// ファイル内カードリスト
-var data_index = 1;					// 
+var data_index = 1;					//
 // 以下、GM変数
 var cardGroupArray = [];
 var cardGroup1 = [];
@@ -29434,7 +29438,7 @@ var cardGroup10 = [];
 // ページ読み込み完了を待たない処理
 ////////////////////////////////////////////////////////
 // 対象ページでない場合処理中断
-if (!(location.pathname == location_deckURL 
+if (!(location.pathname == location_deckURL
 	|| location.pathname == location_tradeCardURL
 	|| location.pathname == location_duelURL
 	|| location.pathname == location_unionIndexURL
@@ -29511,7 +29515,7 @@ function addBtns_deckPage() {
 		selectedGroup = tmp;
 		createLayout();
 		$_21("#brotool_baseEL").hide();
-		
+
 		if (hrefArray_21.length <= 0) {
 			getFileCardInfo();
 		} else {
@@ -29577,7 +29581,7 @@ function addBtns_duelPage() {
 		tmp = groupViewSelectEL.options[groupViewSelectEL.selectedIndex].value;
 		if (tmp == "") { return; }
 		selectedGroup = tmp;
-		
+
 		if (hrefArray_21.length <= 0) {
 			d_getFileCardInfo();
 		} else {
@@ -29612,7 +29616,7 @@ function d_loadPage (loadNo) {
 			d_addPageElement(loadNo, res);
 		}
 	}
-	GM_xmlhttpRequest(opt); 
+	GM_xmlhttpRequest(opt);
 }
 function d_addPageElement(loadNo, res) {
 	var targetNode = $xp1_21('//div[@class="rotateInfo bottom clearfix"]', d_21);//ひろ120516
@@ -29737,7 +29741,7 @@ function c_loadPage (loadNo) {
 			c_addPageElement(loadNo, res);
 		}
 	}
-	GM_xmlhttpRequest(opt); 
+	GM_xmlhttpRequest(opt);
 }
 function c_addPageElement(loadNo, res) {
 	var targetNode = $xp1_21('//div[@id="cardFileList"]', d_21);
@@ -29786,11 +29790,11 @@ function c_getFileCardList(targetOp) {
 }
 function c_getUqId (nodes) {
 	var onClickNode = $xp1_21('descendant::a[@class="setTrade" or @class="useUnion" or @class="deleteSkillTp"]', nodes);
-	if (!!onClickNode) { 
+	if (!!onClickNode) {
 		var cardId = onClickNode.getAttribute('onClick').split("(")[1].split(")")[0];return cardId;
 	}
 	var onClickNode = $xp1_21('descendant::a[@class="skillLvUp" or @class="skillLearn" or @class="skillDelete"]', nodes);
-	if (!!onClickNode) { 
+	if (!!onClickNode) {
 		var cardId = onClickNode.href.split("=")[1].split("#")[0];return cardId;
 	}
 	return null;
@@ -29803,13 +29807,13 @@ function createLayout() {
 	if (!baseEL) {
 		baseEL =  d_21.createElement("div");baseEL.id = "brotool_baseEL";baseEL.className = "baseDiv";baseEL.style.display = "none";
 		var targetNode = $xp1_21('//div[@id="whiteWrapper"]', d_21);targetNode.insertBefore(baseEL, targetNode.firstChild);
-			
+
 		var showBaseEL = d_21.createElement("div");showBaseEL.id = "brotool_showBaseEL";showBaseEL.className = "baseDiv";
 		var showDeckEL = d_21.createElement("div");showDeckEL.id = "brotool_showDeckEL";showDeckEL.className = "baseDiv";
 		var showbtnsEL = d_21.createElement("div");showbtnsEL.id = "brotool_showbtnEL";	showbtnsEL.className = "baseDiv";
 		var showFileEL = d_21.createElement("div");showFileEL.id = "brotool_showFileEL";showFileEL.className = "baseDiv";
 		var opBaseEL = d_21.createElement("div");opBaseEL.id = "brotool_opBaseEL";opBaseEL.className = "baseDiv";
-			
+
 		createTopBtnLayout();
 		baseEL.appendChild(showBaseEL);baseEL.appendChild(opBaseEL);
 		showBaseEL.appendChild(showDeckEL);showBaseEL.appendChild(showbtnsEL);showBaseEL.appendChild(showFileEL);
@@ -29817,7 +29821,7 @@ function createLayout() {
 		createTableLayout();
 		createMiddleBtnLayout();
 		createOptionLayout();
-		
+
 		showFileEL.style.display = "none";opBaseEL.style.display = "none";
 	}
 	// 【先頭ボタン】レイアウト
@@ -29849,7 +29853,7 @@ function createLayout() {
 		var fileTableEL = d_21.createElement("table");fileTableEL.id = "brotool_fileTableEL";fileTableEL.className = "showTable";
 		var theadEL = d_21.createElement("thead");fileTableEL.appendChild(theadEL);
 		var tbodyEL = d_21.createElement("tbody");fileTableEL.appendChild(tbodyEL);createTableHead(theadEL);
-		
+
 		showDeckEL.appendChild(deckTableEL);
 		showFileEL.appendChild(fileTableEL);
 	}
@@ -29908,7 +29912,7 @@ function createLayout() {
 			modeParamBtn.disabled = false;
 			modeSkillBtn.disabled = false;
 		}
-		
+
 		showbtnsEL.appendChild(modeParamBtn);
 		showbtnsEL.appendChild(modeSkillBtn);
 		showbtnsEL.appendChild(d_21.createTextNode("　／　"));
@@ -29948,7 +29952,7 @@ function createLayout() {
 			opBaseEL.appendChild(textEL);
 			opBaseEL.appendChild(d_21.createTextNode("　【旧】" + cardGroupArray[i][1]));
 		}
-		
+
 		opBaseEL.appendChild(d_21.createElement("br"));
 		opBaseEL.appendChild(d_21.createElement("br"));
 		opBaseEL.appendChild(d_21.createTextNode("　２．現ワールドのカード分類情報を"));
@@ -29971,7 +29975,7 @@ function createLayout() {
 			}
 		}, false);
 		opBaseEL.appendChild(resetBtn);
-		
+
 		opBaseEL.appendChild(d_21.createElement("br"));
 		opBaseEL.appendChild(d_21.createElement("br"));
 		opBaseEL.appendChild(d_21.createTextNode("　３．本スクリプトの最新版などは→をご確認ください　・ｗ・　"));
@@ -29995,7 +29999,7 @@ function loadPage_deck (loadNo) {
 			addPageElement_deck(loadNo, res);
 		}
 	}
-	GM_xmlhttpRequest(opt); 
+	GM_xmlhttpRequest(opt);
 }
 function addPageElement_deck(loadNo, res) {
 	var targetNode = $xp1_21('//div[@class="rotateInfo clearfix label-all-color-inner"]', d_21);
@@ -30208,7 +30212,7 @@ console.log('uqid:');	cardInfo["uqId"] = getUqId(cardColmn);
 	var exeB = $_21("a[href^=javascript:executeB(]", cardColmn).get(0);
 	if (!!exeA && !!exeB) {
 		var num = exeA.href.match(/[0-9]+/)[0];
-		
+
 		exeA.href="javascript:void(0)";
 		exeA.addEventListener("click", function() {
 			$_21("[id=card_frontback" + num + "-front]").hide();
@@ -30220,7 +30224,7 @@ console.log('uqid:');	cardInfo["uqId"] = getUqId(cardColmn);
 			$_21("[id=card_frontback" + num + "-back]").hide();
 		}, false);
 	}
-		
+
 	return cardInfo;
 }
 
@@ -30232,16 +30236,16 @@ function getUqId (nodes) {
 	var onClickNode = $xp1_21('descendant::a[@class="delete-card-button" and @onClick]', nodes);
 
 	//デッキ内「ファイルに戻す」から取得
-	if (!onClickNode) { 
+	if (!onClickNode) {
 		onClickNode = $xp1_21('descendant::img[@class="aboutdeck" and @onClick]', nodes);
 		onClickNode = $xp1_21('descendant::img[@class="btn_deck_set" and @onClick]', nodes);
-			
+
 	}
 // alt="このカードをデッキから外しファイルに戻します" title="このカードをデッキから外しファイルに戻します" class="btn_deck_set" onClick="return operationExecution('兀突骨', 288791, 'unset')" /></a>
 
 
 	//デッキ外「カードの保護」から取得
-	if (!onClickNode) { 
+	if (!onClickNode) {
 		onClickNode = $xp1_21('descendant::a[@class="set-protection-button" and @onClick]', nodes);
 	}
 	 //デッキ外「カードの保護の解除」から取得
@@ -30369,7 +30373,7 @@ function createTableData(tbodyEL, cardList) {
 			for (var i = 0, len = cardGroup10.length; i < len; i++) {
 				if (cardGroup10[i] == uqId) { cardGroup10.splice(i,1); i--; }
 			}
-			
+
 			var setGroup = select.options[select.selectedIndex].value;
 			if (setGroup == "cardGroup1") {
 				cardGroup1.push(uqId);
@@ -30547,10 +30551,10 @@ function resetCmValue () {
 // tablesorter
 // Author: Christian Bach
 // Version: 2.0.3 (changelog)
-// Licence: Dual licensed under MIT  or GPL licenses. 
+// Licence: Dual licensed under MIT  or GPL licenses.
 ////////////////////////////////////////////////////////
 (function($_21){$_21.extend({tablesorter:new function(){var parsers=[],widgets=[];this.defaults={cssHeader:"header",cssAsc:"headerSortUp",cssDesc:"headerSortDown",sortInitialOrder:"asc",sortMultiSortKey:"shiftKey",sortForce:null,sortAppend:null,textExtraction:"simple",parsers:{},widgets:[],widgetZebra:{css:["even","odd"]},headers:{},widthFixed:false,cancelSelection:true,sortList:[],headerList:[],dateFormat:"us",decimal:'.',debug:false};function benchmark(s,d){log(s+","+(new Date().getTime()-d_21.getTime())+"ms");}this.benchmark=benchmark;function log(s){if(typeof console!="undefined"&&typeof console.debug!="undefined"){console.log(s);}else{alert(s);}}function buildParserCache(table,$headers){if(table.config.debug){var parsersDebug="";}var rows=table.tBodies[0].rows;if(table.tBodies[0].rows[0]){var list=[],cells=rows[0].cells,l=cells.length;for(var i=0;i<l;i++){var p=false;if($_21.metadata&&($_21($headers[i]).metadata()&&$_21($headers[i]).metadata().sorter)){p=getParserById($_21($headers[i]).metadata().sorter);}else if((table.config.headers[i]&&table.config.headers[i].sorter)){p=getParserById(table.config.headers[i].sorter);}if(!p){p=detectParserForColumn(table,cells[i]);}if(table.config.debug){parsersDebug+="column:"+i+" parser:"+p.id+"\n";}list.push(p);}}if(table.config.debug){log(parsersDebug);}return list;};function detectParserForColumn(table,node){var l=parsers.length;for(var i=1;i<l;i++){if(parsers[i].is($_21.trim(getElementText(table.config,node)),table,node)){return parsers[i];}}return parsers[0];}function getParserById(name){var l=parsers.length;for(var i=0;i<l;i++){if(parsers[i].id.toLowerCase()==name.toLowerCase()){return parsers[i];}}return false;}function buildCache(table){if(table.config.debug){var cacheTime=new Date();}var totalRows=(table.tBodies[0]&&table.tBodies[0].rows.length)||0,totalCells=(table.tBodies[0].rows[0]&&table.tBodies[0].rows[0].cells.length)||0,parsers=table.config.parsers,cache={row:[],normalized:[]};for(var i=0;i<totalRows;++i){var c=table.tBodies[0].rows[i],cols=[];cache.row.push($_21(c));for(var j=0;j<totalCells;++j){cols.push(parsers[j].format(getElementText(table.config,c.cells[j]),table,c.cells[j]));}cols.push(i);cache.normalized.push(cols);cols=null;};if(table.config.debug){benchmark("Building cache for "+totalRows+" rows:",cacheTime);}return cache;};function getElementText(config,node){if(!node)return"";var t="";if(config.textExtraction=="simple"){if(node.childNodes[0]&&node.childNodes[0].hasChildNodes()){t=node.childNodes[0].innerHTML;}else{t=node.innerHTML;}}else{if(typeof(config.textExtraction)=="function"){t=config.textExtraction(node);}else{t=$_21(node).text();}}return t;}function appendToTable(table,cache){if(table.config.debug){var appendTime=new Date()}var c=cache,r=c.row,n=c.normalized,totalRows=n.length,checkCell=(n[0].length-1),tableBody=$_21(table.tBodies[0]),rows=[];for(var i=0;i<totalRows;i++){rows.push(r[n[i][checkCell]]);if(!table.config.appender){var o=r[n[i][checkCell]];var l=o.length;for(var j=0;j<l;j++){tableBody[0].appendChild(o[j]);}}}if(table.config.appender){table.config.appender(table,rows);}rows=null;if(table.config.debug){benchmark("Rebuilt table:",appendTime);}applyWidget(table);setTimeout(function(){$_21(table).trigger("sortEnd");},0);};function buildHeaders(table){if(table.config.debug){var time=new Date();}var meta=($_21.metadata)?true:false,tableHeadersRows=[];for(var i=0;i<table.tHead.rows.length;i++){tableHeadersRows[i]=0;};$tableHeaders=$_21("thead th",table);$tableHeaders.each(function(index){this.count=0;this.column=index;this.order=formatSortingOrder(table.config.sortInitialOrder);if(checkHeaderMetadata(this)||checkHeaderOptions(table,index))this.sortDisabled=true;if(!this.sortDisabled){$_21(this).addClass(table.config.cssHeader);}table.config.headerList[index]=this;});if(table.config.debug){benchmark("Built headers:",time);log($tableHeaders);}return $tableHeaders;};function checkCellColSpan(table,rows,row){var arr=[],r=table.tHead.rows,c=r[row].cells;for(var i=0;i<c.length;i++){var cell=c[i];if(cell.colSpan>1){arr=arr.concat(checkCellColSpan(table,headerArr,row++));}else{if(table.tHead.length==1||(cell.rowSpan>1||!r[row+1])){arr.push(cell);}}}return arr;};function checkHeaderMetadata(cell){if(($_21.metadata)&&($_21(cell).metadata().sorter===false)){return true;};return false;}function checkHeaderOptions(table,i){if((table.config.headers[i])&&(table.config.headers[i].sorter===false)){return true;};return false;}function applyWidget(table){var c=table.config.widgets;var l=c.length;for(var i=0;i<l;i++){getWidgetById(c[i]).format(table);}}function getWidgetById(name){var l=widgets.length;for(var i=0;i<l;i++){if(widgets[i].id.toLowerCase()==name.toLowerCase()){return widgets[i];}}};function formatSortingOrder(v){if(typeof(v)!="Number"){i=(v.toLowerCase()=="desc")?1:0;}else{i=(v==(0||1))?v:0;}return i;}function isValueInArray(v,a){var l=a.length;for(var i=0;i<l;i++){if(a[i][0]==v){return true;}}return false;}function setHeadersCss(table,$headers,list,css){$headers.removeClass(css[0]).removeClass(css[1]);var h=[];$headers.each(function(offset){if(!this.sortDisabled){h[this.column]=$_21(this);}});var l=list.length;for(var i=0;i<l;i++){h[list[i][0]].addClass(css[list[i][1]]);}}function fixColumnWidth(table,$headers){var c=table.config;if(c.widthFixed){var colgroup=$_21('<colgroup>');$_21("tr:first td",table.tBodies[0]).each(function(){colgroup.append($_21('<col>').css('width',$_21(this).width()));});$_21(table).prepend(colgroup);};}function updateHeaderSortCount(table,sortList){var c=table.config,l=sortList.length;for(var i=0;i<l;i++){var s=sortList[i],o=c.headerList[s[0]];o.count=s[1];o.count++;}}function multisort(table,sortList,cache){if(table.config.debug){var sortTime=new Date();}var dynamicExp="var sortWrapper = function(a,b) {",l=sortList.length;for(var i=0;i<l;i++){var c=sortList[i][0];var order=sortList[i][1];var s=(getCachedSortType(table.config.parsers,c)=="text")?((order==0)?"sortText":"sortTextDesc"):((order==0)?"sortNumeric":"sortNumericDesc");var e="e"+i;dynamicExp+="var "+e+" = "+s+"(a["+c+"],b["+c+"]); ";dynamicExp+="if("+e+") { return "+e+"; } ";dynamicExp+="else { ";}var orgOrderCol=cache.normalized[0].length-1;dynamicExp+="return a["+orgOrderCol+"]-b["+orgOrderCol+"];";for(var i=0;i<l;i++){dynamicExp+="}; ";}dynamicExp+="return 0; ";dynamicExp+="}; ";eval(dynamicExp);cache.normalized.sort(sortWrapper);if(table.config.debug){benchmark("Sorting on "+sortList.toString()+" and dir "+order+" time:",sortTime);}return cache;};function sortText(a,b){return((a<b)?-1:((a>b)?1:0));};function sortTextDesc(a,b){return((b<a)?-1:((b>a)?1:0));};function sortNumeric(a,b){return a-b;};function sortNumericDesc(a,b){return b-a;};function getCachedSortType(parsers,i){return parsers[i].type;};this.construct=function(settings){return this.each(function(){if(!this.tHead||!this.tBodies)return;var $this,$document,$headers,cache,config,shiftDown=0,sortOrder;this.config={};config=$_21.extend(this.config,$_21.tablesorter.defaults,settings);$this=$_21(this);$headers=buildHeaders(this);this.config.parsers=buildParserCache(this,$headers);cache=buildCache(this);var sortCSS=[config.cssDesc,config.cssAsc];fixColumnWidth(this);$headers.click(function(e){$this.trigger("sortStart");var totalRows=($this[0].tBodies[0]&&$this[0].tBodies[0].rows.length)||0;if(!this.sortDisabled&&totalRows>0){var $cell=$_21(this);var i=this.column;this.order=this.count++%2;if(!e[config.sortMultiSortKey]){config.sortList=[];if(config.sortForce!=null){var a=config.sortForce;for(var j=0;j<a.length;j++){if(a[j][0]!=i){config.sortList.push(a[j]);}}}config.sortList.push([i,this.order]);}else{if(isValueInArray(i,config.sortList)){for(var j=0;j<config.sortList.length;j++){var s=config.sortList[j],o=config.headerList[s[0]];if(s[0]==i){o.count=s[1];o.count++;s[1]=o.count%2;}}}else{config.sortList.push([i,this.order]);}};setTimeout(function(){setHeadersCss($this[0],$headers,config.sortList,sortCSS);appendToTable($this[0],multisort($this[0],config.sortList,cache));},1);return false;}}).mousedown(function(){if(config.cancelSelection){this.onselectstart=function(){return false};return false;}});$this.bind("update",function(){this.config.parsers=buildParserCache(this,$headers);cache=buildCache(this);}).bind("sorton",function(e,list){$_21(this).trigger("sortStart");config.sortList=list;var sortList=config.sortList;updateHeaderSortCount(this,sortList);setHeadersCss(this,$headers,sortList,sortCSS);appendToTable(this,multisort(this,sortList,cache));}).bind("appendCache",function(){appendToTable(this,cache);}).bind("applyWidgetId",function(e,id){getWidgetById(id).format(this);}).bind("applyWidgets",function(){applyWidget(this);});if($_21.metadata&&($_21(this).metadata()&&$_21(this).metadata().sortlist)){config.sortList=$_21(this).metadata().sortlist;}if(config.sortList.length>0){$this.trigger("sorton",[config.sortList]);}applyWidget(this);});};this.addParser=function(parser){var l=parsers.length,a=true;for(var i=0;i<l;i++){if(parsers[i].id.toLowerCase()==parser.id.toLowerCase()){a=false;}}if(a){parsers.push(parser);};};this.addWidget=function(widget){widgets.push(widget);};this.formatFloat=function(s){var i=parseFloat(s);return(isNaN(i))?0:i;};this.formatInt=function(s){var i=parseInt(s);return(isNaN(i))?0:i;};this.isDigit=function(s,config){var DECIMAL='\\'+config.decimal;var exp='/(^[+]?0('+DECIMAL+'0+)?$)|(^([-+]?[1-9][0-9]*)$)|(^([-+]?((0?|[1-9][0-9]*)'+DECIMAL+'(0*[1-9][0-9]*)))$)|(^[-+]?[1-9]+[0-9]*'+DECIMAL+'0+$)/';return RegExp(exp).test($_21.trim(s));};this.clearTableBody=function(table){if($_21.browser.msie){function empty(){while(this.firstChild)this.removeChild(this.firstChild);}empty.apply(table.tBodies[0]);}else{table.tBodies[0].innerHTML="";}};}});$_21.fn.extend({tablesorter:$_21.tablesorter.construct});var ts=$_21.tablesorter;ts.addParser({id:"text",is:function(s){return true;},format:function(s){return $_21.trim(s.toLowerCase());},type:"text"});ts.addParser({id:"digit",is:function(s,table){var c=table.config;return $_21.tablesorter.isDigit(s,c);},format:function(s){return $_21.tablesorter.formatFloat(s);},type:"numeric"});ts.addParser({id:"currency",is:function(s){return/^[￡$ｬ ?.]/.test(s);},format:function(s){return $_21.tablesorter.formatFloat(s.replace(new RegExp(/[^0-9.]/g),""));},type:"numeric"});ts.addParser({id:"ipAddress",is:function(s){return/^\d{2,3}[\.]\d{2,3}[\.]\d{2,3}[\.]\d{2,3}$/.test(s);},format:function(s){var a=s.split("."),r="",l=a.length;for(var i=0;i<l;i++){var item=a[i];if(item.length==2){r+="0"+item;}else{r+=item;}}return $_21.tablesorter.formatFloat(r);},type:"numeric"});ts.addParser({id:"url",is:function(s){return/^(https?|ftp|file):\/\/$/.test(s);},format:function(s){return $_21.trim(s.replace(new RegExp(/(https?|ftp|file):\/\//),''));},type:"text"});ts.addParser({id:"isoDate",is:function(s){return/^\d{4}[\/-]\d{1,2}[\/-]\d{1,2}$/.test(s);},format:function(s){return $_21.tablesorter.formatFloat((s!="")?new Date(s.replace(new RegExp(/-/g),"/")).getTime():"0");},type:"numeric"});ts.addParser({id:"percent",is:function(s){return/\%$/.test($_21.trim(s));},format:function(s){return $_21.tablesorter.formatFloat(s.replace(new RegExp(/%/g),""));},type:"numeric"});ts.addParser({id:"usLongDate",is:function(s){return s.match(new RegExp(/^[A-Za-z]{3,10}\.? [0-9]{1,2}, ([0-9]{4}|'?[0-9]{2}) (([0-2]?[0-9]:[0-5][0-9])|([0-1]?[0-9]:[0-5][0-9]\s(AM|PM)))$/));},format:function(s){return $_21.tablesorter.formatFloat(new Date(s).getTime());},type:"numeric"});ts.addParser({id:"shortDate",is:function(s){return/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/.test(s);},format:function(s,table){var c=table.config;s=s.replace(/\-/g,"/");if(c.dateFormat=="us"){s=s.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/,"$3/$1/$2");}else if(c.dateFormat=="uk"){s=s.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/,"$3/$2/$1");}else if(c.dateFormat=="dd/mm/yy"||c.dateFormat=="dd-mm-yy"){s=s.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2})/,"$1/$2/$3");}return $_21.tablesorter.formatFloat(new Date(s).getTime());},type:"numeric"});ts.addParser({id:"time",is:function(s){return/^(([0-2]?[0-9]:[0-5][0-9])|([0-1]?[0-9]:[0-5][0-9]\s(am|pm)))$/.test(s);},format:function(s){return $_21.tablesorter.formatFloat(new Date("2000/01/01 "+s).getTime());},type:"numeric"});ts.addParser({id:"metadata",is:function(s){return false;},format:function(s,table,cell){var c=table.config,p=(!c.parserMetadataName)?'sortValue':c.parserMetadataName;return $_21(cell).metadata()[p];},type:"numeric"});ts.addWidget({id:"zebra",format:function(table){if(table.config.debug){var time=new Date();}$_21("tr:visible",table.tBodies[0]).filter(':even').removeClass(table.config.widgetZebra.css[1]).addClass(table.config.widgetZebra.css[0]).end().filter(':odd').removeClass(table.config.widgetZebra.css[0]).addClass(table.config.widgetZebra.css[1]);if(table.config.debug){$_21.tablesorter.benchmark("Applying Zebra widget",time);}}});})($_21);
-}	
+}
 //faraway 21.武将カード分類ツールのソース(bro3_deck_tool.user.js)終了
 
 //------------------------------------------
@@ -30569,7 +30573,7 @@ var kino_ver = "1.05a";
 //　配布URL
 var se_rack = "<b><内蔵版>ブラウザ三国志 領地敵兵算出機 by Craford, BSE ";
 var url_rack = "http://dev.3g-ws.com/?tools";
-var com_rack = "出現目安です！ 初心者から変態まで御用達の通期版（とりあえず15期までは大丈夫。16期確認中）"   // 2013/07/12修正
+var com_rack = "出現目安です！ 初心者から変態まで御用達の通期版（とりあえず15期までは大丈夫。16期確認中）"	 // 2013/07/12修正
 var url_rack2 = "http://chaki.s27.xrea.com/br3/";
 
 var title = document.title;//　ページタイトル
@@ -30707,13 +30711,13 @@ var buki_lv = {
 
 		//　距離の計算
 		length = Math.sqrt(Math.pow(bcordx-tocordx,2)+Math.pow(bcordy-tocordy,2));
-		
+
 		if(season>0){
 
 			//　出兵先タイルパターン取得のためのHTTP要求　starに★数、tile[]に各タイル数を格納。
 			var url = "http://"+location.hostname+"/land.php?x="+tocordx+"&y="+tocordy;
 			GM_xmlhttpRequest({
-				method:"GET", 
+				method:"GET",
 				url:url,
 				onload:function(x){
 				//　読み込み後の処理は関数 getFieldType() 内で行う。
@@ -30887,7 +30891,7 @@ function getFieldType(x, length){
 		var yarik = kenmax*def["yari"][0]+tatemax*def["yari"][1]+yarimax*def["yari"][2]+yumimax*def["yari"][3]+kimax*def["yari"][4]+daimax*def["yari"][5]+jtmax*def["yari"][6]+hokomax*def["yari"][7]+domax*def["yari"][8]+konomax*def["yari"][9];
 		var yumik = kenmax*def["yumi"][0]+tatemax*def["yumi"][1]+yarimax*def["yumi"][2]+yumimax*def["yumi"][3]+kimax*def["yumi"][4]+daimax*def["yumi"][5]+jtmax*def["yumi"][6]+hokomax*def["yumi"][7]+domax*def["yumi"][8]+konomax*def["yumi"][9];
 		var kik = kenmax*def["ki"][0]+tatemax*def["ki"][1]+yarimax*def["ki"][2]+yumimax*def["ki"][3]+kimax*def["ki"][4]+daimax*def["ki"][5]+jtmax*def["ki"][6]+hokomax*def["ki"][7]+domax*def["ki"][8]+konomax*def["ki"][9];
-		
+
 		//距離最小時乗数
 		var hentai2 = (1+length/10);
 		//最小出現数計算
@@ -30901,13 +30905,13 @@ function getFieldType(x, length){
 		var hokomin = Math.floor(list[P_HSPR]*hentai2);
 		var domin = Math.floor(list[P_HARC]*hentai2);
 		var konomin = Math.floor(list[P_HKNT]*hentai2);
-		
+
 		//最小防御力集計
 		var kenk2 = kenmin*def["ken"][0]+tatemin*def["ken"][1]+yarimin*def["ken"][2]+yumimin*def["ken"][3]+kimin*def["ken"][4]+daimin*def["ken"][5]+jtmin*def["ken"][6]+hokomin*def["ken"][7]+domin*def["ken"][8]+konomin*def["ken"][9];
 		var yarik2 = kenmin*def["yari"][0]+tatemin*def["yari"][1]+yarimin*def["yari"][2]+yumimin*def["yari"][3]+kimin*def["yari"][4]+daimin*def["yari"][5]+jtmin*def["yari"][6]+hokomin*def["yari"][7]+domin*def["yari"][8]+konomin*def["yari"][9];
 		var yumik2 = kenmin*def["yumi"][0]+tatemin*def["yumi"][1]+yarimin*def["yumi"][2]+yumimin*def["yumi"][3]+kimin*def["yumi"][4]+daimin*def["yumi"][5]+jtmin*def["yumi"][6]+hokomin*def["yumi"][7]+domin*def["yumi"][8]+konomin*def["yumi"][9];
 		var kik2 = kenmin*def["ki"][0]+tatemin*def["ki"][1]+yarimin*def["ki"][2]+yumimin*def["ki"][3]+kimin*def["ki"][4]+daimin*def["ki"][5]+jtmin*def["ki"][6]+hokomin*def["ki"][7]+domin*def["ki"][8]+konomin*def["ki"][9];
-		
+
 		//表示部分フォント追加分
 		var red_f = "</b></font>\n";
 		var red_s = "<font color=red><b>";
@@ -30940,7 +30944,7 @@ function getFieldType(x, length){
 			cavalry_guards_count = sol_items.snapshotItem(11).innerHTML.match(/[0-9]+/);
 		} else if (title.indexOf("出兵(確認)") != -1) {
 			var sol_items = document.evaluate("//table[@class='fighting_units']//input/@value", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-		
+
 			//　剣兵
 			infantry_count = sol_items.snapshotItem(0).textContent;
 			//　大剣兵
@@ -30965,14 +30969,14 @@ function getFieldType(x, length){
 			cavalry_count = sol_items.snapshotItem(10).textContent;
 			//　近衛騎兵
 			cavalry_guards_count = sol_items.snapshotItem(11).textContent;
-		
+
 			//　総攻撃力
 			var power = 0;
 			areas = document.evaluate('//strong[@class="size1"]', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 			power = areas.snapshotItem(0).textContent;
 			power = power.replace(/,/,'');
 			power = power.replace(/,/,'');
-		
+
 			//　武将兵科
 			areas = document.evaluate('//span[@class="soltype"]//img/@title', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 			if(areas.snapshotItem(0)) soltype = areas.snapshotItem(0).textContent;
@@ -31039,8 +31043,8 @@ function getFieldType(x, length){
 		msg = msg + "</font>\n";
 		msg = msg + "剣：\n"+ red_s + Math.ceil(kenk/atk["ken"]) + red_f + "～" + gre_s   + Math.ceil(kenk2/atk["ken"]) + red_f + "(大剣：\n"+ red_s + Math.ceil(kenk/atk["dai"]) + red_f + "～" + gre_s   + Math.ceil(kenk2/atk["dai"]) + red_f + "）<br>\n"
 		msg = msg + "槍：\n"+ red_s + Math.ceil(yarik/atk["yari"]) + red_f + "～" + gre_s + Math.ceil(yarik2/atk["yari"]) + red_f + "(矛槍：\n"+ red_s + Math.ceil(yarik/atk["hoko"]) + red_f + "～" + gre_s   + Math.ceil(yarik2/atk["hoko"]) + red_f + "）<br>\n";
-		msg = msg + "弓：\n"+ red_s + Math.ceil(yumik/atk["yumi"]) + red_f + "～" + gre_s + Math.ceil(yumik2/atk["yumi"]) + red_f + "(弩兵：\n"+ red_s + Math.ceil(yumik/atk["do"]) + red_f + "～" + gre_s   + Math.ceil(yumik2/atk["do"]) + red_f + "）<br>\n";
-		msg = msg + "騎：\n"+ red_s + Math.ceil(kik/atk["ki"]) + red_f + "～" + gre_s + Math.ceil(kik2/atk["ki"]) + red_f + "(近衛：\n"+ red_s + Math.ceil(kik/atk["kono"]) + red_f + "～" + gre_s   + Math.ceil(kik2/atk["kono"]) + red_f + "）<br>\n";
+		msg = msg + "弓：\n"+ red_s + Math.ceil(yumik/atk["yumi"]) + red_f + "～" + gre_s + Math.ceil(yumik2/atk["yumi"]) + red_f + "(弩兵：\n"+ red_s + Math.ceil(yumik/atk["do"]) + red_f + "～" + gre_s	 + Math.ceil(yumik2/atk["do"]) + red_f + "）<br>\n";
+		msg = msg + "騎：\n"+ red_s + Math.ceil(kik/atk["ki"]) + red_f + "～" + gre_s + Math.ceil(kik2/atk["ki"]) + red_f + "(近衛：\n"+ red_s + Math.ceil(kik/atk["kono"]) + red_f + "～" + gre_s	 + Math.ceil(kik2/atk["kono"]) + red_f + "）<br>\n";
 
 		msg = msg + "</td><td align=center style='text-align:center;background:#FFC;color:#C60;'>\n";
 
@@ -31150,94 +31154,94 @@ function getFieldType(x, length){
 		kaji = kaji_lv[kaji];
 		var cp = document.getElementById("cp");
 		cp = cp.options[cp.selectedIndex].value;
-	
+
 		var infantry_count2 = document.getElementById("infantry_count2").value;
 		var ken_skill = document.getElementById("ken_skill").value;
 		var ken_kaji = document.getElementById("ken_kaji");
 		ken_kaji = ken_kaji.options[ken_kaji.selectedIndex].value;
-	
+
 		var large_infantry_count2 = document.getElementById("large_infantry_count2").value;
 		var dai_skill = document.getElementById("dai_skill").value;
 		var dai_kaji = document.getElementById("dai_kaji");
 		dai_kaji = dai_kaji.options[dai_kaji.selectedIndex].value;
-	
+
 		var shield_count2 = document.getElementById("shield_count2").value;
 		var tate_skill = document.getElementById("tate_skill").value;
 		var tate_kaji = document.getElementById("tate_kaji");
 		tate_kaji = tate_kaji.options[tate_kaji.selectedIndex].value;
-	
+
 		var heavy_shield_count2 = document.getElementById("heavy_shield_count2").value;
 		var jt_skill = document.getElementById("jt_skill").value;
 		var jt_kaji = document.getElementById("jt_kaji");
 		jt_kaji = jt_kaji.options[jt_kaji.selectedIndex].value;
-	
+
 		var spear_count2 = document.getElementById("spear_count2").value;
 		var yari_skill = document.getElementById("yari_skill").value;
 		var yari_kaji = document.getElementById("yari_kaji");
 		yari_kaji = yari_kaji.options[yari_kaji.selectedIndex].value;
-	
+
 		var archer_count2 = document.getElementById("archer_count2").value;
 		var yumi_skill = document.getElementById("yumi_skill").value;
 		var yumi_kaji = document.getElementById("yumi_kaji");
 		yumi_kaji = yumi_kaji.options[yumi_kaji.selectedIndex].value;
-	
+
 		var cavalry_count2 = document.getElementById("cavalry_count2").value;
 		var ki_skill = document.getElementById("ki_skill").value;
 		var ki_kaji = document.getElementById("ki_kaji");
 		ki_kaji = ki_kaji.options[ki_kaji.selectedIndex].value;
-	
+
 		var halbert_count2 = document.getElementById("halbert_count2").value;
 		var hoko_skill = document.getElementById("hoko_skill").value;
 		var hoko_kaji = document.getElementById("hoko_kaji");
 		hoko_kaji = hoko_kaji.options[hoko_kaji.selectedIndex].value;
-	
+
 		var crossbow_count2 = document.getElementById("crossbow_count2").value;
 		var do_skill = document.getElementById("do_skill").value;
 		var do_kaji = document.getElementById("do_kaji");
 		do_kaji = do_kaji.options[do_kaji.selectedIndex].value;
-	
+
 		var cavalry_guards_count2 = document.getElementById("cavalry_guards_count2").value;
 		var konoe_skill = document.getElementById("konoe_skill").value;
 		var konoe_kaji = document.getElementById("konoe_kaji");
 		konoe_kaji = konoe_kaji.options[konoe_kaji.selectedIndex].value;
-	
+
 		var ram_count2 = document.getElementById("ram_count2").value;
 		var ram_skill = document.getElementById("ram_skill").value;
 		var ram_kaji = document.getElementById("ram_kaji");
 		ram_kaji = ram_kaji.options[ram_kaji.selectedIndex].value;
-	
+
 		var catapult_count2 = document.getElementById("catapult_count2").value;
 		var catapult_skill = document.getElementById("catapult_skill").value;
 		var catapult_kaji = document.getElementById("catapult_kaji");
 		catapult_kaji = catapult_kaji.options[catapult_kaji.selectedIndex].value;
-	
+
 		//攻撃側総兵数
 		attack_count = 1;	// 武将
 		attack_count +=   Math.floor(infantry_count2) + Math.floor(shield_count2) + Math.floor(spear_count2) + Math.floor(archer_count2) + Math.floor(cavalry_count2)
 						+ Math.floor(halbert_count2) + Math.floor(crossbow_count2) + Math.floor(cavalry_guards_count2)
 						+ Math.floor(large_infantry_count2) + Math.floor(heavy_shield_count2)
 						+ Math.floor(ram_count2) + Math.floor(catapult_count2);
-	
+
 		//歩兵科
 		aken = Math.floor(infantry_count2) + Math.floor(large_infantry_count2) + Math.floor(shield_count2) + Math.floor(heavy_shield_count2) + Math.floor(ram_count2) + Math.floor(catapult_count2);
 		if(b_type2=="0") aken+=1;
 		aken /= attack_count;
-	
+
 		//槍兵科
 		ayari = Math.floor(spear_count2) + Math.floor(halbert_count2);
 		if(b_type2=="1") ayari += 1;
 		ayari = ayari / attack_count;
-	
+
 		//弓兵科
 		ayumi = Math.floor(archer_count2) + Math.floor(crossbow_count2);
 		if(b_type2=="2") ayumi+=1;
 		ayumi /= attack_count;
-	
+
 		//騎兵科
 		aki = Math.floor(cavalry_count2) + Math.floor(cavalry_guards_count2);
 		if(b_type2=="3") aki+=1;
 		aki /= attack_count;
-	
+
 		//各兵科攻撃力
 		b_power = b_power*(1 + b_skill / 100);
 		var infantry_power = infantry_count2 * atk["ken"] * ( 1 + ken_skill / 100 + kaji + buki_lv["ken"][ken_kaji]);
@@ -31255,7 +31259,7 @@ function getFieldType(x, length){
 
 		if (title.indexOf("出兵(入力)") != -1) {
 			//総攻撃力
-			power =   Math.floor((    Math.floor(b_power) + Math.floor(infantry_power) + Math.floor(large_infantry_power)
+			power =   Math.floor((	  Math.floor(b_power) + Math.floor(infantry_power) + Math.floor(large_infantry_power)
 									+ Math.floor(shield_power) + Math.floor(heavy_shield_power)
 									+ Math.floor(spear_power) + Math.floor(archer_power) + Math.floor(cavalry_power)
 									+ Math.floor(halbert_power) + Math.floor(crossbow_power) + Math.floor(cavalry_guards_power)
@@ -31312,7 +31316,7 @@ function getFieldType(x, length){
 						var hentai_j = hentai2*(10+j*2)/10;
 						var hentai_k = hentai2*(10+k*2)/10;
 						var hentai_l = hentai2*(10+l*2)/10;
-			
+
 						var ken_x = Math.floor(list[P_NSWD]*hentai_j);
 						var tate_x = Math.floor(list[P_NSLD]*hentai_j);
 						var yari_x = Math.floor(list[P_NSPR]*hentai_k);
@@ -31323,7 +31327,7 @@ function getFieldType(x, length){
 						var hoko_x = Math.floor(list[P_HSPR]*hentai_k);
 						var do_x = Math.floor(list[P_HARC]*hentai_j);
 						var kono_x = Math.floor(list[P_HKNT]*hentai_l);
-			
+
 						var dken = ken_x*(aken*def["ken"][0]+ayari*def["yari"][0]+ayumi*def["yumi"][0]+aki*def["ki"][0]);
 						var dtate = tate_x*(aken*def["ken"][1]+ayari*def["yari"][1]+ayumi*def["yumi"][1]+aki*def["ki"][1]);
 						var dyari = yari_x*(aken*def["ken"][2]+ayari*def["yari"][2]+ayumi*def["yumi"][2]+aki*def["ki"][2]);
@@ -31334,7 +31338,7 @@ function getFieldType(x, length){
 						var dhoko = hoko_x*(aken*def["ken"][7]+ayari*def["yari"][7]+ayumi*def["yumi"][7]+aki*def["ki"][7]);
 						var ddo = do_x*(aken*def["ken"][8]+ayari*def["yari"][8]+ayumi*def["yumi"][8]+aki*def["ki"][8]);
 						var dkono = kono_x*(aken*def["ken"][9]+ayari*def["yari"][9]+ayumi*def["yumi"][9]+aki*def["ki"][9]);
-			
+
 						var d = dken + dtate + dyumi + dyari + dki + ddai + djt + ddo + dhoko + dkono ;
 						if( power > d ) vcnt += 1;
 					}
@@ -31376,19 +31380,19 @@ function getFieldType(x, length){
 		svreset_btn.addEventListener("click", function(){reset_season();}, false);
 
 	function get_kaji_lv(){
-		
+
 		//鍛冶場Lv・武器強化Lvを自動入力
 		var url2 = "http://"+location.hostname+"/village.php";
 		GM_xmlhttpRequest({
-			method:"GET", 
+			method:"GET",
 			url:url2,
 			onload:function(x){
 				var responseXML = document.createElement('div');
 				responseXML.innerHTML = x.responseText;
-			
+
 				var panels2 = document.evaluate('.//*[@id="mapOverlayMap"]//area/@title',
 				responseXML, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-			
+
 				for (var i = 0; i < panels2.snapshotLength; i++) {
 					panels3 = panels2.snapshotItem(i).textContent;
 					if(panels3.indexOf("鍛冶場") != -1) {
@@ -31714,7 +31718,7 @@ function reset_season(){
 	}
 }
 
-}	
+}
 
 //----------------------------------------------
 // JST表示
@@ -31748,13 +31752,13 @@ function disp_jsttime(){
 		var now = new Date();
 		if( json["st"] == null || json["it"] == null ) return;
 		if( json["leap"] == null || json["next"] == null ) return;
-		json["rt"] = now.getTime() / 1000;  // Record Receive time
+		json["rt"] = now.getTime() / 1000;	// Record Receive time
 		Server.push( json );
 	}
 	function addscript(url) {  // Dynamic loading of JSONP script
 		var now = new Date();  // Record Initiation time
-		var script	 = document.createElement('script'); 
-		script.type	= 'text/javascript'; 
+		var script	 = document.createElement('script');
+		script.type	= 'text/javascript';
 		script.charset = 'UTF-8';
 		script.src	 = url + "?" + ( now.getTime() / 1000 );
 		Nservers++;  // Number of servers
@@ -31883,7 +31887,7 @@ function HistAnalysis(){
 	if (location.pathname != "/busyodas/busyodas_history.php") {
 		return;
 	}
-	
+
 	//----------------//
 	// コンテナの取得 //
 	//----------------//
@@ -31965,7 +31969,7 @@ function HistAnalysis(){
 		var op = document.createElement("option");
 		op.value = i;
 		op.text = i;
-		
+
 		combo1.appendChild(op);
 	}
 	combo1.value = maxpage;
@@ -32059,15 +32063,15 @@ function getButtonClicked_01() {
 	rare_count = {}; // ランク別カード数
 
 	// レア枚数の初期化
-	t_rare_count['C'] = 0;  t_rare_count['UC'] = 0;  t_rare_count['R']   = 0;t_rare_count['SR']   = 0;t_rare_count['UR']   = 0;
-	g_rare_count['C'] = 0;  g_rare_count['UC'] = 0;  g_rare_count['R']   = 0;g_rare_count['SR']   = 0;g_rare_count['UR']   = 0;
-	s_rare_count['C'] = 0;  s_rare_count['UC'] = 0;  s_rare_count['R']   = 0;s_rare_count['SR']   = 0;s_rare_count['UR']   = 0;
+	t_rare_count['C'] = 0;	t_rare_count['UC'] = 0;  t_rare_count['R']	 = 0;t_rare_count['SR']   = 0;t_rare_count['UR']   = 0;
+	g_rare_count['C'] = 0;	g_rare_count['UC'] = 0;  g_rare_count['R']	 = 0;g_rare_count['SR']   = 0;g_rare_count['UR']   = 0;
+	s_rare_count['C'] = 0;	s_rare_count['UC'] = 0;  s_rare_count['R']	 = 0;s_rare_count['SR']   = 0;s_rare_count['UR']   = 0;
 	sp_rare_count['C'] = 0; sp_rare_count['UC']  = 0;sp_rare_count['R']  = 0;sp_rare_count['SR']  = 0;sp_rare_count['UR']  = 0;
 	sho_rare_count['C'] = 0;sho_rare_count['UC'] = 0;sho_rare_count['R'] = 0;sho_rare_count['SR'] = 0;sho_rare_count['UR'] = 0;
 	tai_rare_count['C'] = 0;tai_rare_count['UC'] = 0;tai_rare_count['R'] = 0;tai_rare_count['SR'] = 0;tai_rare_count['UR'] = 0;
 	stp_rare_count['C'] = 0;stp_rare_count['UC'] = 0;stp_rare_count['R'] = 0;stp_rare_count['SR'] = 0;stp_rare_count['UR'] = 0;
 	itm_rare_count['C'] = 0;itm_rare_count['UC'] = 0;itm_rare_count['R'] = 0;itm_rare_count['SR'] = 0;itm_rare_count['UR'] = 0;
-	l_rare_count['C'] = 0;  l_rare_count['UC']   = 0;l_rare_count['R']   = 0;l_rare_count['SR']   = 0;l_rare_count['UR']   = 0;
+	l_rare_count['C'] = 0;	l_rare_count['UC']	 = 0;l_rare_count['R']	 = 0;l_rare_count['SR']   = 0;l_rare_count['UR']   = 0;
 	xg_rare_count['C'] = 0; xg_rare_count['UC']  = 0;xg_rare_count['R']  = 0;xg_rare_count['SR']  = 0;xg_rare_count['UR']  = 0;
 	xs_rare_count['C'] = 0; xs_rare_count['UC']  = 0;xs_rare_count['R']  = 0;xs_rare_count['SR']  = 0;xs_rare_count['UR']  = 0;
 
@@ -32223,7 +32227,7 @@ function loadPage_24(targetPageNo) {
 			addResult(targetPageNo, res);
 		}
 	}
-	GM_xmlhttpRequest(opt); 
+	GM_xmlhttpRequest(opt);
 }
 
 //--------------//
@@ -32574,7 +32578,7 @@ function formatRightNumber_24( num, length ){
 }
 
 function formatRightNumber_25( num, length ){
-	var fix = '      ';
+	var fix = ' 	 ';
 	var str;
 	var result = '';
 
@@ -33076,7 +33080,7 @@ function TradeIncome(){
 //31.自動巡回
 //================================================================================
 function AutoRound(){
-	if( location.pathname != "/map.php" ) {	//全体地図 	
+	if( location.pathname != "/map.php" ) {	//全体地図
    		return ;
 	}
 
@@ -33100,7 +33104,7 @@ function AutoRound(){
 		openMoveBox();
 		MoveCheck();
 	}
-}	
+}
 function MoveCheck() {
 	var host = location.hostname;
 	var Move_Flg = GM_getValue(host + "Move_Flg", false);
@@ -33127,7 +33131,7 @@ function MoveCheck() {
 			GM_setValue(host + "Move_Flg", false);
 			deleteMoveHtml();
 			GM_log("MoveCheck() END x=" + temp_x + "  y=" + CENTER_Y_31);
-			
+
 			//移動開始位置に戻る
 			CENTER_X_31 = GM_getValue(host + "now_x", "0");
 			CENTER_Y_31 = GM_getValue(host + "now_y", "0");
@@ -33491,7 +33495,7 @@ function addMoveHtml(Favorite_Flg) {
 		  </tr>\
 		</table>";
 		MoveContainer.appendChild(table);
-		
+
 		//保存ボタンへのイベント登録
 		document.getElementById('btn_Save' + 1).addEventListener("click",function() { FavoriteSave(1); }, true);
 		document.getElementById('btn_Save' + 2).addEventListener("click",function() { FavoriteSave(2); }, true);
@@ -33501,7 +33505,7 @@ function addMoveHtml(Favorite_Flg) {
 		document.getElementById('btn_Save' + 6).addEventListener("click",function() { FavoriteSave(6); }, true);
 		document.getElementById('btn_Save' + 7).addEventListener("click",function() { FavoriteSave(7); }, true);
 		document.getElementById('btn_Save' + 8).addEventListener("click",function() { FavoriteSave(8); }, true);
-		
+
 		//読込みボタンへのイベント登録
 		document.getElementById('btn_Load' + 1).addEventListener("click",function() { FavoriteLoad(1); }, true);
 		document.getElementById('btn_Load' + 2).addEventListener("click",function() { FavoriteLoad(2); }, true);
@@ -33511,7 +33515,7 @@ function addMoveHtml(Favorite_Flg) {
 		document.getElementById('btn_Load' + 6).addEventListener("click",function() { FavoriteLoad(6); }, true);
 		document.getElementById('btn_Load' + 7).addEventListener("click",function() { FavoriteLoad(7); }, true);
 		document.getElementById('btn_Load' + 8).addEventListener("click",function() { FavoriteLoad(8); }, true);
-		
+
 		//保存ボタンへのイベント登録
 		document.getElementById('btn_MoveSave' + 1).addEventListener("click",function() { FavoriteMoveSave(1); }, true);
 		document.getElementById('btn_MoveSave' + 2).addEventListener("click",function() { FavoriteMoveSave(2); }, true);
@@ -33562,7 +33566,7 @@ function addMoveHtml(Favorite_Flg) {
 		}
 
 
-		
+
 	}//Endif
 
 	var host = location.hostname;
@@ -33673,7 +33677,7 @@ function getLogInfoMain() {
 		if (text == null) { continue; }
 			text = text.replace(/<[^>]*>/g, "");
 			text = text.replace(/\t/g, "");
-			
+
 		// 親ノード
 		var trNode = linkNodes.snapshotItem(i).parentNode.parentNode;
 		// 出兵先
@@ -33695,7 +33699,7 @@ function getLogInfoMain() {
 	}
 	if (hrefArray_32.length <= 0) {
 		alert("出力対象はありません。");
-		return; 
+		return;
 	}
 
 	// 実行中表示レイヤー
@@ -33728,7 +33732,7 @@ function loadPage_32(loadNo) {
 			getLogInfo(loadNo, res);
 		}
 	};
-	GM_xmlhttpRequest(opt); 
+	GM_xmlhttpRequest(opt);
 }
 var copyTxt = "";
 function getLogInfo(loadNo, res) {
@@ -33769,10 +33773,10 @@ function getLogInfo(loadNo, res) {
 			textAreaEL.rows = 25;
 			textAreaEL.defaultValue = copyTxt;
 		targetNode.appendChild(textAreaEL);
-		
+
 		var layer = $xp1_32('//div[@id="cash_layer"]', d_32);
 			layer.parentNode.removeChild(layer);
-		
+
 		saveOpValues_32();
 		alert("ログ情報を出力しました。");
 		return;
@@ -33825,7 +33829,7 @@ function saveOpValues_32 () {
 	GM_setValue(worldKey_32 + "reportIdArray", reportIdArray.toSource());
 	GM_setValue(worldKey_32 + "allianceIdArray", allianceIdArray.toSource());
 }
-}	
+}
 
 
 //faraway 32.報告書・同盟ログCSV出力のソース(.user.js)終了
@@ -34292,37 +34296,37 @@ function disp_territory_remove() {
 function disp_bro3_etcs(){
 	/*
 		グローバル
-	*/	
+	*/
 	var SCRIPT_VERSION = '0.33.8の抜粋';
 	var SERVER_NAME = location.hostname.split('.')[0];
-	var GAME_TYPE    = location.host.split('.')[1];
+	var GAME_TYPE	 = location.host.split('.')[1];
 	var SERVICE_TYPE = 's';									// サービスの種類(s:本鯖 h:ハンゲー m:mixi y:ヤフー f:facebook)
 	var SERVER_TYPE = 0;									// サーバーのタイプ 0:[s/h/f] 1:[m/y]
 	var SAVE_NAME_HEAD = "3GOKUSHI_ETCS_";
-	var SAVE_NAME   = SAVE_NAME_HEAD+SERVER_NAME+"_";
-	var SERVER_URI  = 'http://'+location.host;
+	var SAVE_NAME	= SAVE_NAME_HEAD+SERVER_NAME+"_";
+	var SERVER_URI	= 'http://'+location.host;
 	var PROFILE_URI = SERVER_URI+'/user/';
 	var MAPMOVE_URL = SERVER_URI+'/map.php?';
 	var BSYODAS_URI = SERVER_URI+'/busyodas/busyodas.php';
-	var TRADE_URI   = SERVER_URI+'/card/trade.php';
-	var CPITEM_URI  = SERVER_URI+'/item/shop.php';
-	var NAVI_ID     = 'gnavi';			// P・本鯖UI変更対応(2012/04/23変更)
-	
+	var TRADE_URI	= SERVER_URI+'/card/trade.php';
+	var CPITEM_URI	= SERVER_URI+'/item/shop.php';
+	var NAVI_ID 	= 'gnavi';			// P・本鯖UI変更対応(2012/04/23変更)
+
 	var DEBUG_FLG = false;
-	
+
 	// オプション保存
 	var ETCS_OPTION = [];
-	
+
 	// ウインドウ関係
 	var baseWinList = [];
 	var baseWinListCnt = 0;
 	var myToolTipList = [];
 	var myToolTipListCnt = 0;
-	
+
 	// サーバー時間
 	var serverTime = new Date();
 	var EXIMG_URL  = '';
-	
+
 	// 保存データのデフォルト設定・使用コントロール
 	var saveDefaultData = [
 		["AllDelayTime","value",300],
@@ -34365,76 +34369,76 @@ function disp_bro3_etcs(){
 		["copyTitleInBBSTitle","checked",true],
 		["donationResourceView","checked",true],
 	];
-	
+
 	// GAME別用語置き換え
 	var gameTermsList = {
 		"3gokushi" : {
-			"君主"       : "君主",
-			"木"         : "木",
-			"石"         : "石",
-			"鉄"         : "鉄",
-			"糧"         : "糧",
-			"木s"        : "木",
-			"石s"        : "石",
-			"鉄s"        : "鉄",
-			"糧s"        : "糧",
-			"市場"       : "市場",
-			"訓練所"     : "訓練所",
+			"君主"		 : "君主",
+			"木"		 : "木",
+			"石"		 : "石",
+			"鉄"		 : "鉄",
+			"糧"		 : "糧",
+			"木s"		 : "木",
+			"石s"		 : "石",
+			"鉄s"		 : "鉄",
+			"糧s"		 : "糧",
+			"市場"		 : "市場",
+			"訓練所"	 : "訓練所",
 			"遠征訓練所" : "遠征訓練所",
-			"鍛冶場"     : "鍛冶場",
-			"防具工場"   : "防具工場",
-			"研究所"     : "研究所",
-			"練兵所"     : "練兵所",
-			"兵舎"       : "兵舎",
-			"弓兵舎"     : "弓兵舎",
-			"厩舎"       : "厩舎",
-			"兵器工房"   : "兵器工房",
-			"兵士管理"   : "兵士管理",
-			"出兵先"     : "出兵先",
-			"出兵元"     : "出兵元",
-			"衝車"       : "衝車",
-			"投石機"     : "投石機",
-			'剣兵'       : '剣兵',
-			'斥候'       : '斥候',
-			'槍兵'       : '槍兵',
-			'弓兵'       : '弓兵',
-			'騎兵'       : '騎兵',
-			'矛槍兵'     : '矛槍兵',
-			'弩兵'       : '弩兵',
-			'近衛騎兵'   : '近衛騎兵',
-			'斥候騎兵'   : '斥候騎兵',
-			'大剣兵'     : '大剣兵',
-			'盾兵'       : '盾兵',
-			'重盾兵'     : '重盾兵'
+			"鍛冶場"	 : "鍛冶場",
+			"防具工場"	 : "防具工場",
+			"研究所"	 : "研究所",
+			"練兵所"	 : "練兵所",
+			"兵舎"		 : "兵舎",
+			"弓兵舎"	 : "弓兵舎",
+			"厩舎"		 : "厩舎",
+			"兵器工房"	 : "兵器工房",
+			"兵士管理"	 : "兵士管理",
+			"出兵先"	 : "出兵先",
+			"出兵元"	 : "出兵元",
+			"衝車"		 : "衝車",
+			"投石機"	 : "投石機",
+			'剣兵'		 : '剣兵',
+			'斥候'		 : '斥候',
+			'槍兵'		 : '槍兵',
+			'弓兵'		 : '弓兵',
+			'騎兵'		 : '騎兵',
+			'矛槍兵'	 : '矛槍兵',
+			'弩兵'		 : '弩兵',
+			'近衛騎兵'	 : '近衛騎兵',
+			'斥候騎兵'	 : '斥候騎兵',
+			'大剣兵'	 : '大剣兵',
+			'盾兵'		 : '盾兵',
+			'重盾兵'	 : '重盾兵'
 		}
 	};
 	var GAME_TERMS;
-	
-	
+
+
 	// ========================
-	//       メイン関数
+	//		 メイン関数
 	// ========================
-	
+
 		Init();
 		GM_init();				// Chrome対策
-	
+
 		EtcsSetting_Load();	// 設定ロード
 		EtcsSetting_Insert();		// 設定画面(タイマーで呼ばない。タイマーの値が大きくなると再設定が難しくなる)
-	
+
 		setTimeout(function() {
 			serverTime = getNowTime();		// 時間取得
 			getCommon();			// プロフィール読み込み
 			setEvent_chkInputStrLen();												// 文字数表示(ON/OFFは中で)
 			if(ETCS_OPTION['MarketStockPreset'])		MarketStockPreset();
 			if(ETCS_OPTION['MarketStockCalc'])			initMarketStockCalc();
-			initMapDrag();	
+			initMapDrag();
 			if(ETCS_OPTION['JumpURIFromClickCard'] || ETCS_OPTION['cardRightClickSkill'])	jumpURIFromClickCardNo();
 			if(ETCS_OPTION['viewSellCardFees'])			initViewSellCardFees();		// カード手数料
 			if(ETCS_OPTION['listViewSellCardFees'])		listViewSellCardFees();
 			if(ETCS_OPTION['retDateOnSendTroop'])		returnDateOnCastleSendTroop();
 			if(ETCS_OPTION['addRTradeSortLink'])		addRTradeSortLink();
 			if(ETCS_OPTION['viewDeckCostFree'])			viewDeckCostFree();
-	
+
 			AlertOfBuyTradeTime();													// ON/OFFは中で
 			if(ETCS_OPTION['carDmgCalc'])				carDmgCalc();
 			if(ETCS_OPTION['deckToDomestic'])			deckToDomestic();
@@ -34444,10 +34448,10 @@ function disp_bro3_etcs(){
 			if(ETCS_OPTION['makeDisSolMax'])			makeDisSolMax();
 			if(ETCS_OPTION['deckPagerUpperClone'])		deckPagerUpperClone();
 			if(ETCS_OPTION['donationResourceView'])		donationResourceView();
-	
-	
+
+
 		},ETCS_OPTION['AllDelayTime']);
-	
+
 		// CSS
 		(function() {
 			var cssstr =
@@ -34469,7 +34473,7 @@ function disp_bro3_etcs(){
 				'position: absolute; background:none repeat scroll #ffffcc; border:1px solid #000000; '+
 				'padding: 3px;border-radius:3px; box-shadow:2px 4px rgba(0,0,0,0.4); z-index : 10010;'+
 			'}'+
-	
+
 	// 市場で取引状態を仮算出
 			'table.etcs_market_table { border:1px solid #000000;min-width:280px; margin:0.5em auto;}'+
 			'table.etcs_market_table thead th { border : 1px solid #000000; text-align:center; min-width:50px;}'+
@@ -34479,9 +34483,9 @@ function disp_bro3_etcs(){
 			'table.etcs_market_table thead th:nth-child(4) {background-color:#f4c6ff; color:#000000;}'+
 			'table.etcs_market_table thead th:nth-child(5) {background-color:#ffffc2; color:#000000;}'+
 			'table.etcs_market_table tbody td { border : 1px solid #000000; text-align:center; padding:5px;}'+
-	
+
 	// コストビュー
-			'div#etcs_costview  { border:1px solid #000000; padding:1em;}'+
+			'div#etcs_costview	{ border:1px solid #000000; padding:1em;}'+
 			'div#etcs_costview > div { margin:0 auto;}'+
 			'div#etcs_costview table.etcs_market_table tbody th { min-width:120px; }'+
 			'div#etcs_costview table.etcs_market_table tbody th { min-width:120px; }'+
@@ -34489,18 +34493,18 @@ function disp_bro3_etcs(){
 			'div#etcs_sidebar_costview table.etcs_market_table thead th:nth-child(1) { display:none; padding:0;}'+
 			'div#etcs_sidebar_costview table.etcs_market_table tbody th { display:none; padding:0;}'+
 			'div#etcs_sidebar_costview table.etcs_market_table td { padding:0;}'+
-	
+
 	// 資源プリセット
 			'div#etcs_stockPreset {position:absolute; border:1px solid #000000; padding:4px; box-shadow : 3px 3px rgba(0,0,0,0.4); border-radius : 3px;}'+
 			'div#etcs_stockPreset h3 { border:1px solid #000000; background:#cccccc; margin:1px; text-align:center;}'+
-	
-	
+
+
 	// 手数料表示
 			'span.etcs_sellcardlistfees { font-size:80%; font-weight:normal; color:#ff6666; display:block;}'+
 	// 文字数表示
 			'div#comment_str_etcsChkLen { position:absolute; top:4px; left:458px; color:#ffffff; font-size:80%;}'+
 			'span.bbsres_view_etcsChkLenCss { font-size:80%; }'+
-	
+
 	// 設定ウインドウ
 			'#etcs-setting { padding:1em; background:transparent;}'+
 			'#etcs-setting dl > dt { padding:0.1em 0.1em 0.1em 0.5em; font-size:1.1em;font-weight:bold; color:#000000; background-color:#eeeeff;}'+
@@ -34515,16 +34519,16 @@ function disp_bro3_etcs(){
 			'#etcsopt_tab li:hover { border:2px inset #000000;}'+
 	// オフィシャルロールオーバー修正
 			'#menu_container { z-index : 9801; }'+
-	
+
 			'';
-	
+
 			GM_addStyle(cssstr);
 		})();
 	// =============================
-	//           初期化
+	//			 初期化
 	// =============================
 	function Init() {
-	
+
 		// GAME/サーバーチェック
 		if(SERVER_NAME.match(/(.)\d+/)) {
 			var kindData = {
@@ -34536,14 +34540,14 @@ function disp_bro3_etcs(){
 				GAME_TYPE = '3gokushi';
 				console.log("このゲームは未対応");
 			}
-			GAME_TERMS   = gameTermsList[GAME_TYPE];
-	
+			GAME_TERMS	 = gameTermsList[GAME_TYPE];
+
 			if(GAME_TYPE != "3gokushi") {
 				SAVE_NAME = SAVE_NAME_HEAD+SERVER_NAME+"_"+GAME_TYPE+"_"		// ブラ三じゃ無いときのセーブデータ先
 			}
 			if(typeof SERVER_TYPE == 'undefined') SERVER_TYPE = 0;
 		}
-	
+
 		// ゲーム画像基本URL取得
 		EXIMG_URL = '/20120807-01/extend_project/w945';
 		var img   = document.getElementsByTagName('img');
@@ -34553,23 +34557,23 @@ function disp_bro3_etcs(){
 				break;
 			}
 		}
-	
+
 		// 旧タイプチェック
 		if(document.getElementById('gNav') != null) {
 			NAVI_ID = 'gNav';
 		}
 	}
-	
+
 	// =============================
-	//           共通取得
+	//			 共通取得
 	// =============================
 	function getCommon() {
-	
+
 		var population,vpos;
 		var cnt;
 		var saveData;
 		var trnode,tdnode;
-	
+
 		/*
 			プロフィール画面
 		*/
@@ -34577,26 +34581,26 @@ function disp_bro3_etcs(){
 			// 他君主との区分け
 			var node = document.querySelector('#gray02Wrapper h2');
 			if(node == null || node.textContent != "プロフィール") return;
-	
+
 			// 自分の情報取得
 			saveData = [];
 			tdnode = getNodeXPath('id("gray02Wrapper")/table[@class="commonTables"]//tr/td[preceding-sibling::td[contains(text(),GAME_TERMS["君主"])]]');
 			saveData['name'] = tdnode[0].textContent.trim();
 			tdnode = getNodeXPath('id("gray02Wrapper")/table[@class="commonTables"]//a[contains(text(),"個人掲示板")]');
-			saveData['id']   = tdnode[0].getAttribute('href').replace(/.+user_id=(\d+).*/,"$1");
-	
+			saveData['id']	 = tdnode[0].getAttribute('href').replace(/.+user_id=(\d+).*/,"$1");
+
 			// 村リスト取得
 			trnode = getNodeXPath('id("gray02Wrapper")/table[@class="commonTables"]//tr[preceding-sibling::tr[th[1]/text() = "名前"] and preceding-sibling::tr[th[1]/text() = "国情報"]]');
-	
+
 			if(trnode.length == 0) { return; }	// 念のため
-	
+
 			cnt = 0;
 			for(var i = 0;i < trnode.length;i++) {
 				tdnode = trnode[i].getElementsByTagName('td');
 				if(tdnode.length == 0) continue;
-	
+
 				saveData = [];
-	
+
 				// 人口を取得し拠点と領地の判別をする
 				if(tdnode[2].textContent.match(/(\d+)/)) {
 					population = parseInt(RegExp.$1);
@@ -34604,13 +34608,13 @@ function disp_bro3_etcs(){
 					break;
 				}
 				if(isNaN(population)) break;		// 領地
-	
+
 				// 拠点名・拠点ID取得
 				node = tdnode[0].getElementsByTagName('a');
 				if(!node[0].getAttribute('href').match(/village_id=(\d+)/)) continue;
 				saveData[0] = RegExp.$1;
 				saveData[3] = node[0].textContent.trim();
-	
+
 				// 座標取得
 				vpos = tdnode[1].textContent;
 				if(vpos.match(/(\-?\d+)\,(\-?\d+)/)) {
@@ -34620,7 +34624,7 @@ function disp_bro3_etcs(){
 					trnode = trnode.nextSibling;
 					continue;	// 取得失敗は保存しない
 				}
-	
+
 				GM_setValue(SAVE_NAME+"COMMON_VILLAGEID_"+cnt,saveData.join("\t"));
 				cnt++;
 			}
@@ -34629,16 +34633,16 @@ function disp_bro3_etcs(){
 		/*
 			拠点画面
 		*/
-	
+
 		else if(location.pathname == '/village.php') {
 			AccommodationFree();
-	
+
 			var area = document.querySelectorAll('#mapOverlayMap area');
 			for(var i = 0;i < area.length;i++) {
 				// 遠征・訓練所レベルを保存
 				var data = area[i].getAttribute('alt').match(/^\s*(.+?)(?:\s+LV.([0-9]+))?\s*$/);
 				if(data == null) continue;
-	
+
 				if(typeof data[2] == 'undefined') data[2] = 0;
 				if(data[1] == GAME_TERMS['訓練所']) {
 					saveVillageData('trainingScool',parseInt(data[2],10));
@@ -34655,18 +34659,18 @@ function disp_bro3_etcs(){
 	/*
 		保存していた拠点リストからIDを指定して、対象の拠点情報を取得
 		(ID未指定時、現在の拠点)
-	
+
 		0:ID 1:X 2:Y 3:拠点名
 	*/
 	function getVillageDataFromID( vID ) {
 		var vIDNum,vIDstr,vID,fx,fy;
 		var vxy = [];
-	
+
 		if(typeof vID == 'undefined') {
 			vID = getVillageID();
 			if(vID == -1) return null;
 		}
-	
+
 		vIDNum = GM_getValue(SAVE_NAME+"COMMON_VILLAGEID_NUM");
 		for(i = 0; i < vIDNum; i++) {
 			vIDstr = GM_getValue(SAVE_NAME+"COMMON_VILLAGEID_"+i).split('\t');
@@ -34679,20 +34683,20 @@ function disp_bro3_etcs(){
 				return(vxy);
 			}
 		}
-	
+
 		return(null);
 	}
-	
-	
+
+
 	/*
 		拠点の座標から、対象の拠点IDを取得
 		(ID未指定時、現在の拠点)
 	*/
 	function getVillageID( vx, vy ) {
-	
+
 		var vIDNum,base_node,vIDstr,vID,fx,fy,vxy;
 		var i,j;
-	
+
 		// 座標が指定されていない時は、現在の拠点を対象に
 		if((typeof vx == 'undefined') || (typeof vy == 'undefined')) {
 			vxy  = getNowVillagePos();
@@ -34700,13 +34704,13 @@ function disp_bro3_etcs(){
 		} else {
 			vxy = [ vx, vy ];
 		}
-	
+
 		vID    = -1;
 		vIDNum = GM_getValue(SAVE_NAME+"COMMON_VILLAGEID_NUM");
 		for(i = 0; i < vIDNum; i++) {
 			vIDstr = GM_getValue(SAVE_NAME+"COMMON_VILLAGEID_"+i).split('\t');
-			fx     = parseInt(vIDstr[1]);
-			fy     = parseInt(vIDstr[2]);
+			fx	   = parseInt(vIDstr[1]);
+			fy	   = parseInt(vIDstr[2]);
 			if(vxy[0] == fx && vxy[1] == fy) {
 				vID = vIDstr[0];
 				break;
@@ -34718,19 +34722,19 @@ function disp_bro3_etcs(){
 		『サイドバーの拠点』から対象の拠点のIDを取得
 	*/
 	function getVIDFromSidebar( posx, posy ) {
-	
+
 		var base_node,node;
 		var i;
 		var href,title,vx,vy;
-	
+
 		// 現在の村チェック
 		if(SERVER_TYPE == 1) {
 			base_node = getNodeXPath('//div[@id="lodgment"]/div[@class="floatInner"]')[0].parentNode;
 		} else {
 			base_node = getNodeXPath('//div[@class="sideBox"]/div[@class="sideBoxHead"][h3/strong/text()="拠点"]')[0].parentNode;
 		}
-		node      = getNodeXPath('*/ul/li/*[1]',base_node);
-	
+		node	  = getNodeXPath('*/ul/li/*[1]',base_node);
+
 		for(i = 0;i < node.length;i++) {
 			// 拠点座標取得
 			title = node[i].getAttribute('title');
@@ -34755,30 +34759,30 @@ function disp_bro3_etcs(){
 		現在の拠点の座標を取得
 	*/
 	function getNowVillagePos() {
-	
+
 		var base_node,node;
 		var i;
 		var title,vp = [];
-	
+
 		// mixi
 		if(SERVER_TYPE == 1) {
 			node = getNodeXPath('//div[@id="lodgment"]/div[@class="floatInner"]');
 			if(node.length == 0) {
 				// 拠点リストがない(施設画面など)時は、全体地図タブから座標を取得
 				base_node = getNodeXPath('//div[@id="'+NAVI_ID+'"]//li[@class="gnavi02"]/a');
-				vp        = getPosFromURI(base_node[0].getAttribute('href'));
+				vp		  = getPosFromURI(base_node[0].getAttribute('href'));
 				return(vp);
-	
+
 			} else {
 				base_node = node[0].parentNode;
-				node      = getNodeXPath('*/ul/li[@class="on"]/*[1]',base_node)[0];
+				node	  = getNodeXPath('*/ul/li[@class="on"]/*[1]',base_node)[0];
 			}
 		} else {
 			// 本鯖
 			base_node = getNodeXPath('//div[@class="sideBox"]/div[@class="sideBoxHead"][h3/strong/text()="拠点"]')[0].parentNode;
-			node      = getNodeXPath('*/ul/li[@class="on"]/*[1]',base_node)[0];
+			node	  = getNodeXPath('*/ul/li[@class="on"]/*[1]',base_node)[0];
 		}
-	
+
 		// 拠点座標取得
 		title = node.getAttribute('title');
 		if(title.match(/(.+)\s+\((\-?\d+)\,(\-?\d+)\)/)) {
@@ -34790,34 +34794,34 @@ function disp_bro3_etcs(){
 	}
 	/*
 		URLから座標を取得 x=??&y=??形式
-	
+
 		uri:URI
 		返値: 座標(x,y)の配列 [0]=x [1]=y
 	*/
 	function getPosFromURI( uri ) {
-	
+
 		var xy = [-1,-1];
-	
+
 		if(uri.match(/x=(\-?\d+)/)) {
 			xy[0] = parseInt(RegExp.$1);
 		}
 		if(uri.match(/y=(\-?\d+)/)) {
 			xy[1] = parseInt(RegExp.$1);
 		}
-	
+
 		return xy;
 	}
-	
-	
+
+
 	//=================================================
-	//  兵数の空き計算表示・取得
+	//	兵数の空き計算表示・取得
 	//=================================================
 	function AccommodationFree() {
-	
-		var solNow  = 0;
-		var solMax  = 0;
+
+		var solNow	= 0;
+		var solMax	= 0;
 		var stNode = document.querySelector('#basepoint div.status');
-	
+
 		if(stNode != null) {
 			var text = stNode.textContent.replace(/\r|\n/,"");
 			if(text.match(/(\d+)\/(\d+)/)) {
@@ -34825,14 +34829,14 @@ function disp_bro3_etcs(){
 				solMax = RegExp.$2;
 			}
 		}
-	
+
 		if((ETCS_OPTION['AccommodationFree']) && (ETCS_OPTION['AccommodationFreeType'] == "1")) {
 			var acFreeNode = stNode.parentNode.appendChild(document.createElement('span'));
 			acFreeNode.textContent += "("+(solMax-solNow)+")";
 			acFreeNode.style.cssText = 'position:absolute; top:0px; left:0px; color:#ffffff; font-size:77%;';
 			acFreeNode.style.top  = (stNode.offsetTop +5) + 'px';
 			acFreeNode.style.left = (stNode.offsetWidth + stNode.offsetLeft - acFreeNode.offsetWidth - 2) + 'px';
-	
+
 			var width = (acFreeNode.offsetWidth + 4);
 			if(solMax >= 10000 || solNow >= 10000) {
 				width = width > 30 ? 30 : width;
@@ -34840,25 +34844,25 @@ function disp_bro3_etcs(){
 			stNode.style.paddingLeft  = width + 'px';
 			stNode.style.paddingRight = (acFreeNode.offsetWidth + 4) + 'px';
 		}
-	
+
 		if((ETCS_OPTION['AccommodationFree']) && (ETCS_OPTION['AccommodationFreeType'] == "0")) {
 			stNode.parentNode.setAttribute('title','宿舎空き：'+(solMax-solNow));
 		}
-	
+
 		saveVillageData('AccommodationFree',solMax-solNow);
-	
+
 	}
 
 	//=================================================
-	//  デッキコストの残りを表示
+	//	デッキコストの残りを表示
 	//=================================================
 	function viewDeckCostFree() {
 		var deckcost = document.querySelector('.rightTitle p.deckcost');
 		if(deckcost == null) return;
-	
+
 		var size = deckcost.textContent.match(/(\d+(\.\d+)?)\s*\/\s*(\d+(\.\d+)?)/);
 		if(size == null) return;
-	
+
 		if(ETCS_OPTION['viewDeckCostFreeType'] == "0") {
 			deckcost.setAttribute('title','残り：'+(+size[3] - +size[1]));
 		} else {
@@ -34870,17 +34874,17 @@ function disp_bro3_etcs(){
 			deckcost.style.minWidth = '90px';
 		}
 	}
-	
+
 	//=================================================
-	//  カードNo.をクリックしたら、指定URLに飛ぶ
+	//	カードNo.をクリックしたら、指定URLに飛ぶ
 	//=================================================
 	/*
 		初期化とか
 	*/
 	function jumpURIFromClickCardNo() {
-	
+
 		var i,j;
-	
+
 		var xPathData = [
 			[	// 武将図鑑(リスト)
 				1,
@@ -34953,7 +34957,7 @@ function disp_bro3_etcs(){
 				break;
 			}
 		}
-	
+
 		// イベント付加
 		for(i in clickNode) {
 			(function( data ) {
@@ -34962,13 +34966,13 @@ function disp_bro3_etcs(){
 				if(typeof cardNoNode == 'undefined') return;
 				var cardno = cardNoNode.textContent.match(/\d+/);
 				var url    = ETCS_OPTION['JumpURIFromClickCardNoURI'].replace(/%%NO%%/,cardno);
-	
+
 				// カードの名前取得
 				var name   = getNodeXPath(data[3],data[0]);
 				if(name.length > 0) name = name[0].textContent;
-	
-	
-	
+
+
+
 				var skill  = null;
 				var tmp;
 				if(data[4] != null){
@@ -34981,8 +34985,8 @@ function disp_bro3_etcs(){
 						}
 					}
 				}
-	
-	
+
+
 				// カーソル(in)
 				cardNoNode.addEventListener('mouseover', function() {
 					cardNoNode.style.cursor = 'help';
@@ -34991,14 +34995,14 @@ function disp_bro3_etcs(){
 				cardNoNode.addEventListener('mouseout', function() {
 					cardNoNode.style.cursor = '';
 				},false);
-	
+
 				// カードNo.左クリック
 				if(ETCS_OPTION['JumpURIFromClickCard'] && url != "") {
 					cardNoNode.addEventListener('click', function() {
 							window.open(url);
 						}, false);
 				}
-	
+
 				// 右クリック
 				if(ETCS_OPTION['cardRightClickSkill']) {
 					for(j in rClickNode) {
@@ -35008,7 +35012,7 @@ function disp_bro3_etcs(){
 						},false);
 					}
 				}
-	
+
 				cardNoNode.style.zIndex = "20";		// 合成でクリックできない対策
 			})( clickNode[i] );
 		}
@@ -35017,17 +35021,17 @@ function disp_bro3_etcs(){
 		右クリックメニュー
 	*/
 	function RightClickCardNo( event , cardno , name , skill ) {
-	
-	
+
+
 		var menuName = [
 			['カードNo.%%NO%%でURLを開く',ETCS_OPTION['JumpURIFromClickCardNoURI']],
 			['カードNo.%%NO%%でトレードを開く',TRADE_URI+'?t=no&k=%%NO%%'],
 			['武将名『 %%NAME%% 』でトレードを開く',TRADE_URI+'?t=name&k=%%NAME%%'],
 		];
-	
+
 		// CSV分解
 		var list = ETCS_OPTION['cardRightClickSkillCSV'].split(/\r\n|\r|\n/);
-	
+
 		// IDリストにあればメニューに追加する
 		var skillList = [];
 		for(i in list) {
@@ -35035,7 +35039,7 @@ function disp_bro3_etcs(){
 			if(tmp.length != 2) continue;
 			skillList.push([tmp[0] , tmp[1]]);
 		}
-	
+
 		for(i in skill) {
 			tmp = "";
 			for(j in skillList) {
@@ -35059,33 +35063,33 @@ function disp_bro3_etcs(){
 				TRADE_URI+'?t=skill&k='+skill[i],
 			]);
 		}
-	
-	
+
+
 		for( i in menuName ){
 			menuName[i][1] = menuName[i][1].replace(/%%NAME%%/,name);
 			menuName[i][1] = menuName[i][1].replace(/%%NO%%/,cardno);
 			menuName[i][0] = menuName[i][0].replace(/%%NAME%%/,name);
 			menuName[i][0] = menuName[i][0].replace(/%%NO%%/,cardno);
 		}
-	
-		var baseWin  =  new baseWindow('','cardrightclick');
+
+		var baseWin  =	new baseWindow('','cardrightclick');
 		var listNode = document.createElement('ul');
 		baseWin.addContent(listNode);
-	
-	
+
+
 		for(i = 0;i < menuName.length;i++) {
 			node = document.createElement('li');
-	
+
 			if(menuName[i][1] == '') continue;
 			node.innerHTML = '<a href="'+menuName[i][1]+'"'+(ETCS_OPTION['cardRightClickSkillNewTab'] ? ' target="_blank"' : '')+ '>'+menuName[i][0]+'</a>';
 			listNode.appendChild(node);
 		}
-	
+
 		baseWin.titleBar.style.display = 'none';
 		baseWin.contentNode.style.resize = 'none';
 		baseWin.disp(true);
 		baseWin.nearPosMouse( event );
-	
+
 		// ウインドウ外をクリックor移動したら閉じる
 		var outclick = function ( event ) {
 			if(event.type == 'mouseout') {
@@ -35100,7 +35104,7 @@ function disp_bro3_etcs(){
 		};
 		document.addEventListener('click', outclick, false);
 		baseWin.winNode.addEventListener('mouseout', outclick,false);
-	
+
 		baseWin.closeProc = function() {
 			document.removeEventListener('click', outclick, false);
 			baseWin.winNode.addEventListener('mouseout', outclick,false);
@@ -35109,33 +35113,33 @@ function disp_bro3_etcs(){
 	}
 
 	// ==============================
-	//     カード出品手数料表示
+	//	   カード出品手数料表示
 	// ==============================
 	/*
 		手数料の計算
 	*/
 	function calcSellCardFees( price ) {
-	
+
 		var fees = 0;
-	
+
 		price = isNaN(price) ? 0 : parseInt(price,10);	// 数値に変換できないとき対策
-	
+
 		fees += price > 1000 ? (price - 1000) : 0;		// 第二段階
 		fees += price >  500 ? (price -  500) : 0;		// 第一段階
 		fees += price;									// 基本
 		fees  = parseInt(fees / 10,10);
-	
+
 		return fees;
 	}
 	/*
 		出品画面で手数料を表示(初期化)
 	*/
 	function initViewSellCardFees() {
-	
-	
+
+
 		/* 出品表示画面 */
 		if(location.pathname != '/card/exhibit_confirm.php') return;
-	
+
 		// ノード作成
 		var inputnode = getNodeXPath('//form[@name="exec_exhibit_form"]//input[@name="exhibit_price"]')[0];
 		var basenode  = getNodeXPath('//form[@name="exec_exhibit_form"]/./following-sibling::*[position()=1]')[0];
@@ -35144,10 +35148,10 @@ function disp_bro3_etcs(){
 		with(divnode.style) {
 			background = 'none #ffffff';
 			textAlign  = 'center';
-			color      = '#666666';
+			color	   = '#666666';
 			padding    = '4px';
 		}
-	
+
 		// イベント
 		inputnode.addEventListener('keyup', function() {
 			viewSellCardFees( divnode, inputnode );
@@ -35161,26 +35165,26 @@ function disp_bro3_etcs(){
 		出品画面で手数料を表示
 	*/
 	function viewSellCardFees( node , inputnode ) {
-	
+
 		var price = inputnode.value;
 		var fees , result;
-	
-		fees    = isNaN(price) || price == '' ? '---' : calcSellCardFees( price );
-		result  = isNaN(price - fees)         ? '---' : price - fees;
-	
+
+		fees	= isNaN(price) || price == '' ? '---' : calcSellCardFees( price );
+		result	= isNaN(price - fees)		  ? '---' : price - fees;
+
 		node.innerHTML = '[落札時] 手数料 : <span style="font-weight:bold;">'+(fees+'').replace(/(\d)(?=(\d\d\d)+$)/g,'$1,')+'</span> TP / 受取額 : <span style="font-weight:bold;">'+(result+'').replace(/(\d)(?=(\d\d\d)+$)/g,'$1,')+'</span> TP';
 	}
 	/*
 		出品中のカードで手数料表示
 	*/
 	function listViewSellCardFees() {
-	
+
 		if(location.pathname != '/card/exhibit_list.php') return;
-	
+
 		var price,fees,node;
 		var i;
 		var askPriceRow,maxPriceRow;
-	
+
 		// 列探索
 		var tnode =getNodeXPath('//table[@class="tradeTables"]//tr[contains(@class,"tradeSell")]/th');
 		for(i = 0;i < tnode.length;i++) {
@@ -35193,17 +35197,17 @@ function disp_bro3_etcs(){
 				continue;
 			}
 		}
-	
+
 		// 列：出品中のカード
 		tnode = getNodeXPath('//table[@class="tradeTables"]//td[@class="tp" or @class="trade"]');
 		tnode.forEach(function( nodeptr ) {
-	
+
 			if((nodeptr.getAttribute('class') == 'tp') && (nodeptr.cellIndex == askPriceRow)){
-	
+
 				price = nodeptr.textContent.replace(/^\s+|\s+$/g,'');
 				price = price.toString().replace(/,/,'');
 				fees  = calcSellCardFees(price);
-	
+
 				nodeptr.setAttribute('title','手数料: '+(fees+'').replace(/(\d)(?=(\d\d\d)+$)/g,'$1,')+
 									' TP 受取額: '+((price - fees)+'').replace(/(\d)(?=(\d\d\d)+$)/g,'$1,')+' TP');
 				node   = document.createElement('span');
@@ -35214,7 +35218,7 @@ function disp_bro3_etcs(){
 			}
 			// 列：最大入札TP
 			if((nodeptr.getAttribute('class') == 'trade') && (nodeptr.cellIndex == maxPriceRow)) {
-	
+
 				if(nodeptr.textContent.match(/取消/)) return;		// 未入札
 				node   = getNodeXPath('span[contains(@class,"notice")]',nodeptr);	//より厳密にチェック
 				if(node.length == 0) return;
@@ -35227,43 +35231,43 @@ function disp_bro3_etcs(){
 								' TP 受取額: '+((price - fees)+'').replace(/(\d)(?=(\d\d\d)+$)/g,'$1,')+' TP');
 				node   = document.createElement('span');
 				nodeptr.appendChild(node);
-	
+
 				node.setAttribute('class','etcs_sellcardlistfees');
 				node.appendChild(document.createTextNode('('+fees+')'));
 			}
 		});
 	}
 	// ==============================
-	//        トレード日時警告
+	//		  トレード日時警告
 	// ==============================
 	/*
 		初期化
 	*/
 	function AlertOfBuyTradeTime() {
-	
+
 		var node,tradeDate,diffTime,newNode;
-	
+
 		if((location.pathname == '/card/trade_bid.php') && ETCS_OPTION['AlertOfBuyTradeTime_Bid']) {
-	
+
 			// 日時分解
 			node = getNodeXPath('//div[@class="tradeInfo"]/div[2]/span[@class="notice"]');
 			if(node.length == 0) return;		// 即札可
-	
+
 			tradeDate = cnvMDateStrToDate(node[0].textContent);
 			diffTime  = tradeDate.getTime() - serverTime.getTime();
-	
+
 			// 24時間以上経過の場合注意喚起
 			if(diffTime >= (24*60*60*1000)) {
 				node = getNodeXPath('//form[@name="exec_bid_form"]')[0];
 				node.style.backgroundColor = '#ffaaaa';
-	
+
 				newNode = document.createElement('div');
 				newNode.textContent = '※落札まで、24時間以上かかります！';
 				newNode.style.cssText = 'color:#ff0000; background-color:#ffffff';
 				node.appendChild(newNode);
 			}
 		}
-	
+
 		// トレード一覧
 		if((location.pathname == '/card/trade.php') && ETCS_OPTION['AlertOfBuyTradeTime_List']) {
 			node = getNodeXPath('//table[@class="tradeTables"]//td[@class="limit"]');
@@ -35294,13 +35298,13 @@ function disp_bro3_etcs(){
 	// トレードのソートにレアリティ表示状態を加える
 	//===============================================
 	function addRTradeSortLink() {
-		if(location.pathname != '/card/trade.php')  return;
-	
+		if(location.pathname != '/card/trade.php')	return;
+
 		var rswitch = ['r_l','r_ur','r_sr','r_r','r_uc','r_c','r_pr','r_hr','r_lr','lim'];	// 付け足す引数
 		var labelNode = getNodeXPath('//table[@class="tradeTables"]/tbody/tr[1]//a');
 		var i,addstr;
 		var rnow_switch = [];
-	
+
 		// 現在の状態を取得
 		for(i = 0;i < rswitch.length;i++) {
 			reg = new RegExp(rswitch[i]+'=(\\d)?');
@@ -35310,7 +35314,7 @@ function disp_bro3_etcs(){
 			}
 			rnow_switch[i] = 0;	// 表示無し
 		}
-	
+
 		labelNode.forEach( function( node ) {
 			addstr = [];
 			for(i = 0;i < rswitch.length;i++) {
@@ -35325,17 +35329,17 @@ function disp_bro3_etcs(){
 	}
 
 	// ==============================================
-	//   トレードなどでページ切り替えを上部にも表示
+	//	 トレードなどでページ切り替えを上部にも表示
 	// ===============================================
 	function deckPagerUpperClone() {
 		var pagerNode = null;
 		var baseNode  = null;
 		var insNode   = null;
-	
+
 		if(location.pathname.match(/\/card\/trade_card.php/)) {
 			pagerNode  = document.querySelector('.pager');
 			if(pagerNode == null) return;	// pagerが無ければ終了
-	
+
 			baseNode = pagerNode.parentNode;
 			insNode  = baseNode.querySelector('#cardFileListBack , #cardFileList');
 			if(insNode == null) {
@@ -35346,7 +35350,7 @@ function disp_bro3_etcs(){
 		if(location.pathname == '/facility/territory_status.php') {
 			pagerNode  = document.querySelector('.pager');
 			if(pagerNode == null) return;	// pagerが無ければ終了
-	
+
 			baseNode = pagerNode.parentNode;
 			insNode  = baseNode.querySelector('table');
 			if(insNode == null) {
@@ -35357,40 +35361,40 @@ function disp_bro3_etcs(){
 		if(pagerNode != null && baseNode != null && insNode != null) {
 			baseNode.insertBefore(pagerNode.cloneNode(true), insNode);
 		}
-	
+
 	}
-	
+
 	// ==============================================
-	//   入札時に初期価格を消去
+	//	 入札時に初期価格を消去
 	// ===============================================
 	function eraseDefaultBiddingPrice() {
-		if(location.pathname != '/card/trade.php')  return;
-	
+		if(location.pathname != '/card/trade.php')	return;
+
 		var eraseFlag = false;
 		var node = document.querySelector('input[name="exhibit_price"]');
 		if(node == null) return;
-	
+
 		node.addEventListener('forcus',function() {
 			if(!eraseFlag) return;		// 二回目以降は消さない
 		},false);
 	}
-	
-	
+
+
 	// ==============================
-	//   市場で取引状態を仮算出
+	//	 市場で取引状態を仮算出
 	// ==============================
 	/*
 		初期化
 	*/
 	function initMarketStockCalc() {
-	
+
 		var node;
-	
+
 		// 処理する場所かチェック
 		if(location.pathname != "/facility/facility.php") return;	// 施設?
 		var result = getNodeXPath('//div[@id="gray02Wrapper"]/h2/text()')[0];
 		if(result.nodeValue != GAME_TERMS["市場"]) return;
-	
+
 		// 表示物作成
 		node = document.createElement('div');
 		node.setAttribute('id','etcs_market_calc');
@@ -35399,18 +35403,18 @@ function disp_bro3_etcs(){
 				'<tr><th title="取引する内容(左：売る量 右：買う量)">取引内容</th><td colspan="4">&nbsp;</td></tr>'+
 				'<tr><th title="取引後の結果">取引後</th><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>'+
 				'</tr></tbody></table>';
-	
+
 		getNodeXPath('//form[@name="form2"]/table//td[table]')[0].appendChild(node);
-	
+
 		// イベントの設定
 		addEventByXPath('//input[@id="tc"]', 'keyup', viewMarketStockCalc,false);
 		addEventByXPath('//input[@id="tc"] | //select[@id="select" or @id="select2"] | //span[@id="resorce_num"]', 'change',viewMarketStockCalc,false);
-	
+
 		viewMarketStockCalc();
 		if(ETCS_OPTION['MarketStockCalcTimer']) {
 			setInterval(viewMarketStockCalc,1000);
 		}
-	
+
 	}
 	/*
 		表示更新
@@ -35419,11 +35423,11 @@ function disp_bro3_etcs(){
 		var trNode,tdNode,node;
 		var i,j;
 		var cnt;
-		var stock     = {'wood':0, 'stone':0, 'iron':0, 'rice':0 };
-		var stockName = {"-1":-1,  "101":0,   "102":1,  "103":2,   "104":3};
-	
+		var stock	  = {'wood':0, 'stone':0, 'iron':0, 'rice':0 };
+		var stockName = {"-1":-1,  "101":0,   "102":1,	"103":2,   "104":3};
+
 		trNode = document.getElementById('etcs_market_calc').getElementsByTagName('tr');
-	
+
 		// 現在の資源の値
 		tdNode = trNode[1].getElementsByTagName('td');
 		cnt = 0;
@@ -35432,10 +35436,10 @@ function disp_bro3_etcs(){
 			tdNode[cnt].firstChild.nodeValue = stock[i];
 			cnt++;
 		}
-	
+
 		// 取引相場の取得
 		var convPer = getMarketConvPer();
-	
+
 		// Inputボックスに入力された値を取得し、取引を表示
 		var sellQty,buyQty;
 		var selAct = [0,0];
@@ -35458,14 +35462,14 @@ function disp_bro3_etcs(){
 			if(node.length == 0) return;		// 表示なし
 			sellQty   = parseInt(node[0].getAttribute('value'),10);	//8進数と誤解しないように
 		}
-	
+
 		if(isNaN(sellQty)) {
 			sellQty = 0;
 		}
-	
+
 		buyQty = parseInt((sellQty * convPer)/100);		// sellqty *(convper/100)だと誤差が出る
 		trNode[2].getElementsByTagName('td')[0].firstChild.nodeValue = (sellQty+'').replace(/(\d)(?=(\d\d\d)+$)/g,'$1,') + ' → ' + (buyQty+'').replace(/(\d)(?=(\d\d\d)+$)/g,'$1,');
-	
+
 		// 取引後の資源量を表示
 		tdNode = getNodeXPath('td/text()',trNode[3]);
 		cnt = 0;
@@ -35489,20 +35493,20 @@ function disp_bro3_etcs(){
 		相場の取得(%を返す)
 	*/
 	function getMarketConvPer() {
-	
+
 		var node;
-	
+
 		// 取引相場の取得
 		node = getNodeXPath('//form[@name="form1"]//td[preceding-sibling::th[normalize-space(text()) = "'+GAME_TERMS["市場"]+'の取引相場"]]')[0];
 		if(typeof node == 'undefined') return null;
 		var percent = node.innerHTML.match(/\d{1,2}%/g);	// 数値取得
 		for(i in percent) { percent[i] = percent[i].replace('%',''); }		// %をカット
 		var convPer = parseInt(percent[0],10);	// 通常
-	
+
 		if(node.innerHTML.match(/スキル効果/)){
 			convPer += parseInt(percent[1],10);	// スキル効果あり(仮)
 		}
-	
+
 		return convPer;
 	}
 	/*
@@ -35512,15 +35516,15 @@ function disp_bro3_etcs(){
 		var marketCostView_CostData = {
 			0 : 'select',
 			"--- 種類 ---" : {0:'hr'},
-	
+
 			/*
 				施設
 			*/
 			"施設建設" : {
 				0 : 'select',
-	
+
 				"--- 資源施設 ---" : {0:'hr'},
-	
+
 				"伐採所" : {0:'select',
 					"LV1":	[10,35,40,15],
 					"LV2":	[25,88,100,38],
@@ -35613,9 +35617,9 @@ function disp_bro3_etcs(){
 					"LV9":	[48863,32576,32576,48863],
 					"LV10":	[63523,42348,42348,63523],
 				},
-	
+
 				"--- 軍事施設 ---" : {0:'hr'},
-	
+
 				"練兵所" : {0:'select',
 					"LV1":	[112,107,107,122],
 					"LV2":	[224,214,214,244],
@@ -35815,9 +35819,9 @@ function disp_bro3_etcs(){
 					"LV19":	[419350,587090,419350,251610],
 					"LV20":	[503220,704508,503220,301932],
 				},
-	
+
 				"--- 一般施設 ---" : {0:'hr'},
-	
+
 				"倉庫" : {0:'select',
 					"LV1":	[83,141,83,63],
 					"LV2":	[167,281,167,126],
@@ -35876,9 +35880,9 @@ function disp_bro3_etcs(){
 					"LV9":	[23268,34902,34902,23268],
 					"LV10":	[30249,45373,45373,30249],
 				},
-	
+
 				"--- 拠点 ---" : {0:'hr'},
-	
+
 				"城" : {0:'select',
 					"LV1(初期建設済)":	[0,0,0,0],
 					"LV2":	[1404,546,390,780],
@@ -35935,9 +35939,9 @@ function disp_bro3_etcs(){
 					"LV14":	[505021,456148,423566,244365],
 					"LV15":	[844765,763014,708513,408756],
 				},
-	
+
 				"--- 廃止 ---" : {0:'hr'},
-	
+
 				"修行場" : {0:'select',
 					"LV1":	[1600,1200,600,600],
 					"LV2":	[2240,1680,840,840],
@@ -35966,17 +35970,17 @@ function disp_bro3_etcs(){
 			*/
 			"兵士作成" : {
 				0 : 'select',
-				'剣兵'    :['num',[ 10,  0, 10, 60]],
+				'剣兵'	  :['num',[ 10,  0, 10, 60]],
 				'大剣兵'  :['num',[ 85,  0, 85,430]],
-				'盾兵'    :['num',[ 70, 70, 70, 20]],
+				'盾兵'	  :['num',[ 70, 70, 70, 20]],
 				'重盾兵'  :['num',[210,210,210, 60]],
-				'斥候'    :['num',[150,150,150, 10]],
-				'槍兵'    :['num',[ 88,132,  0, 20]],
-				'弓兵'    :['num',[144,  0, 96, 35]],
-				'騎兵'    :['num',[  0,128,192, 40]],
-				'衝車'    :['num',[500,  0,500,  0]],
+				'斥候'	  :['num',[150,150,150, 10]],
+				'槍兵'	  :['num',[ 88,132,  0, 20]],
+				'弓兵'	  :['num',[144,  0, 96, 35]],
+				'騎兵'	  :['num',[  0,128,192, 40]],
+				'衝車'	  :['num',[500,  0,500,  0]],
 				'矛槍兵'  :['num',[264,396,  0, 60]],
-				'弩兵'    :['num',[432,  0,288,105]],
+				'弩兵'	  :['num',[432,  0,288,105]],
 				'近衛騎兵':['num',[  0,384,576,120]],
 				'斥候騎兵':['num',[450,450,450, 30]],
 				'投石機'  :['num',[  0,1500,1500, 0]],
@@ -35986,7 +35990,7 @@ function disp_bro3_etcs(){
 			*/
 			"研究" : {
 				0 : 'select',
-	
+
 				"--- 研究 ---" : {0:'hr'},
 				"[研究] 大剣兵" :	[273600,273600,273600,456000],
 				"[研究] 盾兵" :	[ 1300,1300,1300, 450],
@@ -36001,9 +36005,9 @@ function disp_bro3_etcs(){
 				"[研究] 弩兵" :	[456000,205200,319200,296400],
 				"[研究] 近衛騎兵":	[205200,319200,456000,296400],
 				"[研究] 投石機" :	[414960,592800,414960,385320],
-	
+
 				"--- 武器研究 ---" : {0:'hr'},
-	
+
 				"[武器] 剣兵" : {0:'select',
 					"LV1 粗末な銅剣":	[165,135,0,0],
 					"LV2 訓練兵の銅剣":	[251,319,0,0],
@@ -36136,9 +36140,9 @@ function disp_bro3_etcs(){
 					"LV9 呂尚式・二連炎弾":	[561242,1815782,924398,0],
 					"LV10 呂尚式・多段炎弾":	[729614,2360517,1201718,0],
 				},
-	
+
 				"--- 防具研究 ---" : {0:'hr'},
-	
+
 				"[防具] 剣兵" : {0:'select',
 					"LV1 間に合わせの鎧" : [149,122,0,0],
 					"LV2 木の軽鎧" : [228,285,0,0],
@@ -36313,7 +36317,7 @@ function disp_bro3_etcs(){
 		初期化
 	*/
 	function initMarketCostView() {
-	
+
 		/*
 			施設名とレベルの一部から正式名を探し、データ作成
 		*/
@@ -36336,14 +36340,14 @@ function disp_bro3_etcs(){
 			}
 			return null;
 		};
-	
+
 		// コストをダブルクリックすると、登録
 		if(ETCS_OPTION['MarketCostViewDblClick']) {
 		var costnode = getNodeXPath('//*[contains(@class,"cost")]');
 		if(costnode.length > 0) {
 			for(var k = 0;k < costnode.length;k++) {
 				var node = costnode[k];
-	
+
 				(function( lnode ) {
 					lnode.addEventListener('dblclick',function( event ) {
 						var tnode = getNodeXPath('preceding::th[contains(@class,"mainTtl")]',lnode);	//自分より前のタイトル検索
@@ -36364,7 +36368,7 @@ function disp_bro3_etcs(){
 										//武器研究
 										var node = getNodeXPath('preceding::td[preceding-sibling::th[contains(text(),"現在の武器")]]',lnode);
 										if(node[node.length-1].textContent.match(/.*?レベル\s*(\d+)\s*(.+?)(\s|$)/)) {
-	
+
 											save = func('研究','武器.+'+sol,(parseInt(RegExp.$1,10)+1));
 										}
 									} else if(h2node[0].textContent.match(new RegExp(GAME_TERMS['防具工場']))) {
@@ -36386,7 +36390,7 @@ function disp_bro3_etcs(){
 										var num = parseInt(node[0].value,10);
 										if(isNaN(num)) num = 1;
 										save[save.length] = num;
-	
+
 									}
 								}
 							}
@@ -36421,7 +36425,7 @@ function disp_bro3_etcs(){
 									GM_setValue(SAVE_NAME+'MarketCostViewSelect',save.join('\t'));
 								}
 							}
-	
+
 						}
 					},false);
 				})(node)
@@ -36429,36 +36433,36 @@ function disp_bro3_etcs(){
 		}
 		}
 		if(location.pathname != "/facility/facility.php") return;	// 施設でない
-	
+
 		// 制御用変数
 		var procArg = {
 			'event'   : [],		// イベントリスナ等を格納
 			'timerID' : -1,		// 更新タイマー
-			'need'    : null,	// 必要な資源量の基本ノード
+			'need'	  : null,	// 必要な資源量の基本ノード
 			'excess'  : null,	// 過不足の基本ノード
 			'excessall':null,	// 過不足の合計
-			'buy'     : null,	// 不足量を購入するための必要な他資源の量
-			'buyall'  : null,   // 必要な他資源の合計
+			'buy'	  : null,	// 不足量を購入するための必要な他資源の量
+			'buyall'  : null,	// 必要な他資源の合計
 		};
 		var baseID = 'etcs_costview';
-	
+
 		var node = document.querySelector('#gray02Wrapper h2');
 		if(node == null) return;		// h2が無い
 		if(node.textContent.indexOf(GAME_TERMS["市場"]) == -1) return;	// 市場で無い
-	
+
 		var baseNode  = document.createElement('div');	// base
 		baseNode.setAttribute('id',baseID);
 		baseNode.style.cssText = 'padding:0;';
-	
+
 		node = baseNode.appendChild(document.createElement('div'));
 		node.style.cssText = 'background: none repeat scroll 0 0 #cccccc;'+
 			'border-bottom:1px solid #000000; color:#000000; padding:5px; word-wrap:break-word; text-align:center; margin-bottom:1em;';
 		node.appendChild(document.createTextNode('コストビュー'));
-	
-	
+
+
 		var deep = 0;	// 階層
 		procArg['event'][procArg['event'].length] = null;	// イベントリスナリスト初期化
-	
+
 		// カテゴリの中身を表示部分
 		var costViewNode = document.createElement('div');
 		costViewNode.setAttribute('id',baseID+'_cate');
@@ -36466,8 +36470,8 @@ function disp_bro3_etcs(){
 		costViewNode.style.margin = '0 150px';
 		costViewNode.textContent = '種類を選択　';
 		baseNode.appendChild(costViewNode);
-	
-	
+
+
 		// 表の作成
 			var textNode = baseNode.appendChild(document.createElement('div'));
 			textNode.setAttribute('id',baseID+'_table');
@@ -36482,38 +36486,38 @@ function disp_bro3_etcs(){
 				'<tr><th>必要な他資源の合計<br/><span style="font-size:80%;">(購入に必要な資源量)</span></th><td colspan="4">---</td></tr>'+
 				(ETCS_OPTION['MarketCostViewCalcFullTime'] ? '<tr><th>貯蓄完了予想時間</th><td colspan="4">--</td></tr>' : '') +
 				'</tbody></table>';
-	
+
 		// 作成した物をHTMLに追加
 		node = document.querySelector('#gray02Wrapper');
 		node.appendChild(baseNode);
-	
+
 		var trNode = document.getElementById(baseID+'_table').getElementsByTagName('tr');
-		procArg['need']      = trNode[1];
-		procArg['excess']    = trNode[2];
+		procArg['need'] 	 = trNode[1];
+		procArg['excess']	 = trNode[2];
 		procArg['excessall'] = trNode[3];
-		procArg['buy']       = trNode[4];
-		procArg['buyall']    = trNode[5];
-	
+		procArg['buy']		 = trNode[4];
+		procArg['buyall']	 = trNode[5];
+
 		makeMarketCostView(baseID, marketCostView_CostData, deep, procArg);
 	}
 	/*
 		選択肢を作成し表示
 	*/
 	function makeMarketCostView( baseID, data , deep , procArg) {
-	
+
 		var i;
 		var insposNode = document.getElementById(baseID+'_cate');
-		var node       = document.getElementById(baseID+'_select'+deep);
-	
+		var node	   = document.getElementById(baseID+'_select'+deep);
+
 		// 自分より階層の深いノードとイベントリスナを削除
 		if(node != null) {
-	
+
 			// 更新タイマーを停止(念のため)
 			if(procArg['timerID'] != -1) {
 				clearTimeout( procArg['timerID'] );
 				procArg['timerID'] = -1;
 			}
-	
+
 			// イベントリスナを削除
 			for(i = procArg['event'].length - 1;i >= deep ; i--) {
 				if(typeof procArg['event'][i] != 'undefined') {
@@ -36532,19 +36536,19 @@ function disp_bro3_etcs(){
 			range.deleteContents();
 			range.detach();
 		}
-	
+
 		// 内容物を指示に従って生成
 		procArg['event'][deep] = [];	// 現在の階層のイベントリスと初期化
 		var nowSelect = retSaveMarketCostView(deep);
 		// ドロップダウンで選択する
 		if(data[0] == 'select') {
-	
+
 			// select/option要素作成
 			var selectNode = insposNode.appendChild(document.createElement('select'));
 			selectNode.setAttribute('id',baseID+'_select' + deep);
 			for(j in data) {
 				if(j == 0) continue;	// 識別は無視
-	
+
 				node = document.createElement('option');
 				node.appendChild(document.createTextNode(j));
 				selectNode.appendChild(node);
@@ -36553,15 +36557,15 @@ function disp_bro3_etcs(){
 				}
 			}
 			selSaveMarketCostView(deep,selectNode.options[selectNode.options.selectedIndex].text);
-	
+
 			// イベント発生時
 			(function( lselectNode, ldeep ){
 				var func = function() {
 					var select = lselectNode.options[lselectNode.options.selectedIndex].text;
-	
+
 					selSaveMarketCostView(ldeep, select);			// 現在の階層を保存
 					delSaveMarketCostView(baseID, deep + 1);				// 次の階層以下の未使用を削除
-	
+
 					// 更新タイマーを停止
 					if(procArg['timerID'] != -1) {
 						clearTimeout( procArg['timerID'] );
@@ -36577,16 +36581,16 @@ function disp_bro3_etcs(){
 				procArg['event'][deep][procArg['event'][ldeep].length] = ['change',selectNode,func];	// 保存
 				selectNode.addEventListener('change',func,false);	// 選択されたとき
 				func();					// 作成されたとき(load)
-	
+
 			})(selectNode,deep);
-	
+
 		}
 		// 区切り線
 		else if(data[0] == 'hr') {
 		}
 		// 人数入力
 		else if(data[0] == 'num') {
-	
+
 			// 人数入力欄作成
 			var inputNode = insposNode.appendChild(document.createElement('input'));
 			inputNode.setAttribute('id',baseID+'_select'+deep);
@@ -36599,12 +36603,12 @@ function disp_bro3_etcs(){
 				inputNode.value = 1;
 			}
 			insposNode.appendChild(document.createTextNode('人'));
-	
+
 			viewSolderMarketCostView( baseID+'_table', data[1], parseInt(inputNode.value,10), procArg);
-	
+
 			// イベント発生時
 			(function( lNode ){
-	
+
 				var func = function() {
 					// タイマー止める
 					if(procArg['timerID'] != -1) {
@@ -36621,7 +36625,7 @@ function disp_bro3_etcs(){
 				inputNode.addEventListener('keyup',func,false);
 				if(typeof nowSelect != 'undefined')  func();		// 作成されたとき(load)
 			})(inputNode);
-	
+
 		// 数値を表示
 		} else if(typeof data[0] == 'number') {
 			viewSolderMarketCostView( baseID+'_table', data, 1 , procArg);
@@ -36631,18 +36635,18 @@ function disp_bro3_etcs(){
 		必要資源量などの数値の表示
 	*/
 	function viewMarketCostView( id, data ,procArg) {
-	
+
 		var trNode = document.getElementById(id).getElementsByTagName('tr');
 		if(trNode.length == 0) return;
-	
+
 		var stockName = ['wood', 'stone', 'iron', 'rice' ];
-		var stock     = [];
+		var stock	  = [];
 		// 現在の資源の値
 		for(i =0;i < stockName.length;i++) {
 			stock[i] = parseInt(document.getElementById(stockName[i]).textContent,10);
 		}
 		var convPer = getMarketConvPer();
-	
+
 		var shortage = 0;	// 不足
 		var generous = 0;	// 過分
 		var short_cv = 0;	// 不足変換後
@@ -36667,14 +36671,14 @@ function disp_bro3_etcs(){
 			}
 		}
 		tdNode[0].textContent = '過分:'+ generous +'　不足:'+ shortage;
-	
+
 		// 不足分を売り出す量
 		tdNode = trNode[4].getElementsByTagName('td');
 		for(i = 0;i < 4;i++) {
 			tdNode[i].textContent = stock[i] >= parseInt(data[i],10) ? "---"
 										: Math.ceil(((parseInt(data[i],10) - stock[i]) * 100 )/ convPer);
 		}
-	
+
 		// 不足分を売り出す量の合計
 		tdNode = trNode[5].getElementsByTagName('td');
 		for(i = 0;i < 4;i++) {
@@ -36691,7 +36695,7 @@ function disp_bro3_etcs(){
 				tdNode[0].textContent = short_cv +' (売買で研究・作成できます)';
 			}
 		}
-	
+
 		if(ETCS_OPTION['MarketCostViewCalcFullTime']) {
 			tdNode = trNode[6].getElementsByTagName('td');
 			var endTime = calcFullTime(
@@ -36704,7 +36708,7 @@ function disp_bro3_etcs(){
 			);
 			tdNode[0].textContent = makeDateString(new Date(getNowTime().getTime() + endTime))+ "頃";
 		}
-	
+
 		if(procArg['timerID'] != -1) {
 			clearTimeout(procArg['timerID']);
 			procArg['timerID'] = -1;
@@ -36721,10 +36725,10 @@ function disp_bro3_etcs(){
 	function viewSolderMarketCostView( id, data, solNum, procArg) {
 		var trNode = document.getElementById(id).getElementsByTagName('tr');
 		if(trNode.length == 0) return;
-	
+
 		var stockName = ['wood', 'stone', 'iron', 'rice' ];
-		var stock     = [];
-		var price     = [];
+		var stock	  = [];
+		var price	  = [];
 		var discount  = solNum < 5 ? 100 :
 						solNum < 10 ? 98 :
 						solNum < 20 ? 96 :
@@ -36733,15 +36737,15 @@ function disp_bro3_etcs(){
 		var shortage = 0;	// 不足
 		var generous = 0;	// 過分
 		var short_cv = 0;	// 不足変換後
-	
+
 		var convPer = getMarketConvPer();
-	
+
 		// 現在の資源の値
 		for(i =0;i < 4;i++) {
 			stock[i] = parseInt(document.getElementById(stockName[i]).textContent,10);
 			price[i] = Math.round((parseInt(data[i],10) * discount) / 100) * solNum;
 		}
-	
+
 		// 必要量
 		var tdNode = trNode[1].getElementsByTagName('td');
 		for(i = 0;i < 4;i++) {
@@ -36763,8 +36767,8 @@ function disp_bro3_etcs(){
 			}
 		}
 		tdNode[0].textContent = '過分:'+ generous +'　不足:'+ shortage;
-	
-	
+
+
 		// 売り出す量
 		tdNode = trNode[4].getElementsByTagName('td');
 		for(i = 0;i < 4;i++) {
@@ -36786,7 +36790,7 @@ function disp_bro3_etcs(){
 				tdNode[0].textContent = short_cv +' (売買で研究・作成できます)';
 			}
 		}
-	
+
 		if(ETCS_OPTION['MarketCostViewCalcFullTime']) {
 			tdNode = trNode[6].getElementsByTagName('td');
 			var endTime = calcFullTime(
@@ -36803,12 +36807,12 @@ function disp_bro3_etcs(){
 				tdNode[0].textContent = "必要量が貯まっています"
 			}
 		}
-	
+
 		if(procArg['timerID'] != -1) {
 			clearTimeout(procArg['timerID']);
 			procArg['timerID'] = -1;
 		}
-	
+
 		if(ETCS_OPTION['MarketCostViewTimer']) {
 			procArg['timerID'] = setTimeout(function() {
 				viewSolderMarketCostView( id, data, solNum, procArg);
@@ -36819,44 +36823,44 @@ function disp_bro3_etcs(){
 		現在選択中を保存
 	*/
 	function selSaveMarketCostView( deep , selectText ) {
-	
+
 		var selSave = GM_getValue(SAVE_NAME+'MarketCostViewSelect','').split(/\t/);
-	
+
 		if(selSave.length == 1 && selSave[0] == '') selSave = [];		// 空の時は初期化
-	
+
 		selSave[deep] = selectText;
-	
+
 		GM_setValue(SAVE_NAME+'MarketCostViewSelect',selSave.join('\t'));
 	}
 	/*
 		現在より深い階層を削除
 	*/
 	function delSaveMarketCostView(baseID, deep) {
-	
+
 		// 現在より深い階層のIDが無ければ削除しない(LOAD)
 		var node = document.getElementById(baseID+'_select' + deep);
 		if(node == null) return;
-	
+
 		var selSave = GM_getValue(SAVE_NAME+'MarketCostViewSelect','').split(/\t/);
-		var selNew  = [];
+		var selNew	= [];
 		// 現在以下の階層は削除
 		for(i = 0;i < deep;i++) {
 			selNew[selNew.length] = selSave[i];
 		}
 		GM_setValue(SAVE_NAME+'MarketCostViewSelect',selNew.join('\t'));
 	}
-	
-	
+
+
 	/*
 		保存した選択中を返す
 	*/
 	function retSaveMarketCostView( deep ) {
 		var selSave = GM_getValue(SAVE_NAME+'MarketCostViewSelect','').split(/\t/);
 		if(selSave.length == 1 && selSave[0] == '') selSave = [];		// 空の時は初期化
-	
+
 		return(selSave[deep]);
 	}
-	
+
 	/*
 		現在資源量・増加量・目標値から、時間を計算
 	*/
@@ -36864,26 +36868,26 @@ function disp_bro3_etcs(){
 		var i,j,k;
 		var data   = [{},{},{},{}];
 		var time   = 0;
-	
+
 		for(i = 0;i < 4;i++) {
-			data[i]['no']     = i;
-			data[i]['now']    = now[i];
-			data[i]['inc']    = inc[i];
+			data[i]['no']	  = i;
+			data[i]['now']	  = now[i];
+			data[i]['inc']	  = inc[i];
 			data[i]['incOrg'] = inc[i];
 			data[i]['target'] = target[i];
 			data[i]['time']   = ((target[i] - now[i])) / inc[i];
 		}
-	
+
 		for(i = 0;i < 4;i++) {
-			var yojou     = 0;
+			var yojou	  = 0;
 			var yojou_inc = 0;
-			var fusoku    = 0;
-	
+			var fusoku	  = 0;
+
 			// 貯まる順番に並び替え
 			data = data.sort(function( a, b ) {
 				return(a['time'] - b['time']);
 			});
-	
+
 			// 次に貯まる時間まで移動
 			if(data[i]['time'] > 0) {
 				for(j = 0;j < 4;j++) {
@@ -36891,39 +36895,39 @@ function disp_bro3_etcs(){
 				}
 				time += data[i]['time'];
 			}
-	
+
 			// 貯まっていたら余剰を算出
 			for(j = 0;j < 4;j++) {
 				if((data[j]['now'] - data[j]['target']) >= 0) {
-					yojou         += data[j]['now'] - data[j]['target'];
-					yojou_inc     += (data[j]['incOrg'] * convPer)/100;
+					yojou		  += data[j]['now'] - data[j]['target'];
+					yojou_inc	  += (data[j]['incOrg'] * convPer)/100;
 					data[j]['now'] = data[j]['target'];
 					data[j]['inc'] = 0;
 				} else {
 					fusoku += data[j]['target'] - data[j]['now'];
 				}
 			}
-	
+
 			// 余剰を不足しているところに、時間を基準に平均的に資源割り振り
-			yojou     = (yojou     * convPer)/100;
+			yojou	  = (yojou	   * convPer)/100;
 			for(j = 0;j < 4;j++){
 				if(data[j]['now'] - data[j]['target'] < 0) {
-					data[j]['now'] += yojou     * ((data[j]['target'] - data[j]['now']) / fusoku);
-					data[j]['inc']  = yojou_inc * ((data[j]['target'] - data[j]['now']) / fusoku) + data[j]['incOrg'];
+					data[j]['now'] += yojou 	* ((data[j]['target'] - data[j]['now']) / fusoku);
+					data[j]['inc']	= yojou_inc * ((data[j]['target'] - data[j]['now']) / fusoku) + data[j]['incOrg'];
 				}
 				data[j]['time'] = data[j]['inc'] == 0 ? 0 : (data[j]['target'] - data[j]['now']) / data[j]['inc'];
 			}
-	
+
 		}
-	
+
 		return time*60*60*1000;
 	}
-	
+
 	//======================================
-	//  class=costにtooltipで足りるか表示
+	//	class=costにtooltipで足りるか表示
 	//======================================
 	function checkClassCost() {
-	
+
 		// ツールチップ表示部分
 		var costnode = document.querySelectorAll('.cost');
 		for(var i = 0;i < costnode.length; i++) {
@@ -36932,10 +36936,10 @@ function disp_bro3_etcs(){
 					// 表示
 					var text = lnode.textContent.replace(/\r|\n/gm,'');
 					if(text.match(new RegExp(GAME_TERMS['木']+'\\s+(\\d+).+?'+GAME_TERMS['石']+'\\s+(\\d+).+?'+GAME_TERMS['鉄']+'\\s+(\\d+).+?'+GAME_TERMS['糧']+'\\s+(\\d+)'))) {
-						var idlist   = ['wood','stone','iron','rice'];
+						var idlist	 = ['wood','stone','iron','rice'];
 						var iconList = ['/img/common/ico_wood.gif','/img/common/ico_stone.gif','/img/common/ico_ingot.gif','/img/common/ico_grain.gif'];
 						var namelist = [GAME_TERMS['木s'],GAME_TERMS['石s'],GAME_TERMS['鉄s'],GAME_TERMS['糧s']];
-	
+
 						// 必要
 						var need  = [RegExp.$1,RegExp.$2,RegExp.$3,RegExp.$4];
 						var stock = [];
@@ -36943,12 +36947,12 @@ function disp_bro3_etcs(){
 						for(var i = 0;i < 4;i++) {
 							stock[i] = parseInt(document.getElementById(idlist[i]) .textContent,10);
 						}
-	
+
 						var convPer = ETCS_OPTION['checkClassCostPer'];
-						var chk     = [];
-						var nStock  = 0;
+						var chk 	= [];
+						var nStock	= 0;
 						for(var i = 0;i < 4;i++) {
-							chk[i]  = Math.ceil(((need[i] - stock[i]) * 100 )/ convPer);
+							chk[i]	= Math.ceil(((need[i] - stock[i]) * 100 )/ convPer);
 						}
 						var str = '';
 						var cnt = 0;
@@ -36957,14 +36961,14 @@ function disp_bro3_etcs(){
 								str    += '<img src="'+EXIMG_URL+iconList[i]+'" style="width:20px;height:16px;position:relative;top:2px;">' + namelist[i] + '：<span style="color:#ff0000;">不足' +(need[i]-stock[i])+'('+chk[i]+')</span><br />';
 								nStock += chk[i];
 							} else {
-								str      += '<img src="'+EXIMG_URL+iconList[i]+'" style="width:20px;height:16px;position:relative;top:2px;">' + namelist[i] + '：余り'+(stock[i]-need[i])+'<br />';
+								str 	 += '<img src="'+EXIMG_URL+iconList[i]+'" style="width:20px;height:16px;position:relative;top:2px;">' + namelist[i] + '：余り'+(stock[i]-need[i])+'<br />';
 								stockAll += stock[i] - need[i];
 								cnt++;
 							}
 						}
-	
+
 						str = (cnt == 4 ? '【実行可能】': (stockAll >= nStock ? "【売買必要】" : '【不足】')+ '(相場 '+convPer+'%)') +'<br />'+str;
-	
+
 						var endTime = calcFullTime(
 							stock, [
 								parseInt(document.getElementById('output_wood') .textContent,10),
@@ -36979,27 +36983,27 @@ function disp_bro3_etcs(){
 				,false);
 			})(costnode[i])
 		}
-	
+
 		// 市場簡易登録部分
 		if(location.pathname == '/facility/facility.php') {
-	
+
 				var node = document.querySelector('#gray02Wrapper h2');
 				if(node == null || node.textContent.indexOf(GAME_TERMS["市場"]) == -1) return;	// 市場で無い
 				var tdnode = getNodeXPath('//form[@name="form1"]//td[preceding-sibling::th[normalize-space(text()) = "'+GAME_TERMS["市場"]+'の取引相場"]]')[0];
 				if(typeof tdnode == 'undefined') return;
-	
+
 				node = tdnode.appendChild(document.createElement('a'));
 				node.setAttribute('title','コスト欄のツールチップで使用する相場を登録します');
 				node.textContent = '登録';
 				node.setAttribute('href','javascript:void(0);');
-	
+
 				node.style.cssText = 'float:right; margin:0;padding:0; border:none;'+
 									' background:none; cursor:pointer;text-decoration:underline; color:blue;font-size:12px;';
 				node.addEventListener('click', function() {
-	
+
 					var percent = getMarketConvPer();
 					if(percent == null) return;
-	
+
 					GM_setValue(SAVE_NAME+"SETTING_checkClassCostPer",percent);
 					ETCS_OPTION['checkClassCostPer'] = percent;
 					alert('コスト欄のツールチップで使用する相場を'+percent+'%で登録しました');
@@ -37007,23 +37011,23 @@ function disp_bro3_etcs(){
 		}
 	}
 	//================================
-	//   資源プリセット
+	//	 資源プリセット
 	//================================
 	function MarketStockPreset() {
-	
+
 		// 処理する場所かチェック
 		if(location.pathname != "/facility/facility.php") return;	// 施設?
 		var result = getNodeXPath('//div[@id="gray02Wrapper"]/h2/text()')[0];
 		if(result.nodeValue != GAME_TERMS["市場"]) return;
 		result = document.querySelector('input[name="confirm_btn"]');
 		if(result == null) return;
-	
-	
+
+
 		// 資源の名前変換表
 		var StockName = {101:GAME_TERMS["木"],102:GAME_TERMS["石"],103:GAME_TERMS["鉄"],104:GAME_TERMS["糧"]};
 		var StockId   = {101:"wood",102:"stone",103:"iron",104:"rice"};
 		var StockNo   = {101:0,102:1,103:2,104:3};
-	
+
 		// デフォルト定義
 		// 種類(0:通常 1:拡張),0プリセット/1ユーザー定義,売り資源, 買い資源,量
 		var defaultData = [
@@ -37046,22 +37050,22 @@ function disp_bro3_etcs(){
 			[0,1,104,102,"ALL"],	// 糧　石 MAX
 			[0,1,104,103,"ALL"],	// 糧　鉄 MAX
 		];
-	
+
 		// データ格納先
 		var defData = [
 			[ 0, 0, -1, -1,"---未選択---"],
 		];
-	
+
 		// OPTIONの登録関数
 		var makeOptFunc = function( node, data ) {
-	
+
 			if(data[2] == -1 && data[3] == -1 && data[1] == 0) {
 				node.appendChild(document.createTextNode((data[4]).toString()));
 			} else {
 				var num = data[4];
 				if(num < 0) num = Math.abs(num)+"を残す";
 				else if(num == 'ALL') num = "全て";
-	
+
 				node.appendChild(document.createTextNode(
 					(data[2] == -1 ? '未設定' : StockName[data[2]])
 					+"→"+
@@ -37069,7 +37073,7 @@ function disp_bro3_etcs(){
 					+"("+ num +")"));
 			}
 		}
-	
+
 		// 配列に挿入
 		var saveBuf = loadArray('defSellButton');
 		if(saveBuf != null) {
@@ -37081,13 +37085,13 @@ function disp_bro3_etcs(){
 			// ユーザー定義が保存されていなかったら、デフォルト
 			defData = defData.concat(defaultData);
 		}
-	
+
 		// 基本作成
 		var baseNode = document.getElementById('gray02Wrapper').appendChild(document.createElement('div'));
 		baseNode.setAttribute('id',"etcs_stockPreset");
-		var node     = baseNode.appendChild(document.createElement('h3'));
+		var node	 = baseNode.appendChild(document.createElement('h3'));
 		node.textContent = '資源プリセット';
-	
+
 		// セレクト作成
 		var selectNode = baseNode.appendChild(document.createElement('select'));
 		// 登録
@@ -37099,16 +37103,16 @@ function disp_bro3_etcs(){
 		}
 		// セレクト選択時動作
 		selectNode.addEventListener('change',function() {
-	
-			var selIdx      = selectNode.selectedIndex;
+
+			var selIdx		= selectNode.selectedIndex;
 			var formSelNode = getNodeXPath('//form[@name="form2"]/table//td[table]//select');
 			var formInpNode = getNodeXPath('//form[@name="form2"]/table//td[table]//input')[0];
-	
+
 			for(var j = 0;j < 2; j++) {
 				for(var k = 0;k < formSelNode[j].options.length; k++) {
 					if(formSelNode[j].options[k].value == defData[selIdx][j+2]) {
 						formSelNode[j].selectedIndex = k;
-	
+
 						// 最大値を表示させるために、イベントを送出
 						if(j == 2) {
 							var event = document.createEvent("MouseEvents");
@@ -37118,38 +37122,38 @@ function disp_bro3_etcs(){
 					}
 				}
 			}
-	
+
 			//数値入力
 			if(defData[selIdx][4] == 'ALL' && defData[selIdx][2] != -1) {	// 全て
 				formInpNode.value = document.getElementById(StockId[defData[selIdx][2]]).textContent;
-	
+
 			} else	if(defData[selIdx][4] < 0 && defData[selIdx][2] != -1) {	// 残す
 				var num = parseInt(document.getElementById(StockId[defData[selIdx][2]]).textContent,10) + parseInt(defData[selIdx][4],10);
 				num = num < 0 ? 0 : num;
 				formInpNode.value = num;
-	
+
 			} else	if(!isNaN(defData[selIdx][4])) {
 				formInpNode.value = defData[selIdx][4];	// 通常
 			} else {
 				formInpNode.value = '';	// 無効
 			}
 		},false);
-	
+
 		// ユーザー定義登録
 		node = baseNode.appendChild(document.createElement('br'));
 		node = baseNode.appendChild(document.createElement('input'));
 		node.setAttribute('type','button');
 		node.setAttribute('value','登録');
 		node.setAttribute('title','現在の内容を登録します');
-	
+
 		node.addEventListener('click', function() {
 			var formSelNode = getNodeXPath('//form[@name="form2"]/table//td[table]//select');
 			var formInpNode = getNodeXPath('//form[@name="form2"]/table//td[table]//input')[0];
-	
+
 			var selId  = formSelNode[0].options[formSelNode[0].selectedIndex].value;
 			var buyId  = formSelNode[1].options[formSelNode[1].selectedIndex].value;
 			var selNum = formInpNode.value;
-	
+
 			// 数値で無いので空白で登録
 			if(selNum.match(/all/i)) {	// 全て
 				selNum = 'ALL';
@@ -37162,28 +37166,28 @@ function disp_bro3_etcs(){
 			} else {
 				selNum = parseInt(selNum,10);
 			}
-	
+
 			// 配列に挿入
 			var tmp = defData.concat();	// コピー
 			defData = tmp.slice(0,1);
 			defData[defData.length] = [0, 1, selId, buyId, selNum];
 			defData = defData.concat(tmp.slice(1));
-	
+
 			// ノードに挿入
 			var optionNode = document.createElement('option');
 			makeOptFunc( optionNode, defData[1] );
 			selectNode.add(optionNode,1);
-	
+
 			// 保存
 			var saveBuf = [];
 			for(var i = 0;i < defData.length; i++) {
 				if(defData[i][1] == 1) saveBuf[saveBuf.length] = defData[i];
 			}
 			saveArray('defSellButton', saveBuf)
-	
+
 		},false);
-	
-	
+
+
 		// ユーザー定義削除
 		node = baseNode.appendChild(document.createElement('input'));
 		node.setAttribute('type','button');
@@ -37197,51 +37201,51 @@ function disp_bro3_etcs(){
 			} else {
 				alert("これは削除できません");
 			}
-	
+
 			// 保存
 			var saveBuf = [];
 			for(var i = 0;i < defData.length; i++) {
 				if(defData[i][1] == 1) saveBuf[saveBuf.length] = defData[i];
 			}
 			saveArray('defSellButton', saveBuf)
-	
+
 		},false);
-	
+
 		// 表示位置の変更
 		var tblNode = getNodeXPath('//form[@name="form2"]/table')[0];
 		baseNode.style.cssText = 'z-index:100; background:#ffffff;';
 		baseNode.style.left = tblNode.offsetLeft+ 515 + 'px';
-		baseNode.style.top  = tblNode.offsetTop +  50 + 'px';
-	
+		baseNode.style.top	= tblNode.offsetTop +  50 + 'px';
+
 	}
-	
+
 	//================================
-	//   兵士数割引後の最大値表示
+	//	 兵士数割引後の最大値表示
 	//================================
 	function makeDisSolMax() {
-	
+
 		if(location.pathname != '/facility/facility.php') return;
 		var i,j,k;
-	
+
 		var node = document.querySelector('#gray02Wrapper h2');
 		if((node == null) || !node.textContent.match(new RegExp(GAME_TERMS['練兵所']+"|"+GAME_TERMS['兵舎']+"|"+GAME_TERMS['弓兵舎']+"|"+GAME_TERMS['厩舎']+"|"+GAME_TERMS['兵器工房']))) return;	// 対象の施設で無い
-	
-		var idlist   = ['wood','stone','iron','rice'];
+
+		var idlist	 = ['wood','stone','iron','rice'];
 		var stock = [];
 		for(i = 0;i < 4;i++) {
 			stock[i] = parseInt(document.getElementById(idlist[i]).textContent,10);
 		}
-	
+
 		var formNode = getNodeXPath('//form[@name="createUnitForm"]/input[contains(@id,"unit_value")]');
 		if(formNode.length == 0) return;
-	
-	
+
+
 		var maxFlag = false;
 		for(i in formNode) {
-			var id     = parseInt(formNode[i].getAttribute('id').replace(/.*unit_value\[(\d+)\].*/,'$1'),10);
+			var id	   = parseInt(formNode[i].getAttribute('id').replace(/.*unit_value\[(\d+)\].*/,'$1'),10);
 			var normalMax = 0;
 			var min = 9999999;
-	
+
 			// 最大兵士作成数を計算する(solID:兵士ID,flag:true->ディスカウント有り)
 			var solCalcFunc = function( solID , flag ) {
 				var disData = [[1,100],[5,98],[10,96],[20,94],[50,92],[100,90]];
@@ -37281,7 +37285,7 @@ function disp_bro3_etcs(){
 				}
 				return min;
 			};
-	
+
 			// 割引無しの最大兵士数から、最大兵士数を算出
 			node   = formNode[i].parentNode.getElementsByTagName('span');
 			if(node.length == 0) continue;		// 無いと思うが
@@ -37300,7 +37304,7 @@ function disp_bro3_etcs(){
 					if(save < min) min = save;
 				}
 			}
-	
+
 			// 表示
 			var overfunc = function(event) { event.target.style.color = '#ffffff'; event.target.style.backgroundColor='#0000ff'; }
 			var outfunc  = function(event) { event.target.style.color = '#0000ff'; event.target.style.backgroundColor=''; }
@@ -37309,26 +37313,26 @@ function disp_bro3_etcs(){
 			orgnode.addEventListener('mouseover',overfunc,false);
 			orgnode.addEventListener('mouseout' ,outfunc ,false);
 			node = formNode[i].parentNode.insertBefore( orgnode.cloneNode(true), orgnode.nextSibling);
-	
-	
+
+
 			node.textContent = '[割:'+min+']';
 			node.setAttribute('onclick',node.getAttribute('onclick').replace(/(\,\s+\')(\d+)(\'\))/,'$1'+min+'$3'));
 			node.setAttribute('title','割引後のコストで作成できる兵の最大数');
 			node.addEventListener('mouseover',overfunc,false);
 			node.addEventListener('mouseout' ,outfunc ,false);
-	
+
 		}
 	}
 	//================================
-	//        入力文字数表示
+	//		  入力文字数表示
 	//================================
 	/*
 		イベントセット
 	*/
 	function setEvent_chkInputStrLen() {
-	
+
 		var node,baseNode;
-	
+
 		// ひとこと
 		if(ETCS_OPTION['InputStrLen_Chat']) {
 			addEventByXPath('//input[@id="comment_str"]','keyup',  chkInputStrLen_hitokoto,true);
@@ -37336,10 +37340,10 @@ function disp_bro3_etcs(){
 			node = document.createElement('div');
 			node.setAttribute('id','comment_str_etcsChkLen');
 			getNodeXPath('//input[@id="comment_str"]')[0].parentNode.appendChild(node);
-	
+
 			chkInputStrLen_hitokoto();
 		}
-	
+
 		var pathdata = [
 		// 書簡
 		['InputStrLen_Mail','/message/new.php','//form[@name="message"]//textarea[@name="body"]','th','bbsres_view_etcsChkLen'],
@@ -37355,25 +37359,25 @@ function disp_bro3_etcs(){
 		// 個人掲示板レス(本文)
 		['InputStrLen_PersonBBS','/bbs/personal_res_view.php','//form[@name="input_form"]//textarea[@name="comment"]','td','bbsres_view_etcsChkLen'],
 		];
-	
+
 		for(i in pathdata) {
 			if(!(ETCS_OPTION[pathdata[i][0]] && (location.pathname == pathdata[i][1]))) continue;
-	
+
 			baseNode = getNodeXPath(pathdata[i][2]);
 			if(baseNode.length == 0) continue;
-	
+
 			(function( lbaseNode , idstr ) {
 				lbaseNode.addEventListener('keyup',  function(){
 							chkInputStrLen_res_view(idstr,lbaseNode);},true);
 				lbaseNode.addEventListener('change', function(){
 							chkInputStrLen_res_view(idstr,lbaseNode);},true);
 			})(baseNode[0],pathdata[i][4]);
-	
+
 			node = baseNode[0].parentNode.parentNode.getElementsByTagName(pathdata[i][3])[0];
 			node.innerHTML += '<br><span class="bbsres_view_etcsChkLenCss" id="'+pathdata[i][4]+'"></span>';
-	
+
 			chkInputStrLen_res_view(pathdata[i][4],baseNode[0]);
-	
+
 		}
 	}
 	/*
@@ -37387,37 +37391,37 @@ function disp_bro3_etcs(){
 		掲示板スレッド・書簡の文字数表示
 	*/
 	function chkInputStrLen_res_view( id, node ) {
-	
+
 		var encstr = node.value;
-		encstr     = encstr.replace(/\r\n|\r|\n/g,'\r\n');	// 改行は2バイト(OS依存？)
-	
+		encstr	   = encstr.replace(/\r\n|\r|\n/g,'\r\n');	// 改行は2バイト(OS依存？)
+
 		document.getElementById(id).innerHTML = '入力文字数:'+encstr.length;
 	}
 
 	// ========================
-	//    マップドラッグ
+	//	  マップドラッグ
 	// ========================
 	/*
 		マップドラッグ初期化(イベント設定)
 	*/
 	function initMapDrag() {
-	
+
 		var mapNode = document.getElementById("mapsAll");
 		if(ETCS_OPTION['MapDragPosMove'] != true || mapNode == null) {
 			mapNode = document.getElementById("map51-content");
 			if(ETCS_OPTION['MapDragPosMovex51'] != true || mapNode == null) return;
 		}
-	
+
 		mapNode.addEventListener( "mousedown", StartMapDrag, false);
 		mapNode.addEventListener( "click", MapDrag_LinkCancel, false);
-	
-	
+
+
 	}
 	/*
 		マウスドラッグ開始
 	*/
 	function StartMapDrag(event) {
-	
+
 		var flagx51 = false;
 		var mapNode = document.getElementById("mapsAll");
 		if(mapNode == null) {
@@ -37425,18 +37429,18 @@ function disp_bro3_etcs(){
 			flagx51 = true;
 			if(mapNode == null) return;
 		}
-	
+
 		if(event.button != 0) return;
-	
+
 		mapsall_initX = mapNode.offsetLeft;
 		mapsall_initY = mapNode.offsetTop;
-	
+
 		dragStartPosX = event.clientX + window.pageXOffset;
 		dragStartPosY = event.clientY + window.pageYOffset;
-	
-		document.addEventListener( "mousemove", MapDrag,      false);
-		document.addEventListener( "mouseup",   EndMapDrag,   false);
-	
+
+		document.addEventListener( "mousemove", MapDrag,	  false);
+		document.addEventListener( "mouseup",	EndMapDrag,   false);
+
 		// ダミーを作成
 		if(flagx51 && document.getElementById('etcs_mapdrag_51xdummy') == null) {
 			var style = document.defaultView.getComputedStyle(mapNode,'');
@@ -37460,11 +37464,11 @@ function disp_bro3_etcs(){
 			mapNode.style.position = "absolute";
 			mapNode.style.zIndex = '10';
 		}
-	
-	
-	
+
+
+
 		event.preventDefault();
-	
+
 	}
 	/*
 		マウスドラッグ終了
@@ -37480,7 +37484,7 @@ function disp_bro3_etcs(){
 		}
 		document.removeEventListener( "mousemove", MapDrag,    false);
 		document.removeEventListener( "mouseup",   EndMapDrag, false);
-	
+
 		// 移動量によって決める
 		if(MapDragCalcRange((event.clientX + window.pageXOffset),(event.clientY + window.pageYOffset),
 																			dragStartPosX,dragStartPosY) >= 5) {
@@ -37521,7 +37525,7 @@ function disp_bro3_etcs(){
 		マウスドラッグ中(移動中)
 	*/
 	function MapDrag(event) {
-	
+
 		var elx,ely;
 		var mapNode = document.getElementById("mapsAll");
 		var flagx51 = false;
@@ -37530,38 +37534,38 @@ function disp_bro3_etcs(){
 			if(mapNode == null) return;
 			flagx51 = true;
 		}
-	
-	
+
+
 		var scaleNode = getNodeXPath('//div[@id="change-map-scale"]/ul/li');
-	
+
 		// マウス移動量
 		elx = (event.clientX + window.pageXOffset) - dragStartPosX + mapsall_initX;
 		ely = (event.clientY + window.pageYOffset) - dragStartPosY + mapsall_initY;
-	
+
 		mapNode.style.position = "absolute";
 		mapNode.style.left = elx+"px";
 		mapNode.style.top  = ely+"px";
-	
-	
+
+
 		if(flagx51 && MapDragCalcRange((event.clientX + window.pageXOffset),(event.clientY + window.pageYOffset),
 																			dragStartPosX,dragStartPosY) >= 5) {
 			mapNode.style.opacity = 0.5;
 		}
-	
-	
+
+
 		event.preventDefault();
 	}
 	/*
 		マップドラッグ　リンクキャンセル
 	*/
 	function MapDrag_LinkCancel( event ) {
-	
+
 		// 移動量によって決める
 		if(MapDragCalcRange((event.clientX + window.pageXOffset),(event.clientY + window.pageYOffset),
 																			dragStartPosX,dragStartPosY) >= 5) {
 			event.preventDefault();
 		}
-	
+
 	}
 	/*
 		移動量計算
@@ -37573,13 +37577,13 @@ function disp_bro3_etcs(){
 		座標変換
 	*/
 	function MapDragPosConv( event ) {
-	
+
 		var ret = [];
 		var mx,my;
 		var px,py,nx,ny;
 		var psin,pcos;
 		var nowX,nowY,scale;
-					//  W,H,遊びW,遊びH
+					//	W,H,遊びW,遊びH
 		var scaleSize = [[42.9,42.7,0.4,0.4],[31.3,31.3,0.5,0.5],[22.7,22.7,0.3,0.3],[12,12,0.3,0.3]];
 		var scaleNode = getNodeXPath('//div[@id="change-map-scale"]/ul/li');
 		for(scale = 0;scale < scaleNode.length; scale++) {
@@ -37587,87 +37591,87 @@ function disp_bro3_etcs(){
 				break;
 			}
 		}
-	
+
 		mx = (event.clientX + window.pageXOffset) - dragStartPosX;
 		my = (event.clientY + window.pageYOffset) - dragStartPosY;
 		px = (mx * -1);
 		py = (my * -2);
-	
+
 		// 回転 mx = x * sin(rad)
 		psin = Math.sin(Math.PI*(45/180));
 		pcos = Math.cos(Math.PI*(45/180));
-	
+
 		nx = (Math.floor(px * psin + py * pcos)) / scaleSize[scale][0];
 		ny = (Math.floor(px * pcos - py * psin)) / scaleSize[scale][1];
-	
+
 		nx = nx + (nx == 0 ? 0 : (nx > 0 ? 1 : -1) * scaleSize[scale][2]);
 		ny = ny + (ny == 0 ? 0 : (ny > 0 ? 1 : -1) * scaleSize[scale][3]);
-	
+
 		nowX = parseInt(getNodeXPath('//div[@id="datas"]/input[@id="x"]')[0].value);
 		nowY = parseInt(getNodeXPath('//div[@id="datas"]/input[@id="y"]')[0].value);
-	
+
 		ret[0] = nowX + parseInt(nx);
 		ret[1] = nowY + parseInt(ny);
 		ret[2] = nowX;
 		ret[3] = nowY;
-	
+
 		return ret;
 	}
 	/*
 		現在地を取得(map.php / big_map.php)
 	*/
 	function getNowPos() {
-	
+
 		var node = document.querySelector("#change-map-scale .sort11 a");
 		if(node == null) return null;
 		var pos  = getPosFromURI(node.getAttribute('href'));
-	
+
 		return pos;
 	}
-	
+
 	// ========================
-	//      車ダメージ計算
+	//		車ダメージ計算
 	// ========================
 	function carDmgCalc() {
 		// 鍛冶場を開いたときに自動保存
 		if(location.pathname == '/facility/facility.php') {
-	
+
 			var result = getNodeXPath('//div[@id="gray02Wrapper"]/h2/text()')[0].textContent;
 			if(result.indexOf(GAME_TERMS['鍛冶場']) == -1) return;	// 鍛冶場で無ければ終了
-	
+
 			var vData = getVillageDataFromID();
 			if(vData == null) {
 				console.log('carDmgCalc:拠点情報が取得できませんでした');
 				return;
 			}
-	
+
 			var smithyLv = 0;
-			var ramLv    = 0;
-			var catLv    = 0;
-	
+			var ramLv	 = 0;
+			var catLv	 = 0;
+
 			result = getNodeXPath('id("gray02Wrapper")//table[contains(@class,"commonTables")]//th[contains(@class,"mainTtl")]/div[contains(@class,"th_ttl")]');
 			if(result.length > 0) {
 				smithyLv = parseInt(result[0].textContent.replace(/^.+レベル\s*(\d+).*$/,"$1"),10);	// 鍛冶場レベル
 			}
-	
+
 			result = getNodeXPath('id("gray02Wrapper")//table[contains(@class,"commonTables")]//tr[preceding-sibling::tr/th[contains(@class,"mainTtl6") and (text() = "'+GAME_TERMS['衝車']+'")]]/td[contains(@class,"contents")]');
 			if(result.length > 0) {
 				ramLv = result[0].textContent.replace(/\r|\n/gm,"")
 				ramLv = parseInt(ramLv.replace(/^.*?レベル\s*(\d+).+$/m,"$1"));
 			}
-	
+
 			result = getNodeXPath('id("gray02Wrapper")//table[contains(@class,"commonTables")]//tr[preceding-sibling::tr/th[contains(@class,"mainTtl6") and (text() = "'+GAME_TERMS['投石機']+'")]]/td[contains(@class,"contents")]');
 			if(result.length > 0) {
 				catLv = result[0].textContent.replace(/\r|\n/gm,"")
 				catLv = parseInt(catLv.replace(/^.*?レベル\s*(\d+).+$/m,"$1"));
 			}
 			var savestr = new Date() + '\t' + smithyLv + '\t' + ramLv + '\t' + catLv;
-	
+
 			GM_setValue(SAVE_NAME+'carDmgCalc_Setting_'+vData[0], savestr);
-	
+
 			return;
 		}
-	
+
 		if(location.pathname != '/facility/castle_send_troop.php') return;
 		var skillData = {
 			 active : {
@@ -37675,15 +37679,15 @@ function disp_bro3_etcs(){
 			"兵器の強撃": {reg : /.*城・砦・村への攻撃力が(\d+(\.\d+)?)%上昇する.*/,base:'$1',add:'',dist:'', distif:'' },
 			"兵器の猛撃": {reg : /.*城・砦・村への攻撃力が(\d+(\.\d+)?)%上昇する.*/,base:'$1',add:'',dist:'', distif:'' },
 			"兵器の極撃": {reg : /.*城・砦・村への攻撃力が(\d+(\.\d+)?)%上昇する.*/,base:'$1',add:'',dist:'', distif:'' },
-			"兵器突撃"  : {reg : /.*城・砦・村への攻撃力が(\d+(\.\d+)?)%.*/,base:'$1',add:'',dist:'', distif:'' },
-			"兵器突覇"  : {reg : /.*城・砦・村への攻撃力が(\d+(\.\d+)?)%.*/,base:'$1',add:'',dist:'', distif:'' },
-			"智将器撃"  : {reg : /.*城・砦・村への攻撃力が(\d+(\.\d+)?)%.*/,base:'$1',add:'',dist:'', distif:'' },
-			"苦肉の計"  : {reg : /.*兵器の攻撃力が(\d+(\.\d+)?)%.*ダメージを(\d+(\.\d+)?)追加.*/,base:'$1',add:'$3',dist:'',distif:'' },
+			"兵器突撃"	: {reg : /.*城・砦・村への攻撃力が(\d+(\.\d+)?)%.*/,base:'$1',add:'',dist:'', distif:'' },
+			"兵器突覇"	: {reg : /.*城・砦・村への攻撃力が(\d+(\.\d+)?)%.*/,base:'$1',add:'',dist:'', distif:'' },
+			"智将器撃"	: {reg : /.*城・砦・村への攻撃力が(\d+(\.\d+)?)%.*/,base:'$1',add:'',dist:'', distif:'' },
+			"苦肉の計"	: {reg : /.*兵器の攻撃力が(\d+(\.\d+)?)%.*ダメージを(\d+(\.\d+)?)追加.*/,base:'$1',add:'$3',dist:'',distif:'' },
 			"皇叔の号令": {reg : /.*兵器の攻撃力が(\d+(\.\d+)?)%.*ダメージを(\d+(\.\d+)?)追加.*/,base:'$1',add:'$3',dist:'',distif:'' },
 			"陥陣営の侵攻":{reg : /.*城・砦・村への攻撃力(\d+(\.\d+)?)%.*/,base:'$1',add:'',dist:'',distif:'' },
 			"智将砕器":{reg : /.*城・砦・村への攻撃力(\d+(\.\d+)?)%.*/,base:'$1',add:'',dist:'',distif:'' },
-			"隣地攻城"  : {reg : /.*出兵距離が(\d+)以下.+兵器の城・砦・村への攻撃力が(\d+(\.\d+)?)%上昇する.*/,base:'$2',add:'',dist:'$1', distif:'<=' },
-			"攻城戦の極砕"  : {reg : /.*兵器の拠点への攻撃力が(\d+(\.\d+)?)%.*ダメージを(\d+(\.\d+)?)追加.*/,base:'$1',add:'$3',dist:'',distif:'' },
+			"隣地攻城"	: {reg : /.*出兵距離が(\d+)以下.+兵器の城・砦・村への攻撃力が(\d+(\.\d+)?)%上昇する.*/,base:'$2',add:'',dist:'$1', distif:'<=' },
+			"攻城戦の極砕"	: {reg : /.*兵器の拠点への攻撃力が(\d+(\.\d+)?)%.*ダメージを(\d+(\.\d+)?)追加.*/,base:'$1',add:'$3',dist:'',distif:'' },
 			},
 			passive : {
 			"兵器の進攻": {reg : /.*城・砦・村への攻撃力(\d+(\.\d+)?)%.*/,base:'$1',add:'',dist:'', distif:'' },
@@ -37692,35 +37696,35 @@ function disp_bro3_etcs(){
 			"兵器の極攻": {reg : /.*城・砦・村への攻撃力(\d+(\.\d+)?)%.*/,base:'$1',add:'',dist:'', distif:'' },
 			}
 		};
-	
+
 		var baseNode = document.getElementById('gray02Wrapper');	// 追加先
-	
+
 		// 出兵画面で拠点ごとの設定
 		var carDmgNode = document.createElement('div');
 		carDmgNode.setAttribute('id','etcs_cardmg');
-	
+
 		var vData = getVillageDataFromID();
 		if(vData == null) {
 			return;
 		}
-	
+
 		var node,selNode,cntNode,smithNode,ramNode,catNode;
 		var savedata;
-	
+
 		// 自動保存
 		var savefunc = function() {
-	
+
 			var smithLv = parseInt(smithNode.value,10);
-			var ramLv   = parseInt(  ramNode.value,10);
-			var catLv   = parseInt(  catNode.value,10);
+			var ramLv	= parseInt(  ramNode.value,10);
+			var catLv	= parseInt(  catNode.value,10);
 			var savestr = new Date() + '\t' + smithLv + '\t' + ramLv + '\t' + catLv;
-	
+
 			GM_setValue(SAVE_NAME+'carDmgCalc_Setting_'+vData[0], savestr);
 		}
-	
+
 		savedata = GM_getValue(SAVE_NAME+'carDmgCalc_Setting_'+vData[0],'未保存\t0\t0\t0').split(/\t/);
-	
-	
+
+
 		// タイトル
 		node = document.createElement('div');
 		node.textContent = vData[3] + ' の'+GAME_TERMS['鍛冶場']+'設定';
@@ -37731,61 +37735,61 @@ function disp_bro3_etcs(){
 		cntNode    .appendChild(document.createTextNode(GAME_TERMS['鍛冶場']+'レベル'));
 		smithNode = cntNode.appendChild(document.createElement('select'));
 		for(i = 0;i < 11;i++) {
-			node    = smithNode.appendChild(document.createElement('option'));
+			node	= smithNode.appendChild(document.createElement('option'));
 			node.textContent = 'LV'+i;
 			node.setAttribute('value',i);
 		}
 		smithNode.selectedIndex = savedata[1];
 		smithNode.addEventListener('change', savefunc, false);
-	
+
 		cntNode.appendChild(document.createTextNode(' '+GAME_TERMS['衝車']+'武器レベル'));
 		ramNode = cntNode.appendChild(document.createElement('select'));
 		for(i = 0;i < 11;i++) {
-			node    = ramNode.appendChild(document.createElement('option'));
+			node	= ramNode.appendChild(document.createElement('option'));
 			node.textContent = 'LV'+i;
 			node.setAttribute('value',i);
 		}
 		ramNode.selectedIndex = savedata[2];
 		ramNode.addEventListener('change', savefunc, false);
-	
+
 		cntNode.appendChild(document.createTextNode(' '+GAME_TERMS['投石機']+'武器レベル'));
 		catNode = cntNode.appendChild(document.createElement('select'));
 		for(i = 0;i < 11;i++) {
-			node    = catNode.appendChild(document.createElement('option'));
+			node	= catNode.appendChild(document.createElement('option'));
 			node.textContent = 'LV'+i;
 			node.setAttribute('value',i);
 		}
 		catNode.selectedIndex = savedata[3];
 		catNode.addEventListener('change', savefunc, false);
-	
+
 		carDmgNode.appendChild(cntNode);
 		baseNode.appendChild(carDmgNode);
-	
+
 		// ここから先は出兵確認画面のみ
 		var basenode = getNodeXPath('//table[@class="fighting_about"]/tbody/tr/th')[0];
 		if(typeof basenode == 'undefined') return;
 		if(basenode.getAttribute('class') == 'suport') return;	// 援軍は表示しない
-	
-	
+
+
 		//
 		// 算出
 		//
-	
+
 		// 台数取得
-		var ram_cnt = parseInt(getNodeXPath('//input[@name = "ram_count"]'     )[0].value,10);	// 衝車
+		var ram_cnt = parseInt(getNodeXPath('//input[@name = "ram_count"]'	   )[0].value,10);	// 衝車
 		var cat_cnt = parseInt(getNodeXPath('//input[@name = "catapult_count"]')[0].value,10);	// 投石機
-	
-		ram_cnt     = isNaN(ram_cnt) ? 0 : ram_cnt;
-		cat_cnt     = isNaN(cat_cnt) ? 0 : cat_cnt;
-	
+
+		ram_cnt 	= isNaN(ram_cnt) ? 0 : ram_cnt;
+		cat_cnt 	= isNaN(cat_cnt) ? 0 : cat_cnt;
+
 		if(ram_cnt == 0 && cat_cnt == 0) return;		// 車が無しの時表示しない
 	// 計算して表示
 	var func = function() {
-	var ram_cnt = parseInt(getNodeXPath('//input[@name = "ram_count"]'     )[0].value,10);	// 衝車
+	var ram_cnt = parseInt(getNodeXPath('//input[@name = "ram_count"]'	   )[0].value,10);	// 衝車
 	var cat_cnt = parseInt(getNodeXPath('//input[@name = "catapult_count"]')[0].value,10);	// 投石機
 
-	ram_cnt     = isNaN(ram_cnt) ? 0 : ram_cnt;
-	cat_cnt     = isNaN(cat_cnt) ? 0 : cat_cnt;
+	ram_cnt 	= isNaN(ram_cnt) ? 0 : ram_cnt;
+	cat_cnt 	= isNaN(cat_cnt) ? 0 : cat_cnt;
 
 	// スキル取得
 	var skillper = 0;	// スキルでの増加[率]
@@ -37793,7 +37797,7 @@ function disp_bro3_etcs(){
 	var per,add,name;
 	var startPos = getNowVillagePos();		// 現在の位置
 	// 到着地点の場所から距離を算出
-	var dist     = 0;
+	var dist	 = 0;
 	node = document.querySelector('table.fighting_about td strong');
 	if(node !== null) {
 		endPos = node.textContent.match(/\(\s*(-?\d+)\s*,\s*(-?\d+)\s*\)\s*$/);
@@ -37866,35 +37870,35 @@ function disp_bro3_etcs(){
 			skilladd += isNaN(add) ? 0 : add;	// 無いときは0
 		}
 	}
-	
-	
+
+
 			var smithyData = [0,0,1.5,3,4.5,6,7.5,9,10.5,12,15];	//鍛冶場+ATK%
 			var ramData    = [0,3, 6, 9,12,15,18,21,25,29,35];	//衝車+ATK%
 			var catData    = [0,5,10,15,21,28,36,45,56,69,85];	//投石+ATK%
-	
+
 			var smithLv = parseInt(smithNode.value,10);
-			var ramLv   = parseInt(  ramNode.value,10);
-			var catLv   = parseInt(  catNode.value,10);
+			var ramLv	= parseInt(  ramNode.value,10);
+			var catLv	= parseInt(  catNode.value,10);
 			var domsPer = document.getElementById('etcs_cardmg_input').value;
-			domsPer     = isNaN(domsPer) ? 0 : +domsPer;
-	
-			var addper  = skillper + smithyData[smithLv] + domsPer;
-	
+			domsPer 	= isNaN(domsPer) ? 0 : +domsPer;
+
+			var addper	= skillper + smithyData[smithLv] + domsPer;
+
 			var dmg = parseInt((ram_cnt * (100 + addper  + ramData[ramLv])
 					+ cat_cnt * (100 + addper + catData[catLv]))/100,10)
 					+ skilladd;
-	
+
 			// ダメージ追加
 			var node = getNodeXPath('//form[@name="input_troop"]//div[contains(@class,"fightingpower")]/dl/dd[preceding-sibling::dt[contains(text(),"拠点ダメージ")]]/*');
 			if(node.length > 0) {
 				node[0].textContent = dmg;
 				node[1].textContent = '技:'+skillper+'%';
 				node[2].textContent = ' 鍛:'+smithyData[smithLv]+'%';
-				node[3].textContent = ' 車:'+ramData[ramLv]     +'%';
-				node[4].textContent = ' 投:'+catData[catLv]     +'%';
+				node[3].textContent = ' 車:'+ramData[ramLv] 	+'%';
+				node[4].textContent = ' 投:'+catData[catLv] 	+'%';
 			}
 		}
-	
+
 		// ダメージの項目追加
 		var dlnode = getNodeXPath('//form[@name="input_troop"]//div[contains(@class,"fightingpower")]/dl');
 		if(dlnode.length > 0) {
@@ -37960,18 +37964,18 @@ function disp_bro3_etcs(){
 			box.addEventListener('change',func,false);
 		node.appendChild(document.createTextNode('%'));
 	}
-	
-	
+
+
 		func();
-	
+
 		// 再計算用イベント
 		smithNode.addEventListener('change', func, false);
 		ramNode  .addEventListener('change', func, false);
 		catNode  .addEventListener('change', func, false);
 	}
-	
+
 	//================================
-	//    デッキで内政へ飛ぶ
+	//	  デッキで内政へ飛ぶ
 	//================================
 	function deckToDomestic() {
 		if(location.pathname != '/card/deck.php')  return;
@@ -37979,9 +37983,9 @@ function disp_bro3_etcs(){
 			[/内政セット済/ ,"%2Fcard%2Fdomestic_setting.php"],
 			[/待機中/ ,"%2Fcard%2Fdomestic_setting.php"],
 		];
-	
+
 		var setinfo = getNodeXPath('id("cardListDeck")//*[contains(@class,"cardColmn")]//dd[preceding-sibling::dt[contains(text(),"セット状態") and position()=1]]');
-	
+
 		for(var i = 0;i < setinfo.length; i++) {
 			// カードの所属拠点から拠点ID取得
 			var node = getNodeXPath('../dd[preceding-sibling::dt[contains(text(),"所属拠点") and position()=1]]//a',setinfo[i]);
@@ -37989,7 +37993,7 @@ function disp_bro3_etcs(){
 			var villageID = node[0].getAttribute('href').replace(/^.+village_id=(\d+).*?$/,"$1");
 			var range = document.createRange();
 			range.selectNodeContents(setinfo[i]);
-	
+
 			// 追加/置き換え
 			if(setinfo[i].textContent.match(/出兵中/)) {
 				setinfo[i].innerHTML = setinfo[i].innerHTML.replace(/出兵中/,'<a href="/village_change.php?village_id='+villageID+'&from=menu&page=%2Ffacility%2Funit_status.php">出兵中</a>');
@@ -38004,12 +38008,12 @@ function disp_bro3_etcs(){
 	}
 
 	// ==============================
-	//        帰還予定日時表示
+	//		  帰還予定日時表示
 	// ==============================
 	function returnDateOnCastleSendTroop() {
-	
+
 		if(location.pathname != '/facility/castle_send_troop.php') return;	// 出兵確認画面のみ表示
-	
+
 		// 攻撃タイプ判定
 		var basenode = getNodeXPath('//table[@class="fighting_about"]/tbody/tr/th')[0];
 		if(typeof basenode == 'undefined') return;
@@ -38024,32 +38028,32 @@ function disp_bro3_etcs(){
 			"cavalry"  : 12, "cavalry_guards" : 15,		// 騎兵種
 			"archer"   : 5, "crossbow" : 9,				// 弓兵種
 			"scout"    : 9, "cavalry_scout"  : 20,		// 斥候種
-			"ram"      : 3, "catapult" : 6				// 攻城兵種
+			"ram"	   : 3, "catapult" : 6				// 攻城兵種
 		};
-	
+
 		//*** 帰還時刻表示 ****
 		var func = function(  ) {
-	
+
 			var retnode  = document.querySelector('#etcs_returnDate span');
 			retnode.parentNode.parentNode.textContent.match(/到着まで:\s*(\d+)\:(\d{1,2})\:(\d{1,2})\s*到達時間:\s*(\d{1,4}\-\d{1,2}\-\d{1,2}\s+\d{1,2}\:\d{1,2}\:\d{1,2})/);
 			var arrivaltime = new Date((RegExp.$4).replace(/-/g,'/'));
-			var returntime  = new Date(arrivaltime.getTime() + movetime);
+			var returntime	= new Date(arrivaltime.getTime() + movetime);
 			if(moveload) {
 				retnode.textContent = '予測帰還日時: 読み込んでいます.... ';
 			} else {
 				retnode.textContent = '予測帰還日時: '+ makeDateString(returntime) + makeRestTimeString(" (%%hours:%%minuts:%%sec) ",movetime);
 			}
-	
+
 		};
 		//*** サーバーから読み込みボタン ****
 		var loadFightingTime = function() {
-	
+
 			var node  = document.querySelector('#etcs_returnDate a');
 			if(node != null) {
 				node.removeEventListener('click',loadFightingTime);
 				node.parentNode.removeChild(node);
 			}
-	
+
 			// 送信データの作成
 			var sendData   = [];
 			var solderNode = getNodeXPath('//form[@name = "input_troop"]//input[contains(@name,"_count")]');
@@ -38082,19 +38086,19 @@ function disp_bro3_etcs(){
 					sendData[sendData.length] = key + "=" + sendName[key];
 				}
 			}
-	
+
 			// skill
 			var tmp = document.querySelector('input[name ^= "use_skill_id"]');
 			if(tmp != null) {
 				var key  = tmp.getAttribute('name');
 				sendData[sendData.length] = key + "=" + tmp.value;
-	
+
 			}
-	
+
 			// POSTデータ生成
-			tmp      = sendData.join('&');
+			tmp 	 = sendData.join('&');
 			moveload = true;				// ロード中開始
-	
+
 			// 殲滅の確認画面を裏でチェック
 			GM_xmlhttpRequest({
 				method:"POST",
@@ -38105,7 +38109,7 @@ function disp_bro3_etcs(){
 				},
 				onload:function(x){
 					var htmdoc = parseHTML(x.responseText);
-	
+
 					var node   = getNodeXPath('//table[@class="fighting_about"]/tbody/tr/td',htmdoc,htmdoc);
 					if(node[0].parentNode.textContent.match(/到着まで:\s*(\d+)\:(\d{1,2})\:(\d{1,2})\s*到達時間:\s*(\d{1,4}\-\d{1,2}\-\d{1,2}\s+\d{1,2}\:\d{1,2}\:\d{1,2})/)) {
 						movetime = (parseInt(RegExp.$1,10) * 3600 + parseInt(RegExp.$2,10) * 60 + parseInt(RegExp.$3,10))*1000;		// 移動時間
@@ -38117,23 +38121,23 @@ function disp_bro3_etcs(){
 				},
 			});
 		};
-	
+
 		// 移動時間の取得と計算
 		var movetime = 0;
 		var returnSkill = 0;
 		var moveload = false;
-		var node      = getNodeXPath('//table[@class="fighting_about"]/tbody/tr/td')[0];
+		var node	  = getNodeXPath('//table[@class="fighting_about"]/tbody/tr/td')[0];
 		if(node.parentNode.textContent.match(/到着まで:\s*(\d+)\:(\d{1,2})\:(\d{1,2})\s*到達時間:\s*(\d{1,4}\-\d{1,2}\-\d{1,2}\s+\d{1,2}\:\d{1,2}\:\d{1,2})/)) {
 			movetime = (parseInt(RegExp.$1,10) * 3600 + parseInt(RegExp.$2,10) * 60 + parseInt(RegExp.$3,10))*1000;		// 移動時間(殲滅)
 		}
-	
-	
+
+
 		// 強襲・帰還時速度アップスキル用計算
-		var node     = getNodeXPath('//div[contains(@class,"fightingpower")]//dd[preceding-sibling::dt[contains(text(),"部隊移動速度") and position()=1]]');
+		var node	 = getNodeXPath('//div[contains(@class,"fightingpower")]//dd[preceding-sibling::dt[contains(text(),"部隊移動速度") and position()=1]]');
 		var endSpeed = parseFloat(node[0].textContent);
-	
+
 		// 武将・兵から一番足の遅い物を基準にする
-		node       = getNodeXPath('//div[contains(@id,"cardWindow_")]//li[contains(@class,"status_speed")]');	// 武将スピード
+		node	   = getNodeXPath('//div[contains(@id,"cardWindow_")]//li[contains(@class,"status_speed")]');	// 武将スピード
 		var speed  = parseFloat(node[0].textContent);
 		var solderNode = getNodeXPath('//table[@name="input_troop"]//input[contains(@name,"_count")]');
 		for(var i = 0;i < solderNode.length; i++) {
@@ -38151,26 +38155,26 @@ function disp_bro3_etcs(){
 		var traningex  = loadVillageData("trainingScoolEx");	// 保存してある遠征訓練所
 		traning   = (traning   == null) ? 0 : traning;
 		traningex = (traningex == null) ? 0 : traningex;
-	
+
 		var startPos = getNowVillagePos();
 		var endPos_x = +document.querySelector('input[name="village_x_value"]').value;
 		var endPos_y = +document.querySelector('input[name="village_y_value"]').value;
-		endPos_x     = isNaN(endPos_x) ? 0 : endPos_x;
-		endPos_y     = isNaN(endPos_y) ? 0 : endPos_y;
-	
+		endPos_x	 = isNaN(endPos_x) ? 0 : endPos_x;
+		endPos_y	 = isNaN(endPos_y) ? 0 : endPos_y;
+
 		var normal = calcMoveTime(startPos[0],startPos[1],endPos_x,endPos_y,speed,0,0,0,false) * 1000;
 		var node   = getNodeXPath('//div[@class = "useSkill"]/p[@class="skillInfo"]');		// スキル説明
-	
+
 		if(node.length != 0) {
 			// スキルの中に帰還時の速度アップがあるか？
 			if(node[0].textContent.match(/帰還.*?速度.*?(\d+(\.\d+)?)%/)) {
 				returnSkill = parseFloat(RegExp.$1) / 100;
 			}
-	
-	
+
+
 			// 強襲時は計算する
 			if(movetype == 'forceattack') {
-	
+
 				if(node[0].textContent.match(/強襲[時|選択]/)) {
 					// 強襲スキルの時
 					movetime = calcMoveTime(startPos[0],startPos[1],endPos_x,endPos_y,speed,traning,traningex,0,false) * 1000;
@@ -38178,7 +38182,7 @@ function disp_bro3_etcs(){
 					// 通常スキル(計算から算出)
 					movetime = calcMoveTime(startPos[0],startPos[1],endPos_x,endPos_y,speed,0,0,(normal / movetime) - 1.2 + returnSkill,false) * 1000;	//スキル込み殲滅
 				}
-	
+
 				// 殲滅での時間を裏で自動取得
 				if(ETCS_OPTION['retDateOnSendTroop_ForceServerLoad']) {
 					loadFightingTime();
@@ -38192,7 +38196,7 @@ function disp_bro3_etcs(){
 			}
 		} else {
 			// スキル無し
-	
+
 			// 強襲時は計算する
 			if(movetype == 'forceattack') {
 				movetime = calcMoveTime(startPos[0],startPos[1],endPos_x,endPos_y,speed,0,0,(normal / movetime) - 1.2 + returnSkill,false) * 1000;	//スキル込み殲滅
@@ -38202,22 +38206,22 @@ function disp_bro3_etcs(){
 				}
 			}
 		}
-	
-	
-	
+
+
+
 		// 表示部分作成
 		basenode = getNodeXPath('//table[@class="fighting_about"]/tbody/tr/td')[0];
-		node     = basenode.appendChild(document.createElement('div'));
+		node	 = basenode.appendChild(document.createElement('div'));
 		node.setAttribute('id','etcs_returnDate');
 		node.appendChild(document.createElement('span'));				// 時刻表示部分
-	
+
 		if((movetype == 'forceattack') && !ETCS_OPTION['retDateOnSendTroop_ForceServerLoad']) {
-			node    = node.appendChild(document.createElement('a'));	// ロードボタン
+			node	= node.appendChild(document.createElement('a'));	// ロードボタン
 			node.setAttribute('href','javascript:void(0);');
 			node.textContent = '(読み込む)';
 			node.addEventListener('click',loadFightingTime);
 		}
-	
+
 		func();
 		setInterval(function() { func(); } , 100);
 	}
@@ -38233,20 +38237,20 @@ function disp_bro3_etcs(){
 		返値：秒数(float)
 	*/
 	function calcMoveTime( sx, sy, ex, ey, baseSpeed , training, trainingEx, skillUp, forceFlag ) {
-	
+
 		var dist   = MapDragCalcRange(sx, sy, ex, ey);	// 距離計算
 		var upper  = 1 + training / 20 + ((trainingEx * dist) / 1000) + (forceFlag ? 0.2 : 0) + skillUp;		// 速度アップ率
 		var speed  = baseSpeed * upper;
 		return( (dist / speed) * 60 * 60 );
 	}
-	
+
 	// =========================================================
-	//   掲示板のスレを開いた時、タイトルバーにタイトルを表示
+	//	 掲示板のスレを開いた時、タイトルバーにタイトルを表示
 	// =========================================================
 	function copyTitleInBBSTitle() {
-	
+
 		if(location.pathname != '/bbs/res_view.php') return;
-	
+
 		var title = document.getElementsByTagName('title');
 		if(title != null) {
 			var node = getNodeXPath('//table[@summary="件名"]//th[contains(@class,"mainTtl")]/div[contains(@class,"threadTtl")]');
@@ -38260,15 +38264,15 @@ function disp_bro3_etcs(){
 		}
 	}
 	//========================================================
-	//  同盟画面で寄付にフォーカスが当たったら、資源量を表示
+	//	同盟画面で寄付にフォーカスが当たったら、資源量を表示
 	//========================================================
 	function donationResourceView() {
-	
+
 		if(location.pathname != '/alliance/info.php') return;
-	
+
 		var form = document.querySelectorAll('form[name="contributionForm"] input[type="text"]');
 		if(form == null) return;
-	
+
 		var viewMake = function( ) {
 			var form  = document.querySelectorAll('#etcs_donationResourceView span');
 			var stockID = ['wood','stone','iron','rice'];
@@ -38283,11 +38287,11 @@ function disp_bro3_etcs(){
 			x = x < 36 ? 36 : x;
 			base.style.top = (window.scrollY + rect.top  - 84) + 'px';
 			base.style.left = x + 'px';
-	
+
 			return;
 		};
 		var timeID = null;
-	
+
 		for(var i = 0;i < form.length;i++) {
 			(function(li) {
 			form[li].addEventListener('focus',function() {
@@ -38295,25 +38299,25 @@ function disp_bro3_etcs(){
 				var stock = document.body.appendChild(document.createElement('div'));
 				stock.id = 'etcs_donationResourceView';
 				var node;
-				node       = stock.appendChild(document.createElement('img'));
+				node	   = stock.appendChild(document.createElement('img'));
 				node.src  = EXIMG_URL+'/img/common/ico_wood.gif';
-				node      = stock.appendChild(document.createElement('span'));
+				node	  = stock.appendChild(document.createElement('span'));
 				node.textContent = '0';
-				node      = stock.appendChild(document.createElement('img'));
+				node	  = stock.appendChild(document.createElement('img'));
 				node.src  = EXIMG_URL+'/img/common/ico_stone.gif';
-				node      = stock.appendChild(document.createElement('span'));
+				node	  = stock.appendChild(document.createElement('span'));
 				node.textContent = '0';
-				node      = stock.appendChild(document.createElement('img'));
+				node	  = stock.appendChild(document.createElement('img'));
 				node.src  = EXIMG_URL+'/img/common/ico_ingot.gif';
-				node      = stock.appendChild(document.createElement('span'));
+				node	  = stock.appendChild(document.createElement('span'));
 				node.textContent = '0';
-				node      = stock.appendChild(document.createElement('img'));
+				node	  = stock.appendChild(document.createElement('img'));
 				node.src  = EXIMG_URL+'/img/common/ico_grain.gif';
-				node      = stock.appendChild(document.createElement('span'));
+				node	  = stock.appendChild(document.createElement('span'));
 				node.textContent = '0';
-	
+
 				stock.style.cssText = 'position:absolute; background:#000000 none; color:#ffffff;padding:6px;border:1px solid #ffffff;border-radius:6px;font-size:10px;box-shadow:5px 5px 2px rgba(0,0,0,4)';
-	
+
 				viewMake();
 				timeID = setInterval(viewMake,500);
 			},false);
@@ -38327,15 +38331,15 @@ function disp_bro3_etcs(){
 		}
 	}
 	//================================
-	//          設定画面
+	//			設定画面
 	//================================
 	/*
 		入り口挿入
 	*/
 	function EtcsSetting_Insert() {
-	
+
 		var linode,anode;
-	
+
 		// プロフィールのみ
 		if(location.pathname != "/user/") {
 			return;
@@ -38345,54 +38349,54 @@ function disp_bro3_etcs(){
 		}catch(e) {
 			return;
 		}
-	
+
 		// メニューの最後に追加
 		getNodeXPath('//ul[@id="statMenu"]/li[contains(@class,"last") or normalize-space(@class)=""]').forEach(function( hasNode ) {
 			hasNode.removeAttribute('class');
 		});
-	
+
 		linode = document.createElement('li');
 		linode.setAttribute('class','last');
 		document.getElementById('statMenu').appendChild(linode);
-	
+
 		anode  = document.createElement('a');
 		anode.setAttribute('href','javascript:void(0);');
 		anode.appendChild(document.createTextNode('3gokushi-etcsの設定'));
 		linode.appendChild(anode);
 		anode.addEventListener('click',EtcsSettingWindow,false);
-	
-	
-	
+
+
+
 	}
 	/*
 		設定画面表示
 	*/
 	function EtcsSettingWindow() {
 		var insHtml = "";
-	
+
 		if(searchBaseWindow('etcssetting') != null) return;	// 既に開いていたら表示しない
 		EtcsSetting_Load();	// もう一度設定を読み直し
-	
+
 		insHtml +=
-	
+
 		'<div id="etcsopt_contant01">'+
 		'<dl>'+
 		'<dt>全体設定</dt>'+
 		'<dd><label title="このスクリプトを遅延して実行する時間をミリ秒(1秒は1000ミリ秒)で指定します。">遅延実行時間<input type="text" name="AllDelayTime" size="6" />ミリ秒</label>'+makeDisServiceStr()+'</dd>'+
-	
+
 		'<dt>入力文字数の表示</dt>'+
 		'<dd>'+CreateInputCheckBoxOption('InputStrLen_Chat',"ひとことの入力文字数表示","ひとことの文字入力欄の文字数を表示します")+makeDisServiceStr()+'</dd>'+
 		'<dd>'+CreateInputCheckBoxOption('InputStrLen_BBS',"同盟掲示板の入力文字数表示","同盟掲示板の本文入力欄の文字数を表示します")+makeDisServiceStr()+'</dd>'+
 		'<dd>'+CreateInputCheckBoxOption('InputStrLen_PersonBBS',"個人掲示板の入力文字数表示","個人掲示板の本文入力欄の文字数を表示します")+makeDisServiceStr()+'</dd>'+
 		'<dd>'+CreateInputCheckBoxOption('InputStrLen_Mail',"書簡の入力文字数表示","書簡の本文入力欄の文字数を表示します")+makeDisServiceStr()+'</dd>'+
-	
+
 		'<dt>掲示板関係</dt>'+
 		'<dd>'+CreateInputCheckBoxOption('copyTitleInBBSTitle',"掲示板スレッドのタイトルをブラウザのタイトルバーに表示","掲示板スレッドのタイトルを、ブラウザのタイトルバーに表示します")+makeDisServiceStr()+'</dd>'+
 
 		'<dt>全体地図ドラッグ移動</dt>'+
 		'<dd>'+CreateInputCheckBoxOption('MapDragPosMove',"全体地図をドラッグで移動出来るようにする","全体地図をドラッグして移動できるようになります。ニコ鯖であった機能の真似です")+makeDisServiceStr()+'</dd>'+
 		'<dd class="etcs-setting_sub">'+CreateInputCheckBoxOption('MapDragPosMovex51',"51x51地図でもドラッグで移動できるようにする","51×51の全体地図でもドラッグして移動できるようにします")+makeDisServiceStr()+'</dd>'+
-	
+
 		'</dl>'+
 		'</div>'+
 		'<div id="etcsopt_contant02">'+
@@ -38428,62 +38432,62 @@ function disp_bro3_etcs(){
 		'<dd>'+CreateInputCheckBoxOption('deckPagerUpperClone',"カード合成やカード出品で、ページ切り替えを上部にも付ける","カードの各種合成の画面やカードの出品の画面で、ページ切り替えのリンクをカード上部にも表示するようにします")+makeDisServiceStr()+'</dd>'+
 		'<dd>'+CreateInputCheckBoxOption('viewDeckCostFree',"デッキコストの残り表示","デッキ画面で、デッキコストの残りを表示します")+makeDisServiceStr()+'</dd>'+
 		'<dd class="etcs-setting_sub">デッキコストの表示の仕方<ul class="etcs-setting_sub"><li><label><input type="radio" name="viewDeckCostFreeType" value="0" title="ツールチップで表示します">ツールチップで表示</label></li><li><label><input type="radio" name="viewDeckCostFreeType" value="1" title="デッキコストの欄に表示します">デッキコストの欄に表示</label></li></ul></dd>'+
-	
+
 		'<dt>同盟トップ関係</dt>'+
 		'<dd>'+CreateInputCheckBoxOption('donationResourceView',"資源の寄付欄にフォーカスを合わせたとき、資源量を表示","同盟トップの資源の寄付欄にフォーカスを合わせたとき、現在の資源量を表示します")+makeDisServiceStr()+'</dd>'+
-	
+
 		'</dl>'+
 		'</div>'+
 		'<div id="etcsopt_contant03">'+
 		'<dl>'+
-	
+
 		'<dt>出兵時関連</dt>'+
 		'<dd>'+CreateInputCheckBoxOption('retDateOnSendTroop',"出兵時に帰還日時表示","出兵時に帰還する日時を計算して表示します(援軍除く)")+makeDisServiceStr()+'</dd>'+
 		'<dd class="etcs-setting_sub" style="margin-top:0em;margin-bottom:1em;">'+CreateInputCheckBoxOption('retDateOnSendTroop_ForceServerLoad',"強襲時、サーバーから移動時間を自動で取得する","強襲時に、帰還の時間(殲滅の時間)を取得して表示します。鯖に少し負担が掛かります")+makeDisServiceStr()+'<span style="font-size:75%;">(読み込まない時は内政スキルの速度UPは考慮しない簡易計算となります)</span></dd>'+
-	
+
 		'<dd>'+CreateInputCheckBoxOption('carDmgCalc',"出兵時に予測の拠点ダメージを表示","出兵時に、拠点に与えるダメージを予測して表示します")+makeDisServiceStr()+'</dd>'+
-	
+
 		'<dt>兵作成</dt>'+
 		'<dd>'+CreateInputCheckBoxOption('makeDisSolMax',"兵の最大作成数リンク表示","兵を作るときに、割引後の価格で作成できる最大数を入力するリンクを表示します")+makeDisServiceStr()+'</dd>'+
 		'<dd>'+CreateInputCheckBoxOption('AccommodationFree',"拠点画面の空き宿舎数を表示","拠点画面で、宿舎の空き数を表示します")+makeDisServiceStr()+'</dd>'+
 		'<dd class="etcs-setting_sub">空き宿舎数の表示の仕方<ul class="etcs-setting_sub"><li><label><input type="radio" name="AccommodationFreeType" value="0" title="ツールチップで表示します">ツールチップで表示</label></li><li><label><input type="radio" name="AccommodationFreeType" value="1" title="兵数の欄に表示します">兵数の欄に表示</label></li></ul></dd>'+
-	
+
 		'</dl></div><input type="button" value="設定を保存" title="3gokushi-etcsの設定を保存します"/>'+
 		'<hr style="display:block; border:none; border-top:1px dashed #000000; margin:1em 0em;"/><input type="button" value="他のサーバーの設定を読み込み" title="他のサーバーの3gokushi-etcsの設定を読み込みます" />'+
 		'<hr style="display:block; border:none; border-top:1px dashed #000000; margin:1em 0em;"/><input type="button" value="指定サーバーの設定を全て削除" title="3gokushi-etcsのデータを削除します" />';
-	
+
 		var close = function() {};
-	
+
 		var optWin = new baseWindow('3gokushi-etcs ver.'+SCRIPT_VERSION+'の設定','etcssetting');
-	
+
 		node = document.createElement('div');
 		node.innerHTML = insHtml;
 		node.setAttribute('id','etcs-setting');
 		node.style.width   = '100%';
 		node.style.margin  = '0px';
 		node.style.padding = '0px';
-	
+
 		optWin.addContent(node);
 		optWin.disp(true);
-	
+
 		if(SERVER_TYPE == 1) optWin.center(undefined,30);	//mixi
 		else	optWin.center();
-	
+
 		// 保存ボタンへのイベント
 		node = getNodeXPath('//div[@id="etcs-setting"]//input[@type="button"]')[0];
 		node.addEventListener('click',EtcsSetting_Save,false);
 		node.style.textAlign = 'center';
-	
+
 		// 削除ボタンへのイベント
 		node = getNodeXPath('//div[@id="etcs-setting"]//input[@type="button"]')[1];
 		node.addEventListener('click',getServerSaveData,false);
 		node.style.textAlign = 'center';
-	
+
 		// 削除ボタンへのイベント
 		node = getNodeXPath('//div[@id="etcs-setting"]//input[@type="button"]')[2];
 		node.addEventListener('click',allClearServerSaveData,false);
 		node.style.textAlign = 'center';
-	
+
 		// 各種設定にチェックを付ける
 		ETCSSetting_CheckFunc(function(list,node) {
 			switch(list[1]) {
@@ -38493,16 +38497,16 @@ function disp_bro3_etcs(){
 					}
 				break;
 				case 'value' :
-					node.value   = ETCS_OPTION[list[0]];
+					node.value	 = ETCS_OPTION[list[0]];
 				break;
 				case "checked" :
 					node.checked = ETCS_OPTION[list[0]];
 				break;
 			}
-	
+
 		});
 	}
-	
+
 	/*
 		チェックボックス生成(設定用)
 	*/
@@ -38520,9 +38524,9 @@ function disp_bro3_etcs(){
 		(無効にする鯖を文字列で列挙： 'ymh'= yahoo/mixi/hangeを無効
 	*/
 	function makeDisServiceStr( flag ) {
-	
+
 		flag = typeof flag == 'undefined' ?  '' : flag;
-	
+
 		for(i = 0;i < flag.length;i++) {
 			if(flag.charAt(i) == SERVICE_TYPE) {
 				return('(<strong style="color:red;">※このサーバーでは使えません</strong>)');
@@ -38530,18 +38534,18 @@ function disp_bro3_etcs(){
 		}
 		return '';
 	}
-	
-	
-	
+
+
+
 	/*
 		設定(呼び出される)
 	*/
 	function ETCSSetting_CheckFunc( func ) {
-	
+
 		var inputNode = getNodeXPath('id("etcs-setting") //input | //textarea | //select');
 		for(i in inputNode) {
 			var name = inputNode[i].getAttribute('name');
-	
+
 			for(j in saveDefaultData) {
 				if(saveDefaultData[j][0] == name) {
 					func(saveDefaultData[j],inputNode[i]);
@@ -38553,10 +38557,10 @@ function disp_bro3_etcs(){
 		設定保存(ボタンクリックで呼ばれる)
 	*/
 	function EtcsSetting_Save( event ) {
-	
+
 		ETCSSetting_CheckFunc(function(list,node) {
 			var saveData = null;
-	
+
 			switch(list[1]) {
 				case "radio" :
 					if(node.checked) {
@@ -38572,26 +38576,26 @@ function disp_bro3_etcs(){
 			}
 			if(saveData != null)	GM_setValue(SAVE_NAME+"SETTING_"+list[0],saveData);
 		});
-	
-	
+
+
 		alert("設定を保存しました。リロードするかページを移動すると有効になります。");
 	}
 	/*
 		設定読み込み
 	*/
 	function EtcsSetting_Load( savename ) {
-	
+
 		savename = typeof savename == 'undefined' ? SAVE_NAME : SAVE_NAME_HEAD+savename+"_";
-	
+
 		var i,j;
 		var data;
-	
+
 		ETCS_OPTION = [];
 		// default設定
 		for(i = 0;i < saveDefaultData.length;i++) {
 			ETCS_OPTION[saveDefaultData[i][0]] = saveDefaultData[i][2];
 		}
-	
+
 		// 設定読み込み
 		for(i = 0;i < saveDefaultData.length;i++) {
 			data = GM_getValue(savename+"SETTING_"+saveDefaultData[i][0]);
@@ -38599,26 +38603,26 @@ function disp_bro3_etcs(){
 				ETCS_OPTION[saveDefaultData[i][0]] = data;
 			}
 		}
-	
-	
+
+
 	}
-	
+
 	/*
 		指定サーバーのデータを読み込み
 	*/
 	function getServerSaveData() {
 		var server = prompt("設定を読み込むサーバーの接頭語(s**やm**など)を入力してください。",SERVER_NAME);
 		if(server == null) return;
-	
+
 		var opt = [];
-	
+
 		// backup
 		for(var i in ETCS_OPTION) {
 			opt[i] = ETCS_OPTION[i];
 		}
-	
+
 		EtcsSetting_Load(server);
-	
+
 		// 各種設定にチェックを付ける
 		ETCSSetting_CheckFunc(function(list,node) {
 			switch(list[1]) {
@@ -38628,155 +38632,155 @@ function disp_bro3_etcs(){
 					}
 				break;
 				case 'value' :
-					node.value   = ETCS_OPTION[list[0]];
+					node.value	 = ETCS_OPTION[list[0]];
 				break;
 				case "checked" :
 					node.checked = ETCS_OPTION[list[0]];
 				break;
 			}
-	
+
 		});
-	
+
 		// restore
 		for(var i in ETCS_OPTION) {
 			ETCS_OPTION[i] = opt[i];
 		}
-	
+
 	}
 	/*
 		指定サーバーの記録を全て削除
 	*/
 	function allClearServerSaveData() {
-	
+
 		var server = prompt("削除するサーバーの接頭語(s**やm**など)を入力してください。\n\n【！！警告！！】\nOKを押すと、指定サーバーの3gokushi-etcsの設定が 『全て』 削除されます。\n取り扱いには十分注意してください！",SERVER_NAME);
 		if(server == null) return;
-	
+
 		var name = "3GOKUSHI_ETCS_"+server+"_";
-		var keys     = GM_listValues();
+		var keys	 = GM_listValues();
 		for (var i in keys) {
 			if (keys[i].indexOf(name, 0) == 0) {
 				GM_deleteValue(keys[i]);
 			}
 		}
-	
+
 		alert("指定サーバー("+server+")のデータを全て削除しました");
 	}
 	// ========================
-	//     拠点別データSAVE
+	//	   拠点別データSAVE
 	// ========================
 	function saveVillageData( name, data, vID ) {
-	
+
 	//console.log(JSON.stringify(data));
-	
+
 		vID = (typeof vID == 'undefined') ? getVillageID() : vID;
-	
+
 		var save = GM_getValue(SAVE_NAME+'VillageData'+vID,null);
-	
+
 		if(save != null) {
 			save = JSON.parse(save);	// JSON形式で保存していたのを復元
 		} else {
 			save = {};	// 無しの時は空
 		}
-	
+
 		save[name] = data;
-	
+
 		GM_setValue(SAVE_NAME+'VillageData'+vID,JSON.stringify(save));
 	}
 	// ========================
-	//     拠点別データGET
+	//	   拠点別データGET
 	// ========================
 	function loadVillageData( name, vID ) {
-	
+
 	//console.log(JSON.stringify(data));
-	
+
 		vID = (typeof vID == 'undefined') ? getVillageID() : vID;
-	
+
 		var save = GM_getValue(SAVE_NAME+'VillageData'+vID,null);
-	
+
 		if(save != null) {
 			save = JSON.parse(save);	// JSON形式で保存していたのを復元
 		} else {
 			save = {};	// 無しの時は空
 		}
-	
+
 		if(typeof save[name] != 'undefined') return(save[name]);
 		return null;
 	}
 	// ========================
-	//     JSON SAVE
+	//	   JSON SAVE
 	// ========================
 	function saveDataJSON( id, name, data ) {
-	
-	
+
+
 		var save = GM_getValue(SAVE_NAME+id,null);
-	
+
 		if(save != null) {
 			save = JSON.parse(save);	// JSON形式で保存していたのを復元
 		} else {
 			save = {};	// 無しの時は空
 		}
 		save[name] = data;
-	
+
 		GM_setValue(SAVE_NAME+id,JSON.stringify(save));
 	}
 	// ========================
-	//     JSON LOAD
+	//	   JSON LOAD
 	// ========================
 	function loadDataJSON( id, name ) {
-	
-	
+
+
 		var save = GM_getValue(SAVE_NAME+id,null);
-	
+
 		if(save != null) {
 			save = JSON.parse(save);	// JSON形式で保存していたのを復元
 		} else {
 			save = {};	// 無しの時は空
 		}
-	
+
 		if(typeof save[name] != 'undefined') return(save[name]);
 		return null;
 	}
-	
-	
+
+
 	// ========================
-	//      基本ウインドウ
+	//		基本ウインドウ
 	// ========================
 	function baseWindow( title , winid, minBtn, maxBtn ){
-	
+
 		minBtn = typeof minBtn == 'undefined' ? false : minBtn;
 		maxBtn = typeof maxBtn == 'undefined' ? false : maxBtn;
-	
-	
+
+
 		// 基本ウインドウ
 		this.winNode  = document.createElement('div');
 		this.winNode.setAttribute('class','etcsBaseWindow');
-	
+
 		this.hStart = eventBridgeFunc(this,'dragStart');
-		this.hNow   = eventBridgeFunc(this,'dragNow');
-		this.hEnd   = eventBridgeFunc(this,'dragEnd');
-	
-	
+		this.hNow	= eventBridgeFunc(this,'dragNow');
+		this.hEnd	= eventBridgeFunc(this,'dragEnd');
+
+
 		// タイトルバー
 		this.titleBar = document.createElement('div');
-	
+
 		node = document.createElement('span');
 		node.textContent = title;
 		this.titleBar.appendChild(node);
 		this.titleBar.addEventListener('mousedown', this.hStart, false);
-	
+
 		// ボタン領域
 		this.btnArea = document.createElement('div');
 		with(this.btnArea.style) {
 			position = 'absolute';
-			top      = '0.2em';
-			right    = '4px';
-			height   = '1em';
-			margin   = '0';
+			top 	 = '0.2em';
+			right	 = '4px';
+			height	 = '1em';
+			margin	 = '0';
 			padding  = '0';
 			boxShadow= '1px 1px rgba(0,0,0,0.4)';
-			zIndex   = '10012';
+			zIndex	 = '10012';
 		}
-	
+
 		// 閉じるボタン
 		this.closeBtnNode = document.createElement('img');
 		this.closeBtnNode.setAttribute('src','data:image/png;base64,'+		// ×ボタン画像
@@ -38790,22 +38794,22 @@ function disp_bro3_etcs(){
 			'rkJggg==');
 		this.closeBtnNode.setAttribute('title','閉じる');
 		with(this.closeBtnNode.style) {
-			float    = 'right';
-			width    = '1em';
-			height   = '1em';
-			margin   = '0';
+			float	 = 'right';
+			width	 = '1em';
+			height	 = '1em';
+			margin	 = '0';
 			padding  = '0';
 			boxShadow= '1px 1px rgba(0,0,0,0.4)';
-			zIndex   = '10012';
+			zIndex	 = '10012';
 		}
-	
+
 		(function(lthis) {
 			lthis.closeBtnNode.addEventListener('mouseover',function(){lthis.closeBtnNode.style.cursor = 'pointer';},false);
-			lthis.closeBtnNode.addEventListener('mouseout', function(){lthis.closeBtnNode.style.cursor = '';}       ,false);
+			lthis.closeBtnNode.addEventListener('mouseout', function(){lthis.closeBtnNode.style.cursor = '';}		,false);
 		})(this);
 		this.closeBtnHdl = eventBridgeFunc(this,'closeBtn');
 		this.closeBtnNode.addEventListener('click', this.closeBtnHdl, false);	// 動作
-	
+
 		// 最小化ボタン
 		this.minBtnNode = document.createElement('img');
 		this.minBtnNode.setAttribute('src','data:image/png;base64,'+		// ボタン画像
@@ -38814,22 +38818,22 @@ function disp_bro3_etcs(){
 			'xEhMtAAAZ+cSEp980xYAAAAASUVORK5CYII=');
 		this.minBtnNode.setAttribute('title','最小化');
 		with(this.minBtnNode.style) {
-			float    = 'right';
-			width    = '1em';
-			height   = '1em';
-			margin   = '0';
+			float	 = 'right';
+			width	 = '1em';
+			height	 = '1em';
+			margin	 = '0';
 			padding  = '0';
 			boxShadow= '1px 1px rgba(0,0,0,0.4)';
-			zIndex   = '10012';
+			zIndex	 = '10012';
 		}
 		if(!minBtn) this.minBtnNode.style.display = 'none';
 		(function(lthis) {
 			lthis.minBtnNode.addEventListener('mouseover',function(){lthis.minBtnNode.style.cursor = 'pointer';},false);
-			lthis.minBtnNode.addEventListener('mouseout', function(){lthis.minBtnNode.style.cursor = '';}       ,false);
+			lthis.minBtnNode.addEventListener('mouseout', function(){lthis.minBtnNode.style.cursor = '';}		,false);
 		})(this);
 		this.minBtnHdl = eventBridgeFunc(this,'minBtn');
 		this.minBtnNode.addEventListener('click', this.minBtnHdl, false);	// 動作
-	
+
 		// 最大化ボタン
 		this.maxBtnNode = document.createElement('img');
 		this.maxBtnNode.setAttribute('src','data:image/png;base64,'+		// ボタン画像
@@ -38838,25 +38842,25 @@ function disp_bro3_etcs(){
 			'bBcKXk/bR7XUvlsughsOe4iR0AAAAABJRU5ErkJggg==');
 		this.maxBtnNode.setAttribute('title','最大化');
 		with(this.maxBtnNode.style) {
-			float    = 'right';
-			width    = '1em';
-			height   = '1em';
-			margin   = '0';
+			float	 = 'right';
+			width	 = '1em';
+			height	 = '1em';
+			margin	 = '0';
 			padding  = '0';
 			boxShadow= '1px 1px rgba(0,0,0,0.4)';
-			zIndex   = '10012';
+			zIndex	 = '10012';
 		}
 		if(!maxBtn) this.maxBtnNode.style.display = 'none';
 		(function(lthis) {
 			lthis.maxBtnNode.addEventListener('mouseover',function(){lthis.maxBtnNode.style.cursor = 'pointer';},false);
-			lthis.maxBtnNode.addEventListener('mouseout', function(){lthis.maxBtnNode.style.cursor = '';}       ,false);
+			lthis.maxBtnNode.addEventListener('mouseout', function(){lthis.maxBtnNode.style.cursor = '';}		,false);
 		})(this);
 		this.maxBtnHdl = eventBridgeFunc(this,'maxBtn');
 		this.maxBtnNode.addEventListener('click', this.maxBtnHdl, false);	// 動作
-	
+
 		// 内容部分
 		this.contentNode = document.createElement('div');
-	
+
 		// 追加
 		this.pareNode = document.getElementsByTagName('body')[0];
 		this.pareNode.appendChild(this.winNode);
@@ -38866,55 +38870,55 @@ function disp_bro3_etcs(){
 		this.btnArea .appendChild(this.maxBtnNode);
 		this.btnArea .appendChild(this.closeBtnNode);
 		this.winNode .appendChild(this.contentNode);
-	
+
 		this.winID = winid;
 		baseWinList.push(this);
-	
+
 		this.listNo = baseWinList.length - 1;
-	
+
 		this.disp(false);	//off
 	}
 	baseWindow.prototype = {
-	
-		common   : [],			// 汎用
-		listNo   : 0,
-		winID    : null,		// ウインドウのID
+
+		common	 : [],			// 汎用
+		listNo	 : 0,
+		winID	 : null,		// ウインドウのID
 		pareNode : null,		// ウインドウの親ノード
 		winNode  : null,		// ウインドウ自体のノード
 		titleBar : null,		// タイトルバー
 		btnArea  : null,		// ボタン系エリア(追加分)
 		iconArea : null,		// アイコンエリア(追加分)
 		closeBtnNode : null,		// 閉じるボタン
-		minBtnNode   : null,		// 最小化　〃
-		MaxBtnNode   : null,		// 最大化　〃
+		minBtnNode	 : null,		// 最小化　〃
+		MaxBtnNode	 : null,		// 最大化　〃
 		closeProc: null,		// 閉じる時呼び出される関数
-		minProc  : null,		// 最小化時      〃
-		MaxProc  : null,		// 最大化時      〃
+		minProc  : null,		// 最小化時 	 〃
+		MaxProc  : null,		// 最大化時 	 〃
 		closeBtnHdl : null,		// 閉じるボタン、イベントハンドラ
-		minBtnHdl   : null,		// 最小化ボタン        〃
-		maxBtnHdl   : null,		// 最大化ボタン        〃
+		minBtnHdl	: null,		// 最小化ボタン 	   〃
+		maxBtnHdl	: null,		// 最大化ボタン 	   〃
 		contentArea : null,		// 内容部分
 		contentNode  : null,	// 内容のノード
 		dragFlag : false,		// ドラッグ中
-		win_x    : 0,			// ウインドウ座標X
-		win_y    : 0,			//               Y
-		hStart   : null,		// ドラッグ用 mousedownハンドラ
-		hNow     : null,		// ドラッグ用 mousemoveハンドラ
-		hEnd     : null,		// ドラッグ用 mouseup  ハンドラ
-		drag_x   : 0,
-		drag_y   : 0,
-	
+		win_x	 : 0,			// ウインドウ座標X
+		win_y	 : 0,			//				 Y
+		hStart	 : null,		// ドラッグ用 mousedownハンドラ
+		hNow	 : null,		// ドラッグ用 mousemoveハンドラ
+		hEnd	 : null,		// ドラッグ用 mouseup  ハンドラ
+		drag_x	 : 0,
+		drag_y	 : 0,
+
 		// クローズ(終了処理)
 		close : function() {
 			 if(!((this.closeProc != null) ? this.closeProc() : true)) return;	// falseでキャンセル
-	
+
 			this.closeBtnNode.removeEventListener('click', this.closeBtnHdl, false);	// 閉じる
 			this.minBtnNode  .removeEventListener('click', this.minBtnHdl  , false);	// 最小
 			this.maxBtnNode  .removeEventListener('click', this.maxBtnHdl  , false);	// 最大
-	
+
 			this.pareNode.removeChild(this.winNode);
 			delete baseWinList[this.listNo];
-	
+
 		},
 		// 最小化
 		min : function() {
@@ -38924,7 +38928,7 @@ function disp_bro3_etcs(){
 		max : function() {
 			if(this.maxProc != null) this.maxProc();
 		},
-	
+
 		// 閉じるボタン
 		closeBtn : function( event ) {
 			this.close();
@@ -38940,7 +38944,7 @@ function disp_bro3_etcs(){
 			this.max();
 			event.preventDefault();
 		},
-	
+
 		// ドラッグ開始
 		dragStart: function( event ) {
 			if((event.currentTarget != this.titleBar) || (event.target == this.closeBtnNode)
@@ -38949,7 +38953,7 @@ function disp_bro3_etcs(){
 			}
 			this.drag_x = event.layerX;
 			this.drag_y = event.layerY;
-	
+
 			document.addEventListener('mousemove', this.hNow, false);
 			document.addEventListener('mouseup',   this.hEnd, false);
 			this.winNode.style.opacity = '0.8';
@@ -38958,10 +38962,10 @@ function disp_bro3_etcs(){
 		},
 		// ドラッグ中
 		dragNow : function( event ) {
-	
+
 			this.winNode.style.left = (event.pageX-this.drag_x)+'px';
-			this.winNode.style.top  = (event.pageY-this.drag_y)+'px';
-	
+			this.winNode.style.top	= (event.pageY-this.drag_y)+'px';
+
 		},
 		// ドラッグ終了
 		dragEnd : function( ) {
@@ -38969,16 +38973,16 @@ function disp_bro3_etcs(){
 			document.removeEventListener('mouseup',   this.hEnd, false);
 			this.winNode.style.opacity = '1.0';
 		},
-	
+
 		// ウインドウサイズの調整
 		fixSize : function () {
 			var containerNode = document.getElementById('container');
 			var rect = this.winNode.getBoundingClientRect();
-	
+
 			// window全体
 			var winw = rect.width;
 			var winh = rect.height;
-	
+
 			try {
 				winw = (winw > window.top.innerWidth  - 48) ? window.top.innerWidth  - 48 : winw;
 				winh = (winh > window.top.innerHeight - 48) ? window.top.innerHeight - 48 : winh;
@@ -38987,13 +38991,13 @@ function disp_bro3_etcs(){
 				winw = (winw > containerNode.offsetWidth  - 48) ? containerNode.offsetWidth  - 48 : winw;
 				winh = (winh > containerNode.offsetHeight - 48) ? containerNode.offsetHeight - 48 : winh;
 			}
-			var w   = parseInt(document.defaultView.getComputedStyle(this.contentNode,'').width);
-			var h   = parseInt(document.defaultView.getComputedStyle(this.contentNode,'').height);
-	
-			this.contentNode.style.width  = winw - (rect.width  - w)  + 'px'
+			var w	= parseInt(document.defaultView.getComputedStyle(this.contentNode,'').width);
+			var h	= parseInt(document.defaultView.getComputedStyle(this.contentNode,'').height);
+
+			this.contentNode.style.width  = winw - (rect.width	- w)  + 'px'
 			this.contentNode.style.height = winh - (rect.height - h)  + 'px'
 		},
-	
+
 		// ON/OFF
 		disp : function( flag ) {
 			if(flag == true) {
@@ -39001,26 +39005,26 @@ function disp_bro3_etcs(){
 				this.fixSize();
 				this.contentNode.style.minWidth = (this.titleBar.getElementsByTagName('span')[0].offsetWidth + 12) + 'px';
 				this.winNode.style.opacity = '1.0';
-	
-	
+
+
 			} else if(flag == false){
 				this.winNode.style.opacity = '0.0';
 				this.winNode.style.display = 'none';
 			}
 		},
-	
+
 		// 指定位置に表示
 		pos : function( x, y ) {
 			this.winNode.style.left = x + 'px';
-			this.winNode.style.top  = y + 'px';
+			this.winNode.style.top	= y + 'px';
 		},
 		// ブラウザ真ん中に表示
 		// 引数指定時、センタリングしない
 		center : function( posx, posy ) {
-	
+
 			var x;
 			var y;
-	
+
 			try {
 				// 本鯖
 				x = ((window.top.innerWidth  - this.winNode.offsetWidth)  / 2 + window.scrollX);
@@ -39029,24 +39033,24 @@ function disp_bro3_etcs(){
 				// mixi(frame)
 				// 子frameから親のwindowはpermissionエラーなので、containerを使う(仮)
 				var containerNode = document.getElementById('container');
-				x = (containerNode.offsetWidth  -  this.winNode.offsetWidth) / 2;
+				x = (containerNode.offsetWidth	-  this.winNode.offsetWidth) / 2;
 				y = (containerNode.offsetHeight -  this.winNode.offsetWidth) / 2;
 			}
-	
+
 			// 引数指定時はそれを使う
 			x = typeof posy != 'undefined' ? posx : x;
 			y = typeof posy != 'undefined' ? posy : y;
-	
+
 			this.winNode.style.left = (x < 0 ? 0 : x) + 'px';
-			this.winNode.style.top  = (y < 0 ? 0 : y) + 'px';
-	
+			this.winNode.style.top	= (y < 0 ? 0 : y) + 'px';
+
 		},
-	
+
 		// 座標近くに表示
 		nearPos : function( x, y ) {
-	
-			var rect        = this.winNode.getBoundingClientRect();
-	
+
+			var rect		= this.winNode.getBoundingClientRect();
+
 			x = x - 12;
 			y = y - 12;
 			if(x < 0) x = 0;
@@ -39069,48 +39073,48 @@ function disp_bro3_etcs(){
 					y = containerNode.offsetHeight - rect.height;
 				}
 			}
-	
+
 			this.winNode.style.left = x + window.scrollX + "px";
-			this.winNode.style.top  = y + window.scrollY + "px";
-	
+			this.winNode.style.top	= y + window.scrollY + "px";
+
 		},
 		// ノード近くに表示
 		nearPosNode : function( node ) {
 			var x;
 			var y;
-	
+
 			var rect = node.getBoundingClientRect();
 			x = rect.left;
 			y = rect.top;
-	
+
 			this.nearPos(x,y);
-	
+
 		},
-	
+
 		// マウス近くに表示
 		nearPosMouse : function ( event ) {
 			this.nearPos(event.clientX,event.clientY);
-	
+
 		},
-	
+
 		// 内容を追加
 		addContent : function( addNode ) {
 			this.contentNode.appendChild( addNode );
 		},
-	
+
 	};
 	// ========================
-	//      自前ツールチップ
+	//		自前ツールチップ
 	// ========================
 	/*
 		ノードにツールチップをセットする
 	*/
 	function setToolTip( targetNode , str ) {
-	
+
 		targetNode.addEventListener('mouseover',function( event ) {
 			setToolTipCore(event, targetNode,str);
 		},false);
-	
+
 	};
 	/*
 		既にそのノードでセットされているツールチップを返す
@@ -39120,16 +39124,16 @@ function disp_bro3_etcs(){
 			if(typeof myToolTipList[i] == 'undefined') continue;
 			if(myToolTipList[i].targetNode == targetNode) return myToolTipList[i];
 		}
-	
+
 		return null;
 	}
 	/*
 		自前のツールチップを呼ぶ
 	*/
 	function setToolTipCore( event, targetNode , str ) {
-	
+
 		var strnode;
-	
+
 		switch(typeof str) {
 			case 'string':				// 文字列
 				strnode = document.createElement('p');
@@ -39145,100 +39149,100 @@ function disp_bro3_etcs(){
 				}
 			break;
 		}
-	
+
 		var tooltip = new MyToolTip(event, targetNode,strnode);
 		targetNode.addEventListener('mouseout', tooltip.closeHdl, false);
-	
+
 	}
 	/*
 		自前のツールチップ
 	*/
 	function MyToolTip( event, targetNode , contentNode ) {
-	
+
 		this.pareNode = document.getElementsByTagName('body')[0];
-	
+
 		if(typeof targetNode  == 'undefined') {console.log("MyToolTip:none TargetNode");  return; }
 		if(typeof contentNode == 'undefined') {console.log("MyToolTip:none contentNode"); return; }
-	
+
 		this.addContent(contentNode);
 		this.targetNode  = targetNode;
-		this.closeHdl    = eventBridgeFunc(this,'close');
-		this.waitHdl     = eventBridgeFunc(this,'wait');
+		this.closeHdl	 = eventBridgeFunc(this,'close');
+		this.waitHdl	 = eventBridgeFunc(this,'wait');
 		this.mouseChkHdl = eventBridgeFunc(this,'mousecheck');
-	
-	
+
+
 		this.wait(event);
 		myToolTipList[myToolTipList.length] = this;
 		this.listNo = myToolTipList.length - 1;
-	
+
 	}
 	MyToolTip.prototype = {
-	
-		listNo      : 0,
-		targetNode  : null,		// ターゲット
-		frameNode   : null,		// 吹き出しベース
+
+		listNo		: 0,
+		targetNode	: null,		// ターゲット
+		frameNode	: null,		// 吹き出しベース
 		contentNode : null,
-		pareNode    : null,		// 追加元
-		closeHdl    : null,		// 閉じる時の関数
-		waitHdl     : null,		// ウエイト開始の関数
+		pareNode	: null,		// 追加元
+		closeHdl	: null,		// 閉じる時の関数
+		waitHdl 	: null,		// ウエイト開始の関数
 		mouseChkHdl : null,		//
-		timerID     : -1,
-		mouseX      : -1,
-		mouseY      : -1,
-		dispInfo    : false,
-		nodeList    : null,
-	
+		timerID 	: -1,
+		mouseX		: -1,
+		mouseY		: -1,
+		dispInfo	: false,
+		nodeList	: null,
+
 		// コンテンツ追加
 		addContent : function( contentNode ) {
 			this.contentNode = contentNode;
 		},
-	
+
 		// 吹き出し表示まち開始
 		wait : function( event ) {
-	
+
 			this.mouseX = event.clientX;
 			this.mouseY = event.clientY;
-	
+
 			this.targetNode.addEventListener('mousemove',this.mouseChkHdl, false);	// 動いたら消す
 			this.disp_off();
 			if(this.timerID != -1) { clearTimeout(this.timerID); this.timerID = -1; }
 			this.timerID = setTimeout(eventBridgeFunc(this,'disp'), 1000);
-	
+
 		},
 		// マウスチェック
 		mousecheck : function( event ) {
 			this.mouseX = event.clientX;
 			this.mouseY = event.clientY;
-	
+
 			this.disp_off();
 			if(this.timerID != -1) { clearTimeout(this.timerID); this.timerID = -1; }
 			this.timerID = setTimeout(eventBridgeFunc(this,'disp'), 1000);
 		},
-	
-	
+
+
 		// 終了時
 		close : function() {
 			if(this.timerID != -1) { clearTimeout(this.timerID); this.timerID = -1; }
 			this.targetNode.removeEventListener('mousemove', this.mouseChkHdl ,    false);
 			this.disp_off();
-	
+
 			delete myToolTipList[this.listNo];
-	
+
 		},
-	
+
 		// 吹き出しの表示
 		disp : function() {
-	
+
 			this.timerID = -1;
 			this.dispInfo = true;
 			this.frameNode = document.createElement('div');
 			this.frameNode.setAttribute('class','etcs_mytooltip');
 			this.frameNode.appendChild(this.contentNode);
 			this.pareNode.appendChild(this.frameNode);
-	
-	
+
+
 			this.nearPos(this.mouseX,this.mouseY);
-	
+
 		},
 		disp_off : function() {
 			if(this.dispInfo) {
@@ -39246,12 +39250,12 @@ function disp_bro3_etcs(){
 				this.pareNode.removeChild(this.frameNode);
 			}
 		},
-	
+
 		// 座標近くに表示
 		nearPos : function( x, y ) {
-	
-			var rect        = this.frameNode.getBoundingClientRect();
-	
+
+			var rect		= this.frameNode.getBoundingClientRect();
+
 			try {
 				// 本鯖
 				if((x + rect.width) > window.top.innerWidth - 36) {
@@ -39278,25 +39282,25 @@ function disp_bro3_etcs(){
 					y = y + 12 + window.scrollY;
 				}
 			}
-	
+
 			this.frameNode.style.left = x + "px";
 			this.frameNode.style.top  = y + "px";
-	
+
 		},
 	};
-	
+
 	/*
 		既にウインドウが登録されていたら返す
 	*/
 	function searchBaseWindow( winid ) {
-	
+
 		for(i in baseWinList) {
 			if(baseWinList[i].winID == winid) return baseWinList[i];
 		}
 		return null;
 	}
 	// ========================
-	//        ツール類
+	//		  ツール類
 	// ========================
 	/*
 	   クラスのメンバにイベントで飛ぶときに、thisがクラスを指すようにするブリッジ
@@ -39308,18 +39312,18 @@ function disp_bro3_etcs(){
 			eval("inst."+func+'( event )');
 		}
 	}
-	
+
 	/*
 		XPATHでノードを取得(返値：取得したノードの配列)
 	*/
 	function getNodeXPath( xpath , base , doc ) {
 		base = (typeof base == "undefined" ? document : base);
-		doc  = (typeof doc  == "undefined" ? document : doc);
-	
+		doc  = (typeof doc	== "undefined" ? document : doc);
+
 		var result = doc.evaluate(xpath,base,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
 		var ret    = [];
-	
-	
+
+
 		for(var i = 0;i < result.snapshotLength;i++) {
 			ret.push(result.snapshotItem(i));
 		}
@@ -39332,7 +39336,7 @@ function disp_bro3_etcs(){
 		flag = typeof flag == 'undefined' ? true : flag;
 		var result = document.evaluate(xpath,document,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
 		var ret;
-	
+
 		for(var i = 0;i < result.snapshotLength;i++) {
 			ret = result.snapshotItem(i);
 			ret.addEventListener(event,func,flag)
@@ -39342,10 +39346,10 @@ function disp_bro3_etcs(){
 		DateObjから文字列(yyyy-mm-dd hh:mm:ss)生成
 	*/
 	function makeDateString( date ) {
-	
+
 		return(date.getFullYear() + '-' +
 				 ('00'+(date.getMonth()+1)).substr(-2) + '-' +
-				 ('00'+date.getDate())   .substr(-2) + ' '+
+				 ('00'+date.getDate())	 .substr(-2) + ' '+
 				 ('00'+date.getHours())  .substr(-2) + ':' +
 				 ('00'+date.getMinutes()).substr(-2) + ':' +
 				 ('00'+date.getSeconds()).substr(-2)
@@ -39355,15 +39359,15 @@ function disp_bro3_etcs(){
 		文字列(yyyy-mm-dd hh:mm:ss)から時間Objに変換
 	*/
 	function cnvMDateStrToDate( dateString ) {
-	
+
 		return (new Date(dateString.replace(/.*(\d{4}-\d{1,2}-\d{1,2}\s+\d{1,2}\:\d{1,2}(\:\d{1,2})?).*/,'$1').replace(/-/g,'/')));
-	
+
 	}
 	/*
 		時間文字列(hh:mm:ss)から時間msに変換
 	*/
 	function cnvMTimeStrToTime( dateString ) {
-	
+
 		var time = -1;
 		if(dateString.match(/.*?((\d{1,2})\:(\d{1,2})\:(\d{1,2})).*/)) {
 			time = parseInt(RegExp.$2,10)*3600 + parseInt(RegExp.$3,10)*60 + parseInt(RegExp.$4,10);
@@ -39371,22 +39375,22 @@ function disp_bro3_etcs(){
 		}
 		return -1;
 	}
-	
+
 	/*
 		現在の時間を取得
 	*/
 	function getNowTime() {
-	
-	
+
+
 		// サーバー時間を取得
 		var timedate = cnvMDateStrToDate(document.getElementById('server_time').textContent);
-	
+
 		if(timedate == 'Invalid Date') {
 			console.log("ERROR:サーバー時間取得失敗");
 			return new Date();
 		}
 		return timedate;
-	
+
 	}
 	/*
 		何時間何分を表示
@@ -39395,23 +39399,23 @@ function disp_bro3_etcs(){
 	{
 		var str = "";
 		var day,hour,hours,minuts,sec,tmp;
-	
-		hours = parseInt((rest / (   60*60*1000))       ,10);
-	
+
+		hours = parseInt((rest / (	 60*60*1000))		,10);
+
 		str = fmt;
-		str = str.replace("%%day",   parseInt((rest / (24*60*60*1000))       ,10));
+		str = str.replace("%%day",	 parseInt((rest / (24*60*60*1000))		 ,10));
 		str = str.replace("%%hours", hours < 100 ? ("00"+hours).substr(-2) : hours);
-		str = str.replace("%%hour",  ('00'+parseInt((rest / (   60*60*1000)) % 24  ,10)).substr(-2));
-		str = str.replace("%%minuts",('00'+parseInt((rest / (      60*1000)) % 60  ,10)).substr(-2));
-		str = str.replace("%%sec",   ('00'+parseInt((rest % (      60*1000)) / 1000,10)).substr(-2));
-	
+		str = str.replace("%%hour",  ('00'+parseInt((rest / (	60*60*1000)) % 24  ,10)).substr(-2));
+		str = str.replace("%%minuts",('00'+parseInt((rest / (	   60*1000)) % 60  ,10)).substr(-2));
+		str = str.replace("%%sec",	 ('00'+parseInt((rest % (	   60*1000)) / 1000,10)).substr(-2));
+
 		return str;
 	}
 	/*
 		Ajaxで読み込んだHTMLをノードとして使えるようにする
 	*/
 	function parseHTML( htmlText ) {
-	
+
 		// パース
 		var htmldoc;
 		if(document.implementation.createHTMLDocument) {
@@ -39423,28 +39427,28 @@ function disp_bro3_etcs(){
 			);
 			htmldoc = document.implementation.createDocument(null,'html',docType);
 		}
-	
+
 		var htmlData = htmlText;
-	
+
 		var range = htmldoc.createRange();
 		range.selectNodeContents( document.documentElement );
 		range.createContextualFragment( htmlData );
 		node  = htmldoc.adoptNode(range.createContextualFragment( htmlData ));
 		htmldoc.documentElement.appendChild( node );
-	
+
 		return htmldoc;
 	}
 	/*
 		配列をセーブ
 	*/
 	function saveArray( saveID , saveArray , separator ) {
-	
+
 		separator = typeof separator == 'undefined' ? ['\t','##','**','!!'] : separator;	//区切り指定無しはタブ
-	
+
 		//配列,セパレータ...
 		var joinarray = function(array,separator) {
 			var arrybuf = [];
-			var sepa    = typeof separator == 'object' ? separator[0] : separator;
+			var sepa	= typeof separator == 'object' ? separator[0] : separator;
 			for(var i = 0;i < array.length;i++) {
 				arrybuf[arrybuf.length] = typeof array[i] == "object" ? joinarray(array[i],separator.slice(1)) : array[i];
 			}
@@ -39457,14 +39461,14 @@ function disp_bro3_etcs(){
 		ロードして配列へ
 	*/
 	function loadArray( saveID, separator ) {
-	
+
 		separator = typeof separator == 'undefined' ? ['\t','##','**','!!'] : separator;	//区切り指定無しはタブ
-	
+
 		var splitarray = function( str , separator ) {
-	
-			var sepa    = typeof separator == 'object' ? separator[0] : separator;
+
+			var sepa	= typeof separator == 'object' ? separator[0] : separator;
 			var ret = [];
-	
+
 			ret = str.split(sepa);
 			for(var i = 0;i < ret.length;i++) {
 				for(var j = separator.length - 1; j >= 0; j--) {
@@ -39476,14 +39480,14 @@ function disp_bro3_etcs(){
 			}
 			return ret;
 		}
-	
+
 		var ret =  GM_getValue( SAVE_NAME+saveID );
 		if(ret == null) return null;
 		if(ret == '')	return null;
-	
+
 		return splitarray(ret,separator);
 	}
-	
+
 	/*
 		GM系対策
 	*/
@@ -39500,11 +39504,11 @@ function disp_bro3_etcs(){
 			style.textContent = css;
 			document.getElementsByTagName('head')[0].appendChild(style);
 		};
-	
+
 		GM_deleteValue = function(name) {
 			localStorage.removeItem(name);
 		};
-	
+
 		GM_getValue = function(name, defaultValue) {
 			var value = localStorage.getItem(name);
 			if (!value)
@@ -39520,13 +39524,13 @@ function disp_bro3_etcs(){
 					return value;
 				}
 		};
-	
+
 		GM_setValue = function(name, value) {
 			value = (typeof value)[0] + value;
 			localStorage.removeItem(name);	// pkzn追加 ChromeのERROR:22対策
 			localStorage.setItem(name, value);
 		};
-	
+
 		// beyondより
 		GM_xmlhttpRequest = function(requestParam) {
 			var xhr;
@@ -39553,7 +39557,7 @@ function disp_bro3_etcs(){
 					requestParam[event](responseState);
 				};
 			});
-	
+
 			try {
 				req.open(requestParam.method ? requestParam.method : 'GET', requestParam.url, true);
 			} catch(e) {
@@ -39562,18 +39566,18 @@ function disp_bro3_etcs(){
 				}
 				return;
 			}
-	
+
 			if ('headers' in requestParam && typeof requestParam.headers == 'object') {
 				for (var name in requestParam.headers) {
 					req.setRequestHeader(name, requestParam.headers[name]);
 				}
 			}
-	
+
 			req.send(('data' in requestParam) ? requestParam.data : null);
 			return req;
 		};
-	
-	
+
+
 		if(typeof GM_listValues == 'undefined')	{
 			GM_listValues = function() {
 				list = [];
@@ -39595,37 +39599,37 @@ function disp_territory_name_change(){
 	}
 	var host = location.hostname;
 	var path = location.pathname;
-	
+
 	var tMenu = document.getElementById("tMenu_btnif");
 	var xy = document.getElementsByClassName("xy");
 	xy.item(0).innerHTML.match(/\(([\S]*),([\S]*)\)/);
 	var x = RegExp.$1
 	var y = RegExp.$2
 	var basename = document.getElementsByClassName("basename").item(0).innerHTML;
-	
+
 	if( (tMenu.innerHTML.indexOf("レベルアップ")!=-1) || (tMenu.innerHTML.indexOf("拠点")!=-1) || (tMenu.innerHTML.indexOf("破棄")!=-1) ){
 		var chgnmlnk = document.createElement("a");
 		chgnmlnk.className = "easy";
 		chgnmlnk.href = "javascript:void(0);";
 		chgnmlnk.innerHTML = "領地名の変更";
 		chgnmlnk.addEventListener("click",function(){show_btn();},false);
-	
+
 		var chgnmtbx = document.createElement("input");
 		chgnmtbx.id = "chgnm_txt";
 		chgnmtbx.value = basename;
 		chgnmtbx.type = "hidden";
-	
+
 		var chgnmbtn = document.createElement("input");
 		chgnmbtn.type = "hidden";
-	
+
 		var area = document.createElement("div");
 		tMenu.appendChild(area);
-	
+
 		area.appendChild(chgnmlnk);
 		area.appendChild(chgnmtbx);
 		area.appendChild(chgnmbtn);
 	}
-	
+
 	function show_btn(){
 		chgnmlnk.style.display = "none";
 		chgnmtbx.type = "text";
@@ -39633,7 +39637,7 @@ function disp_territory_name_change(){
 		chgnmbtn.type = "button";
 		chgnmbtn.value = "変更";
 		chgnmbtn.addEventListener("click",function(){chgname();},false);
-	
+
 		var profile = document.createElement("div");
 		wrapHttpReq("http://"+host+"/user/change/change.php#ptop", "GET", null,
 			function(response){
@@ -39643,7 +39647,7 @@ function disp_territory_name_change(){
 		profile.id = "TempDOM01";
 		profile.style.display = "none";
 		document.body.appendChild(profile);
-	
+
 		var deck = document.createElement("div")
 		var url02 = "http://"+host+"/card/deck.php";
 		wrapHttpReq("http://"+host+"/card/deck.php", "GET", null,
@@ -39655,14 +39659,14 @@ function disp_territory_name_change(){
 		deck.style.display = "none";
 		document.body.appendChild(deck);
 	}
-	
+
 	function chgname(){
 		var new_name = document.getElementById("chgnm_txt").value;
 		var position = "<td>"+x+","+y+"</td>";
-	
+
 		var table = '//*[@id="TempDOM01"]//*[@id="gray02Wrapper"]//*[@class="commonTables"]//tr';
 		var tr = document.evaluate(table,document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-	
+
 		var input_name = "";
 		for( var i=0; i < tr.snapshotLength; i++ ){
 			if( tr.snapshotItem(i).innerHTML.indexOf(position) != -1 ){
@@ -39671,7 +39675,7 @@ function disp_territory_name_change(){
 				break;
 			}
 		}
-	
+
 		if( input_name.length > 0 ){
 			var add00 = '//*[@id="TempDOM01"]//*[@id="gray02Wrapper"]//form[@name="input_user_profile"]//input';
 			var add01 = '//*[@id="TempDOM01"]//*[@id="gray02Wrapper"]//form[@name="input_user_profile"]//textarea';
@@ -39679,7 +39683,7 @@ function disp_territory_name_change(){
 			var input = document.evaluate(add00,document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 			var textarea = document.evaluate(add01,document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 			var ssid = document.evaluate(add02,document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-	
+
 			var data = "ssid="+ssid.snapshotItem(0).value;
 			for( var i = 0; i < textarea.snapshotLength; i++ ){
 				data += "&" + textarea.snapshotItem(i).name + "=" + textarea.snapshotItem(i).innerHTML
@@ -39735,7 +39739,7 @@ function disp_showtime(){
 	function xpath(query,targetDoc) {
 		return document.evaluate(query, targetDoc, null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 	}
-	
+
 	function computeTime(clock) {
 		var hour = parseInt(trimZero(
 			clock.replace(/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/, "$1")));
@@ -39746,40 +39750,40 @@ function disp_showtime(){
 		var sec = parseInt(trimZero(
 			clock.replace(/^([0-9]{2}):([0-9]{2}):([0-9]{2})$/, "$3")));
 		if (isNaN(sec)) sec = 0;
-	
+
 		var stime = xpath('//*[@id="server_time"]', document);
 		var server_year  = parseInt(stime.snapshotItem(0).innerHTML.replace(/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/, "$1"));
 		var server_month = parseInt(stime.snapshotItem(0).innerHTML.replace(/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/, "$2"));
-		var server_day   = parseInt(stime.snapshotItem(0).innerHTML.replace(/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/, "$3"));
+		var server_day	 = parseInt(stime.snapshotItem(0).innerHTML.replace(/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/, "$3"));
 		var server_hour  = parseInt(stime.snapshotItem(0).innerHTML.replace(/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/, "$4"));
-		var server_min   = parseInt(stime.snapshotItem(0).innerHTML.replace(/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/, "$5"));
-		var server_src   = parseInt(stime.snapshotItem(0).innerHTML.replace(/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/, "$6"));
-	
+		var server_min	 = parseInt(stime.snapshotItem(0).innerHTML.replace(/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/, "$5"));
+		var server_src	 = parseInt(stime.snapshotItem(0).innerHTML.replace(/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/, "$6"));
+
 		var now = new Date(server_year,server_month,server_day,server_hour,server_min,server_src,0);
 		var resTime = new Date();
 		resTime.setHours(now.getHours() + hour);
 		resTime.setMinutes(now.getMinutes() + min);
 		resTime.setSeconds(now.getSeconds() + sec);
-		
+
 		return resTime;
 	}
-	
+
 	//日時文字列編集（yyyy/mm/dd hh:mm:ss）
 	function generateDateString(date) {
-		var res = "" + date.getFullYear() + "/" + padZero(date.getMonth() + 1) + 
-			"/" + padZero(date.getDate()) + " " + padZero(date.getHours()) + ":" + 
+		var res = "" + date.getFullYear() + "/" + padZero(date.getMonth() + 1) +
+			"/" + padZero(date.getDate()) + " " + padZero(date.getHours()) + ":" +
 			padZero(date.getMinutes()) + ":" + padZero(date.getSeconds());
 		return res;
 	}
-	
+
 	//日時文字列編集2（mm/dd hh:mm:ss）
 	function generateDateString2(date) {
-		var res = "" + padZero(date.getMonth() + 1) + "/" + padZero(date.getDate()) + 
-			" " + padZero(date.getHours()) + ":" + padZero(date.getMinutes()) + 
+		var res = "" + padZero(date.getMonth() + 1) + "/" + padZero(date.getDate()) +
+			" " + padZero(date.getHours()) + ":" + padZero(date.getMinutes()) +
 			":" + padZero(date.getSeconds());;
 		return res;
 	}
-	
+
 	//先頭ゼロ除去
 	function trimZero(str) {
 		var res = str.replace(/^0*/, "");
@@ -39790,7 +39794,7 @@ function disp_showtime(){
 	function padZero(num) {
 		var result;
 		if (num < 10) { result = "0" + num;
-		       } else { result = ""  + num; }
+			   } else { result = ""  + num; }
 		return result;
 	}
 }
@@ -39813,7 +39817,7 @@ function disp_quest_all(){
 	var QUEST_ID_RETRY_1  = 254;
 	var QUEST_ID_RETRY_2  = 255;
 	var QUEST_ID_RETRY_3  = 256;
-	
+
 	var d = document;
 	var $ = function (id, pd) {return pd ? pd.getElementById(id) : document.getElementById(id);};
 
@@ -39862,26 +39866,26 @@ function disp_quest_all(){
 		} else {
 			var elem = $s('//p[@id=\"questB3_fukidashi\"]');
 			if (elem){
-				ncreateLink(elem, undefined, undefined, "未クリア"  , "未クリア"  , function(){ showQuest(0) } );
-				ncreateLink(elem, undefined, undefined, "クリア済"  , "クリア済"  , function(){ showQuest(1) } );
+				ncreateLink(elem, undefined, undefined, "未クリア"	, "未クリア"  , function(){ showQuest(0) } );
+				ncreateLink(elem, undefined, undefined, "クリア済"	, "クリア済"  , function(){ showQuest(1) } );
 				ncreateLink(elem, undefined, undefined, "全部"	  , "全部"	  , function(){ showQuest(2) } );
 				ncreateLink(elem, undefined, undefined, "受理中"	, "受理中"	, function(){ showQuest(3) } );
-				ncreateLink(elem, undefined, undefined, "チェック"  , "チェック"  , function(){ showQuest(0); checkFlag = true } );
+				ncreateLink(elem, undefined, undefined, "チェック"	, "チェック"  , function(){ showQuest(0); checkFlag = true } );
 			}
 		}
 	}
 
 	var checkList = undefined;
 	var checkFlag = false;
-	
+
 	function createCheckList()
 	{
 		if (checkList) return;
-		
+
 		checkList = $x('//a[contains(@id, "quest_id")]');
 		checkQuestAll();
 	}
-	
+
 	function checkQuestAll()
 	{
 		var elem = $s('//p[@id=\"questB3_fukidashi\"]');
@@ -39900,10 +39904,10 @@ function disp_quest_all(){
 		var elem_id = checkList[0].id;
 		var quest_id = elem_id.match(/quest_id_([0-9]+)/)[1];
 		checkList.shift();
-		
+
 		checkQuestASync(quest_id, elem_id);
 	}
-	
+
 	function showQuest(mode)
 	{
 		var list = $s('//div[@id=\"questB3_table\"]/table/tbody');
@@ -39948,8 +39952,8 @@ function disp_quest_all(){
 				}
 			}
 		}
-		
-		{//繰り返し		
+
+		{//繰り返し
 			var quest = $s('td[@class=\"quest_btn\ attention_row_05\"]/a', elem);
 			if (quest){
 				var cancel = quest.getAttribute("href").match(/cancelQuest/);
@@ -39977,7 +39981,7 @@ function disp_quest_all(){
 			}
 		}
 	}
-	
+
 	function addQuestLink()
 	{
 		var list = $s('//div[@id=\"questB3_table\"]/table/tbody');
@@ -39988,7 +39992,7 @@ function disp_quest_all(){
 			}
 		}
 	}
-	
+
 	function cancelQuestASync(quest_id, elem_id, flag)
 	{
 		var url = "http://" + location.host + "/quest/index.php"
@@ -40015,7 +40019,7 @@ function disp_quest_all(){
 				elem.style.color = "#CC0000";
 			}
 		};
-		
+
 		var elem = $(elem_id);
 		if (elem){
 			var parent = elem.parentNode;
@@ -40031,7 +40035,7 @@ function disp_quest_all(){
 
 		param['cancel_id'] = quest_id;
 		param['action'] = "cancel_quest";
-		
+
 		najaxRequest(url, "GET", param, ex_param, func_success, func_fail);
 
 	}
@@ -40086,14 +40090,14 @@ function disp_quest_all(){
 				elem.style.color = "#CC0000";
 			}
 		};
-		
+
 		var ex_param = [];
 
 		param['disp_id'] = quest_id;
-				
+
 		najaxRequest(url, "POST", param, ex_param, func_success, func_fail);
 	}
-	
+
 	function checkQuestASyncSub(quest_id, elem_id)
 	{
 		url = "";
@@ -40110,7 +40114,7 @@ function disp_quest_all(){
 			return;
 		}
 		var elem = $(elem_id);
-		
+
 		var func_success = function(req, param) {
 			var dom = d.createElement('html');
 			dom.innerHTML = req.responseText;
@@ -40151,7 +40155,7 @@ function disp_quest_all(){
 					}
 				}
 			}
-			
+
 			checkQuestASyncInput(quest_id, elem_id, tmp);
 		};
 		var func_fail = function(req, param) {
@@ -40160,7 +40164,7 @@ function disp_quest_all(){
 				elem.style.color = "#CC0000";
 			}
 		};
-		
+
 		if (elem){
 			var parent = elem.parentNode;
 			newElem = d.createElement('span');
@@ -40169,14 +40173,14 @@ function disp_quest_all(){
 			newElem.style.color = "black";
 			parent.replaceChild(newElem, elem);
 		}
-		
+
 		var param = [];
 		var ex_param = [];
-		
+
 		najaxRequest(url, "GET", param, ex_param, func_success, func_fail);
 
 	}
-	
+
 	function checkQuestASync(quest_id, elem_id)
 	{
 		var url = "http://" + location.hostname + "/quest/index.php";
@@ -40204,8 +40208,8 @@ function disp_quest_all(){
 					param['que_alliance'] = 3;
 					checkQuestASyncInput(quest_id, elem_id, param);
 				}
-				else if(quest_id == QUEST_ID_RETRY_1 || 
-						quest_id == QUEST_ID_RETRY_2 || 
+				else if(quest_id == QUEST_ID_RETRY_1 ||
+						quest_id == QUEST_ID_RETRY_2 ||
 						quest_id == QUEST_ID_RETRY_3 ){
 					var elem = $(elem_id);
 					if (elem){
@@ -40226,7 +40230,7 @@ function disp_quest_all(){
 				elem.style.color = "#CC0000";
 			}
 		};
-		
+
 		var elem = $(elem_id);
 		if (elem){
 			var parent = elem.parentNode;
@@ -40236,13 +40240,13 @@ function disp_quest_all(){
 			newElem.style.color = "black";
 			parent.replaceChild(newElem, elem);
 		}
-		
+
 		var param = [];
 		var ex_param = [];
 
 		param['id'] = quest_id;
 		param['action'] = "take_quest";
-		
+
 		najaxRequest(url, "GET", param, ex_param, func_success, func_fail);
 	}
 
@@ -40260,7 +40264,7 @@ function disp_quest_all(){
 			}
 		}
 	}
-		
+
 	function showQuestASync(mode, p, page_max)
 	{
 		var elem = $s('//p[@id=\"questB3_fukidashi\"]');
@@ -40284,7 +40288,7 @@ function disp_quest_all(){
 				elem.innerHTML = "ページ " + p + " / " + page_max;
 			}
 		}
-				
+
 		var url = "http://" + location.hostname + "/quest/index.php";
 
 		var func_success = function(req, param) {
@@ -40305,7 +40309,7 @@ function disp_quest_all(){
 		};
 		var func_fail = function(req, param) {
 		};
-		
+
 		var param = [];
 		var ex_param = [];
 
@@ -40314,7 +40318,7 @@ function disp_quest_all(){
 		param['p'] = p;
 
 		param['list'] = document.getElementsByName("list").item(0).value;
-		
+
 		param['sort_1st_item']	= document.getElementsByName("sort_1st_item").item(0).value;
 		param['sort_1st_order']   = document.getElementsByName("sort_1st_order").item(0).value;
 		param['sort_2nd_item']	= document.getElementsByName("sort_2nd_item").item(0).value;
@@ -40324,7 +40328,7 @@ function disp_quest_all(){
 		param['filter_difficult'] = document.getElementsByName("filter_difficult").item(0).value;
 		param['filter_category']  = document.getElementsByName("filter_category").item(0).value;
 		param['filter_reward']	= document.getElementsByName("filter_reward").item(0).value;
-		
+
 		najaxRequest(url, "GET", param, ex_param, func_success, func_fail, true);
 	}
 
@@ -40369,7 +40373,7 @@ function disp_quest_all(){
 			if (senddata != "") senddata += "&";
 			senddata += name + "=" + escape(param[name]);
 		}
-		
+
 		if (method == 'POST') {
 			req.open(method, url, sync);
 			req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -40389,9 +40393,9 @@ function disp_quest_all(){
 //-----------------------------------
 function disp_favorite_trade(){
 	var version = "2.51";
-	 
-	var default_value = 1999;	
-	
+
+	var default_value = 1999;
+
 	///////////////////////////////////////////////
 	//Chrome用GM_関数
 	// @copyright 2009, James Campos
@@ -40402,11 +40406,11 @@ function disp_favorite_trade(){
 			style.textContent = css;
 			document.getElementsByTagName('head')[0].appendChild(style);
 		};
-	 
+
 		GM_deleteValue = function(name) {
 			localStorage.removeItem(name);
 		};
-	 
+
 		GM_getValue = function(name, defaultValue) {
 			var value = localStorage.getItem(name);
 			if (!value)
@@ -40422,7 +40426,7 @@ function disp_favorite_trade(){
 					return value;
 				}
 		};
-	 
+
 		GM_log = function(message) {
 			if (window.opera) {
 				opera.postError(message);
@@ -40430,22 +40434,22 @@ function disp_favorite_trade(){
 			}
 	//	  console.log(message);
 		};
-	 
+
 		GM_registerMenuCommand = function(name, funk) {
 		//todo
 		};
-	 
+
 		GM_setValue = function(name, value) {
 			value = (typeof value)[0] + value;
 			localStorage.setItem(name, value);
 		};
 	}
 	///////////////////////////////////////////////
-	 
+
 	var AH_list = ["仁君","弓腰姫の愛","神医の術式","神医の施術","文姫の慈愛","皇后の慈愛","傾国","優雅な調べ","城壁補強","熊猫の麺匠","酔吟吐息","勇姫督励","才女の瞳","桃色吐息","劉備の契り"];
 	var host = location.hostname;
 	var path = location.pathname;
-	 
+
 	// お気に入りトレード初期設定値(現在のリスト個数を超える初期値は無視されます)
 	// 初期化ボタンを押した時に再設定されます。
 	var trade_search_default = [
@@ -40550,84 +40554,84 @@ function disp_favorite_trade(){
 	//	['lv',0,0,1,1,1,1,1,1],
 	//	['skill','飛将',0,0,0,0,0,0,0],
 	];
-		
+
 	var d = document;
 	var $ = function(id) { return d.getElementById(id); };
 	var $x = function(xp,dc) { return d.evaluate(xp, dc||d, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; };
 	var $a = function(xp,dc) { var r = d.evaluate(xp, dc||d, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null); var a=[]; for(var i=0; i<r.snapshotLength; i++){ a.push(r.snapshotItem(i)); } return a; };
 	var $e = function(e,t,f) { if (!e) return; e.addEventListener(t, f, false); };
-	 
+
 	jQuery.noConflict();
 	j$ = jQuery;
-	 
-	 
+
+
 	var BRO3_FAVORITE_TRADE_FLG = 'bro3_favavorite_trade_flg' + host;
-	var BRO3_SHOW_CARD_ID_FLG   = 'bro3_show_card_id_flg' + host;
+	var BRO3_SHOW_CARD_ID_FLG	= 'bro3_show_card_id_flg' + host;
 	var BRO3_APPEND_LINK_FLG	= 'bro3_append_link_flg' + host;
 	var BRO3_SCORE_VIEW_FLG	 = 'bro3_score_view_flg' + host;
-	var BRO3_IMMEDIATE_BID_FLG  = 'bro3_immediate_bid_flg' + host;
+	var BRO3_IMMEDIATE_BID_FLG	= 'bro3_immediate_bid_flg' + host;
 	var BRO3_TRADING_SUPPORT_FLG	= 'bro3_trading_support_flg' + host;
 	var BRO3_ADD_DEL_COMMAND_FLG	= 'bro3_add_del_command_flg' + host;
 	var BRO3_OVER_MOUSE_FLG	 = 'bro3_over_mouse_flg' + host;
 	var BRO3_AUTO_DELETE_FLG	= 'bro3_auto_delete_flg' + host;
 	var BRO3_AUTO_DELETE_CNO	= 'bro3_auto_delete_cno' + host;
 	var BRO3_AUTO_BUSHODASU_MODE	= 'bro3_auto_bushodasu_mode' + host;
-	var BRO3_DEL_TRADE_REPORT_FLG   = 'bro3_del_trade_report_flg' + host;
+	var BRO3_DEL_TRADE_REPORT_FLG	= 'bro3_del_trade_report_flg' + host;
 	var BRO3_AUTO_HEAL_FLG	  = 'bro3_auto_heal_flg' + host;
 	var BRO3_AUTO_HEAL_B_ID	 = 'bro3_auto_heal_b_id' + host;
 	var BRO3_AUTO_HEAL_S_NO	 = 'bro3_auto_heal_s_no' + host;
 	var BRO3_AUTO_HEAL_V_ID	 = 'bro3_auto_heal_v_id' + host;
-	var BRO3_CARD_COLLECT_FLG   = 'bro3_card_collect_flg' + host;
-	var BRO3_10TP_COLLECT_FLG   = 'bro3_10tp_collect_flg' + host;
+	var BRO3_CARD_COLLECT_FLG	= 'bro3_card_collect_flg' + host;
+	var BRO3_10TP_COLLECT_FLG	= 'bro3_10tp_collect_flg' + host;
 	var BRO3_MISC_FLG	   = 'bro3_misc_flg' + host;
 	var BRO3_BULK_SET_FLG	   = 'bro3_bulk_set_flg' + host;
-	 
-	var favorite_trade_flg  = 1;
+
+	var favorite_trade_flg	= 1;
 	var show_card_id_flg	= 1;
 	var append_link_flg = 1;
-	var score_view_flg  = 1;
-	var immediate_bid_flg   = 1;
+	var score_view_flg	= 1;
+	var immediate_bid_flg	= 1;
 	var trading_support_flg = 1;
 	var add_del_command_flg = 1;
-	var over_mouse_flg  = 1;
+	var over_mouse_flg	= 1;
 	var auto_delete_flg = 0;
 	var auto_delete_cno = "";
 	var auto_bushodasu_mode = 0;
 	var del_trade_report_flg= 1;
-	var auto_heal_flg   = 1;
+	var auto_heal_flg	= 1;
 	var card_collect_flg	= 1;
 	var tp10_collect_flg	= 1;
 	var bro3_misc_flg	= 1;
 	var bulk_set_flg	= 1;
-	 
-	if(GM_getValue(BRO3_FAVORITE_TRADE_FLG))	favorite_trade_flg  = GM_getValue(BRO3_FAVORITE_TRADE_FLG);
+
+	if(GM_getValue(BRO3_FAVORITE_TRADE_FLG))	favorite_trade_flg	= GM_getValue(BRO3_FAVORITE_TRADE_FLG);
 	if(GM_getValue(BRO3_SHOW_CARD_ID_FLG))	  show_card_id_flg	= GM_getValue(BRO3_SHOW_CARD_ID_FLG);
 	if(GM_getValue(BRO3_APPEND_LINK_FLG))	   append_link_flg	 = GM_getValue(BRO3_APPEND_LINK_FLG);
 	if(GM_getValue(BRO3_SCORE_VIEW_FLG))		score_view_flg	  = GM_getValue(BRO3_SCORE_VIEW_FLG);
-	if(GM_getValue(BRO3_IMMEDIATE_BID_FLG))	 immediate_bid_flg   = GM_getValue(BRO3_IMMEDIATE_BID_FLG);
-	if(GM_getValue(BRO3_TRADING_SUPPORT_FLG))   trading_support_flg = GM_getValue(BRO3_TRADING_SUPPORT_FLG);
-	if(GM_getValue(BRO3_ADD_DEL_COMMAND_FLG))   add_del_command_flg = GM_getValue(BRO3_ADD_DEL_COMMAND_FLG);
+	if(GM_getValue(BRO3_IMMEDIATE_BID_FLG))	 immediate_bid_flg	 = GM_getValue(BRO3_IMMEDIATE_BID_FLG);
+	if(GM_getValue(BRO3_TRADING_SUPPORT_FLG))	trading_support_flg = GM_getValue(BRO3_TRADING_SUPPORT_FLG);
+	if(GM_getValue(BRO3_ADD_DEL_COMMAND_FLG))	add_del_command_flg = GM_getValue(BRO3_ADD_DEL_COMMAND_FLG);
 	if(GM_getValue(BRO3_OVER_MOUSE_FLG))		over_mouse_flg	  = GM_getValue(BRO3_OVER_MOUSE_FLG);
 	if(GM_getValue(BRO3_AUTO_DELETE_FLG))	   auto_delete_flg	 = GM_getValue(BRO3_AUTO_DELETE_FLG);
 	if(GM_getValue(BRO3_AUTO_DELETE_CNO))	   auto_delete_cno	 = GM_getValue(BRO3_AUTO_DELETE_CNO);
-	if(GM_getValue(BRO3_AUTO_BUSHODASU_MODE))   auto_bushodasu_mode = GM_getValue(BRO3_AUTO_BUSHODASU_MODE);
-	if(GM_getValue(BRO3_DEL_TRADE_REPORT_FLG))  del_trade_report_flg	= GM_getValue(BRO3_DEL_TRADE_REPORT_FLG);
+	if(GM_getValue(BRO3_AUTO_BUSHODASU_MODE))	auto_bushodasu_mode = GM_getValue(BRO3_AUTO_BUSHODASU_MODE);
+	if(GM_getValue(BRO3_DEL_TRADE_REPORT_FLG))	del_trade_report_flg	= GM_getValue(BRO3_DEL_TRADE_REPORT_FLG);
 	if(GM_getValue(BRO3_AUTO_HEAL_FLG))	 auto_heal_flg	   = GM_getValue(BRO3_AUTO_HEAL_FLG);
 	if(GM_getValue(BRO3_CARD_COLLECT_FLG))	  card_collect_flg	= GM_getValue(BRO3_CARD_COLLECT_FLG);
 	if(GM_getValue(BRO3_10TP_COLLECT_FLG))	  tp10_collect_flg	= GM_getValue(BRO3_10TP_COLLECT_FLG);
 	if(GM_getValue(BRO3_MISC_FLG))		  bro3_misc_flg	   = GM_getValue(BRO3_MISC_FLG);
 	if(GM_getValue(BRO3_BULK_SET_FLG))	  bulk_set_flg		= GM_getValue(BRO3_BULK_SET_FLG);
-	 
-	 
+
+
 	//「トレード」で実行
 	if(path.indexOf("/card/trade.php") != -1){
 		favorite_trade();
-		if(show_card_id_flg == 1)   showCardIdMain();
+		if(show_card_id_flg == 1)	showCardIdMain();
 		if(append_link_flg == 1)	append_hyperlink_to_card_number_trade();
 		if(score_view_flg == 1)	 BRO3_SCORE_view();
-		if(immediate_bid_flg == 1)  ImmBid();
+		if(immediate_bid_flg == 1)	ImmBid();
 		if(over_mouse_flg == 1)	 OverMouse();
-		if(tp10_collect_flg == 1)   TP10Collect();
+		if(tp10_collect_flg == 1)	TP10Collect();
 	}
 	//「一覧」で実行
 	if(path.indexOf("card/trade_card_list.php") != -1){
@@ -40636,7 +40640,7 @@ function disp_favorite_trade(){
 	//「出品中」「入札中」で実行
 	if(path.indexOf("/card/exhibit_list.php") != -1 || path.indexOf("/card/bid_list.php") != -1){
 		favorite_trade();
-		if(show_card_id_flg == 1)   showCardIdMain();
+		if(show_card_id_flg == 1)	showCardIdMain();
 		if(append_link_flg == 1)	append_hyperlink_to_card_number_trade();
 		if(over_mouse_flg == 1)	 OverMouse();
 		if(bro3_misc_flg == 1)	  bro3_misc();
@@ -40667,28 +40671,28 @@ function disp_favorite_trade(){
 		if(trading_support_flg == 1)	TradingSupport();
 	}
 	if(path.indexOf("/card/busyobook.php") != -1){
-		if(card_collect_flg == 1)   CardCollect();
+		if(card_collect_flg == 1)	CardCollect();
 	}
 	//書簡で表示
 	if(path.indexOf("/message/inbox.php") != -1){
-		if(del_trade_report_flg == 1)   DeleteTradeReport();
+		if(del_trade_report_flg == 1)	DeleteTradeReport();
 	}
 
 	// @name		   bro3_favoritetrade
 	// @namespace	  http://chaki.s27.xrea.com/br3/
 	// @description	ブラウザ三国志 お気に入りトレード一覧表示 by きの。
-	 
+
 	function favorite_trade(){
 		var l_length = 44;//リスト個数の初期値
 		var l_length2 = 30;
 		var l_length2 = 100;
-	 
-		var BRO3_FAV_TRADE_LENGTH   = 'bro3_fav_trade_length' + host;
+
+		var BRO3_FAV_TRADE_LENGTH	= 'bro3_fav_trade_length' + host;
 		var BRO3_AUTO_DELETE_LENGTH = 'bro3_auto_delete_length' + host;
 		if(GM_getValue(BRO3_FAV_TRADE_LENGTH)) l_length = GM_getValue(BRO3_FAV_TRADE_LENGTH);
 		if(GM_getValue(BRO3_AUTO_DELETE_LENGTH)) l_length2 = GM_getValue(BRO3_AUTO_DELETE_LENGTH);
 		var ul = document.getElementsByClassName("ui-tabs-nav").item(0);
-	 
+
 		if(favorite_trade_flg == 1 && location.pathname == '/card/trade.php'){
 			// お気に入り検索を行う
 			jQuery.noConflict();
@@ -40703,7 +40707,7 @@ function disp_favorite_trade(){
 				seach_trade();
 			});
 		}
-	 
+
 		var li2 = document.createElement("li");
 		var set = document.createElement("a");
 		set.href = "javascript:void(0)";
@@ -40712,17 +40716,17 @@ function disp_favorite_trade(){
 		set.addEventListener("click",function(){set_favorite();},false)
 		ul.appendChild(li2);
 		li2.appendChild(set);
-	 
+
 		function set_favorite(){
 			if(GM_getValue(BRO3_FAV_TRADE_LENGTH)) l_length = GM_getValue(BRO3_FAV_TRADE_LENGTH);
 			if(GM_getValue(BRO3_AUTO_DELETE_LENGTH)) l_length2 = GM_getValue(BRO3_AUTO_DELETE_LENGTH);
-	 
+
 			var link = document.evaluate('//li[@class=\"ui-tabs-selected\"]/a',document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(0);
 			link.addEventListener("click",function(){location.reload();},false);
-	 
+
 			var table = document.getElementsByClassName("ui-tabs-panel").item(0);
 			var html = "";
-	 
+
 			html += "<table class='tradeTables'><tr><td>"
 			html += "<b>Bro3　FavoriteTrade　ver." + version + "</b><br>"
 			html += "<b>～使い方～</b><br>"
@@ -40740,8 +40744,8 @@ function disp_favorite_trade(){
 			html += "　<br>"
 			html += "　要望・質問などは　skype名=s_hasekun　まで<br>"
 			html += "<br></td></tr></table>"
-	 
-	 
+
+
 			html += "<table class='tradeTables'><tr><td>"
 			html += "<b>利用機能設定</b><br>"
 			html += "<br>"
@@ -40769,7 +40773,7 @@ function disp_favorite_trade(){
 			html += "　<input type=checkbox id=cb_flg12>【武将図鑑】未取得カード収集ボタン<br>"
 			html += "<br>　　　<input type=button id=save_set value=設定を保存 /><br>\n"
 			html += "<br></td></tr></table>"
-	 
+
 			html += "<table class='tradeTables'><tr><td>"
 			html += "<b>自動破棄カードリスト設定</b><br>"
 			html += "<br>"
@@ -40779,11 +40783,11 @@ function disp_favorite_trade(){
 			html += "<input type=button id=ad_2 value='2コス以下全部' />"
 			html += "<input type=button id=ad_2C value='2コス以下&C全部' />"
 			html += "<input type=button id=clear value='入力全消去' /><br>"
-	 
+
 			var a_cnt = 0;
 			var cno = auto_delete_cno.split(",");
 			for(var i=0;i<l_length2;i++){
-	 
+
 				html += "<input type='text' name='a"+i+"' id='a"+i+"' class='text' value='";
 				if( i < cno.length )	html += cno[i];
 				html += "' size=4 maxlength=4 />";
@@ -40792,14 +40796,14 @@ function disp_favorite_trade(){
 					html += "<br />\n";
 					a_cnt = 0;
 				}
-	 
+
 			}
-	 
+
 			html += "<br>※ここにカードNoを入力したカードをブショーダスライトで引くと自動的に破棄してもう一枚引きます。<br />\n"
 			html += "<center><input type=button id=save_list2 value=リストを保存 /></center>\n"
 			html += "</td></tr></table>\n"
-	 
-	 
+
+
 			html += "<table class='tradeTables'><tr><td>"
 			html += "<b>お気に入りトレード検索条件設定</b><br>"
 			html += "<br>"
@@ -40807,9 +40811,9 @@ function disp_favorite_trade(){
 			html += "<input type=button id=save_num value=変更 /><br>\n"
 			html += "<input type=button id=init_num value=初期化 />\n"
 			html += "<input type=button id=clear_num value=クリア /><br>\n"
-	 
+
 			for(var i=0;i<l_length;i++){
-	 
+
 				html += "No."+Math.floor(i+1)+"&nbsp;:&nbsp;";
 				html += "<img src='/20111003-04/extend_project/w760/img/trade/hd_search.gif' alt='フリーワード検索' title='フリーワード検索' />"
 				html += "<select name='t"+i+"' id='t"+i+"' class='combo'><option value='name'>武将名</option><option value='lv'>レベル</option><option value='no'>カードNo</option><option value='skill'>所持スキル</option></select>&nbsp;";
@@ -40821,26 +40825,26 @@ function disp_favorite_trade(){
 				html += "<input type=checkbox id='c"+i+"4'>R&nbsp;"
 				html += "<input type=checkbox id='c"+i+"5'>UC&nbsp;"
 				html += "<input type=checkbox id='c"+i+"6'>C&nbsp;<br>\n"
-	 
+
 			}
-	 
+
 			html += "<center><input type=button id=save_list value=リストを保存 /></center>\n"
 			html += "</td></tr></table>\n"
-	 
+
 			table.innerHTML = html;
-	 
+
 			var a_mode = document.getElementsByName("bushodasu");
 			for ( var i = 0; i < a_mode.length; i++ ){
 				if(a_mode[i].value == auto_bushodasu_mode){
 					a_mode[i].checked = "checked";
 				}
 			}
-	 
+
 			document.getElementById("ad_C").addEventListener("click",function(){chg_select("C");},false)
 			document.getElementById("ad_2").addEventListener("click",function(){chg_select("2");},false)
 			document.getElementById("ad_2C").addEventListener("click",function(){chg_select("2C");},false)
 			document.getElementById("clear").addEventListener("click",function(){all_clear();},false)
-	 
+
 			function chg_select(a){
 				if( a == "C"){
 					auto_delete_cno = "1013,1018,1020,1024,1026,1028,1030,1032,1034,1040,1058,1059,,,,,,,,,2011,2015,2018,2021,2023,2025,2028,2030,2032,2034,2036,2038,2046,2056,,,,,,,,,,,,,,,,,3012,3016,3018,3020,3022,3024,3026,3028,3030,3039,,,,,,,,,,,4007,4009,4011,4013,4015,4017,4019,4021,4023,,,,,,,,,,,";
@@ -40865,36 +40869,36 @@ function disp_favorite_trade(){
 					document.getElementById("a"+i).value = "" ;
 				}
 			}
-	 
-			if( favorite_trade_flg  == 1 ) document.getElementById('cb_flg1').checked = true ;
+
+			if( favorite_trade_flg	== 1 ) document.getElementById('cb_flg1').checked = true ;
 			if( show_card_id_flg	== 1 ) document.getElementById('cb_flg2').checked = true ;
 			if( append_link_flg == 1 ) document.getElementById('cb_flg3').checked = true ;
-			if( score_view_flg  == 1 ) document.getElementById('cb_flg4').checked = true ;
-			if( immediate_bid_flg   == 1 ) document.getElementById('cb_flg5').checked = true ;
+			if( score_view_flg	== 1 ) document.getElementById('cb_flg4').checked = true ;
+			if( immediate_bid_flg	== 1 ) document.getElementById('cb_flg5').checked = true ;
 			if( trading_support_flg == 1 ) document.getElementById('cb_flg6').checked = true ;
 			if( add_del_command_flg == 1 ) document.getElementById('cb_flg7').checked = true ;
-			if( over_mouse_flg  == 1 ) document.getElementById('cb_flg8').checked = true ;
+			if( over_mouse_flg	== 1 ) document.getElementById('cb_flg8').checked = true ;
 			if( auto_delete_flg == 1 ) document.getElementById('cb_flg9').checked = true ;
 			if( del_trade_report_flg== 1 ) document.getElementById('cb_flg10').checked = true ;
-			if( auto_heal_flg   >= 1 ) document.getElementById('cb_flg11').checked = true ;
+			if( auto_heal_flg	>= 1 ) document.getElementById('cb_flg11').checked = true ;
 			if( card_collect_flg	== 1 ) document.getElementById('cb_flg12').checked = true ;
 			if( tp10_collect_flg	== 1 ) document.getElementById('cb_flg14').checked = true ;
-			if( bro3_misc_flg   == 1 ) document.getElementById('cb_flg15').checked = true ;
+			if( bro3_misc_flg	== 1 ) document.getElementById('cb_flg15').checked = true ;
 			if( bulk_set_flg	== 1 ) document.getElementById('cb_flg16').checked = true ;
 			document.getElementById("save_set").addEventListener("click",function(){save_setting();},false)
-	 
+
 			function save_setting(){
 				var t = 1;
 				var f = 0;
 				if( document.getElementById('cb_flg1').checked == true ){ GM_setValue(BRO3_FAVORITE_TRADE_FLG, "1") }	else { GM_setValue(BRO3_FAVORITE_TRADE_FLG, "0") };
 				if( document.getElementById('cb_flg2').checked == true ){ GM_setValue(BRO3_SHOW_CARD_ID_FLG, "1") }  else { GM_setValue(BRO3_SHOW_CARD_ID_FLG, "0") };
-				if( document.getElementById('cb_flg3').checked == true ){ GM_setValue(BRO3_APPEND_LINK_FLG, "1") }   else { GM_setValue(BRO3_APPEND_LINK_FLG, "0") };
+				if( document.getElementById('cb_flg3').checked == true ){ GM_setValue(BRO3_APPEND_LINK_FLG, "1") }	 else { GM_setValue(BRO3_APPEND_LINK_FLG, "0") };
 				if( document.getElementById('cb_flg4').checked == true ){ GM_setValue(BRO3_SCORE_VIEW_FLG, "1") }		else { GM_setValue(BRO3_SCORE_VIEW_FLG, "0") };
 				if( document.getElementById('cb_flg5').checked == true ){ GM_setValue(BRO3_IMMEDIATE_BID_FLG, "1") }	 else { GM_setValue(BRO3_IMMEDIATE_BID_FLG, "0") };
-				if( document.getElementById('cb_flg6').checked == true ){ GM_setValue(BRO3_TRADING_SUPPORT_FLG, "1") }   else { GM_setValue(BRO3_TRADING_SUPPORT_FLG, "0") };
-				if( document.getElementById('cb_flg7').checked == true ){ GM_setValue(BRO3_ADD_DEL_COMMAND_FLG, "1") }   else { GM_setValue(BRO3_ADD_DEL_COMMAND_FLG, "0") };
+				if( document.getElementById('cb_flg6').checked == true ){ GM_setValue(BRO3_TRADING_SUPPORT_FLG, "1") }	 else { GM_setValue(BRO3_TRADING_SUPPORT_FLG, "0") };
+				if( document.getElementById('cb_flg7').checked == true ){ GM_setValue(BRO3_ADD_DEL_COMMAND_FLG, "1") }	 else { GM_setValue(BRO3_ADD_DEL_COMMAND_FLG, "0") };
 				if( document.getElementById('cb_flg8').checked == true ){ GM_setValue(BRO3_OVER_MOUSE_FLG, "1") }	else { GM_setValue(BRO3_OVER_MOUSE_FLG, "0") };
-				if( document.getElementById('cb_flg9').checked == true ){ GM_setValue(BRO3_AUTO_DELETE_FLG, "1") }   else { GM_setValue(BRO3_AUTO_DELETE_FLG, "0") };
+				if( document.getElementById('cb_flg9').checked == true ){ GM_setValue(BRO3_AUTO_DELETE_FLG, "1") }	 else { GM_setValue(BRO3_AUTO_DELETE_FLG, "0") };
 				if( document.getElementById('cb_flg10').checked == true ){ GM_setValue(BRO3_DEL_TRADE_REPORT_FLG, "1") } else { GM_setValue(BRO3_DEL_TRADE_REPORT_FLG, "0") };
 				if( document.getElementById('cb_flg11').checked == true ){ GM_setValue(BRO3_AUTO_HEAL_FLG, "1") }	else { GM_setValue(BRO3_AUTO_HEAL_FLG, "0") };
 				if( document.getElementById('cb_flg12').checked == true ){ GM_setValue(BRO3_CARD_COLLECT_FLG, "1") }	 else { GM_setValue(BRO3_CARD_COLLECT_FLG, "0") };
@@ -40911,38 +40915,38 @@ function disp_favorite_trade(){
 				}
 				alert("保存しました");
 			}
-	 
+
 			for(var i=0;i<l_length;i++){
-	 
+
 				var BRO3_FAV_TRADE_T	=  'bro3_fav_trade_t' + i + host;
 				var BRO3_FAV_TRADE_K	=  'bro3_fav_trade_k' + i + host;
-				var BRO3_FAV_TRADE_TL   =  'bro3_fav_trade_tl' + i + host;
-				var BRO3_FAV_TRADE_L    =  'bro3_fav_trade_l' + i + host;
-				var BRO3_FAV_TRADE_UR   =  'bro3_fav_trade_ur' + i + host;
-				var BRO3_FAV_TRADE_SR   =  'bro3_fav_trade_sr' + i + host;
+				var BRO3_FAV_TRADE_TL	=  'bro3_fav_trade_tl' + i + host;
+				var BRO3_FAV_TRADE_L	=  'bro3_fav_trade_l' + i + host;
+				var BRO3_FAV_TRADE_UR	=  'bro3_fav_trade_ur' + i + host;
+				var BRO3_FAV_TRADE_SR	=  'bro3_fav_trade_sr' + i + host;
 				var BRO3_FAV_TRADE_R	=  'bro3_fav_trade_r' + i + host;
-				var BRO3_FAV_TRADE_UC   =  'bro3_fav_trade_uc' + i + host;
+				var BRO3_FAV_TRADE_UC	=  'bro3_fav_trade_uc' + i + host;
 				var BRO3_FAV_TRADE_C	=  'bro3_fav_trade_c' + i + host;
-	 
-				var list_t  = "";
-				var list_k  = "";
+
+				var list_t	= "";
+				var list_k	= "";
 				var list_tl	 = 0;
 				var list_l	  = 0;
 				var list_ur	 = 0;
 				var list_sr	 = 0;
-				var list_r  = 0;
+				var list_r	= 0;
 				var list_uc	 = 0;
-				var list_c  = 0;
-	 
-				if(GM_getValue(BRO3_FAV_TRADE_T))   list_t  = GM_getValue(BRO3_FAV_TRADE_T);
-				if(GM_getValue(BRO3_FAV_TRADE_K))   list_k  = GM_getValue(BRO3_FAV_TRADE_K);
-				if(GM_getValue(BRO3_FAV_TRADE_TL))  list_tl = GM_getValue(BRO3_FAV_TRADE_TL);
-				if(GM_getValue(BRO3_FAV_TRADE_L))   list_l  = GM_getValue(BRO3_FAV_TRADE_L);
-				if(GM_getValue(BRO3_FAV_TRADE_UR))  list_ur = GM_getValue(BRO3_FAV_TRADE_UR);
-				if(GM_getValue(BRO3_FAV_TRADE_SR))  list_sr = GM_getValue(BRO3_FAV_TRADE_SR);
-				if(GM_getValue(BRO3_FAV_TRADE_R))   list_r  = GM_getValue(BRO3_FAV_TRADE_R);
-				if(GM_getValue(BRO3_FAV_TRADE_UC))  list_uc = GM_getValue(BRO3_FAV_TRADE_UC);
-				if(GM_getValue(BRO3_FAV_TRADE_C))   list_c  = GM_getValue(BRO3_FAV_TRADE_C);
+				var list_c	= 0;
+
+				if(GM_getValue(BRO3_FAV_TRADE_T))	list_t	= GM_getValue(BRO3_FAV_TRADE_T);
+				if(GM_getValue(BRO3_FAV_TRADE_K))	list_k	= GM_getValue(BRO3_FAV_TRADE_K);
+				if(GM_getValue(BRO3_FAV_TRADE_TL))	list_tl = GM_getValue(BRO3_FAV_TRADE_TL);
+				if(GM_getValue(BRO3_FAV_TRADE_L))	list_l	= GM_getValue(BRO3_FAV_TRADE_L);
+				if(GM_getValue(BRO3_FAV_TRADE_UR))	list_ur = GM_getValue(BRO3_FAV_TRADE_UR);
+				if(GM_getValue(BRO3_FAV_TRADE_SR))	list_sr = GM_getValue(BRO3_FAV_TRADE_SR);
+				if(GM_getValue(BRO3_FAV_TRADE_R))	list_r	= GM_getValue(BRO3_FAV_TRADE_R);
+				if(GM_getValue(BRO3_FAV_TRADE_UC))	list_uc = GM_getValue(BRO3_FAV_TRADE_UC);
+				if(GM_getValue(BRO3_FAV_TRADE_C))	list_c	= GM_getValue(BRO3_FAV_TRADE_C);
 
 				if(list_t != ""){
 					var sel = document.getElementById("t"+i);
@@ -40958,23 +40962,23 @@ function disp_favorite_trade(){
 				if(list_r == 0)  document.getElementById("c"+i+"4").checked = true;
 				if(list_uc == 0) document.getElementById("c"+i+"5").checked = true;
 				if(list_c == 0)  document.getElementById("c"+i+"6").checked = true;
-	 
+
 			}
-	 
+
 			document.getElementById("save_num").addEventListener("click",function(){save_num();set_favorite();},false)
 			document.getElementById("init_num").addEventListener("click",function(){init_num();},false)
 			document.getElementById("clear_num").addEventListener("click",function(){clear_num();},false)
 			document.getElementById("save_list").addEventListener("click",function(){save_list();set_favorite();},false)
 			document.getElementById("save_num2").addEventListener("click",function(){save_num();set_favorite();},false)
 			document.getElementById("save_list2").addEventListener("click",function(){save_list();set_favorite();},false)
-	 
+
 			function save_num(){
 				var num = document.getElementById("num").value
 				var num2 = document.getElementById("num2").value
 				GM_setValue(BRO3_FAV_TRADE_LENGTH, num)
 				GM_setValue(BRO3_AUTO_DELETE_LENGTH, num2)
 			}
-	 
+
 			function init_num() {
 				var init_len = trade_search_default.length;
 				for(var i=0; i < l_length; i++){
@@ -41006,7 +41010,7 @@ function disp_favorite_trade(){
 					}
 				}
 			}
-	
+
 			function clear_num() {
 				for(var i=0; i < l_length; i++){
 					document.getElementById("t"+i).value = "name";
@@ -41020,12 +41024,12 @@ function disp_favorite_trade(){
 					document.getElementById("c"+i+"6").checked = 1;
 				}
 			}
-		
+
 			function save_list(){
 				for(var i=0;i<l_length;i++){
 					var sel	 = document.getElementById("t"+i);
-					var list_t  = sel.options[sel.selectedIndex].value ;
-					var list_k  = document.getElementById("k"+i).value;
+					var list_t	= sel.options[sel.selectedIndex].value ;
+					var list_k	= document.getElementById("k"+i).value;
 					if(document.getElementById("c"+i+"1").checked == true) { var list_tl = 0 } else { var list_tl = 1 };
 					if(document.getElementById("c"+i+"7").checked == true) { var list_l = 0 } else { var list_l = 1 };
 					if(document.getElementById("c"+i+"2").checked == true) { var list_ur = 0 } else { var list_ur = 1 };
@@ -41033,19 +41037,19 @@ function disp_favorite_trade(){
 					if(document.getElementById("c"+i+"4").checked == true) { var list_r = 0 } else { var list_r = 1 };
 					if(document.getElementById("c"+i+"5").checked == true) { var list_uc = 0 } else { var list_uc = 1 };
 					if(document.getElementById("c"+i+"6").checked == true) { var list_c = 0 } else { var list_c = 1 };
-	 
+
 					//alert("T="+list_t+",K="+list_k+",TL="+list_tl+",UR="+list_ur+",SR="+list_sr+",R="+list_r+",UC="+list_uc+",C="+list_c)
-	 
+
 					var BRO3_FAV_TRADE_T	=  'bro3_fav_trade_t' + i + host;
 					var BRO3_FAV_TRADE_K	=  'bro3_fav_trade_k' + i + host;
-					var BRO3_FAV_TRADE_TL   =  'bro3_fav_trade_tl' + i + host;
-					var BRO3_FAV_TRADE_L    =  'bro3_fav_trade_l' + i + host;
-					var BRO3_FAV_TRADE_UR   =  'bro3_fav_trade_ur' + i + host;
-					var BRO3_FAV_TRADE_SR   =  'bro3_fav_trade_sr' + i + host;
+					var BRO3_FAV_TRADE_TL	=  'bro3_fav_trade_tl' + i + host;
+					var BRO3_FAV_TRADE_L	=  'bro3_fav_trade_l' + i + host;
+					var BRO3_FAV_TRADE_UR	=  'bro3_fav_trade_ur' + i + host;
+					var BRO3_FAV_TRADE_SR	=  'bro3_fav_trade_sr' + i + host;
 					var BRO3_FAV_TRADE_R	=  'bro3_fav_trade_r' + i + host;
-					var BRO3_FAV_TRADE_UC   =  'bro3_fav_trade_uc' + i + host;
+					var BRO3_FAV_TRADE_UC	=  'bro3_fav_trade_uc' + i + host;
 					var BRO3_FAV_TRADE_C	=  'bro3_fav_trade_c' + i + host;
-	 
+
 					GM_setValue(BRO3_FAV_TRADE_T, list_t);
 					GM_setValue(BRO3_FAV_TRADE_K, list_k);
 					GM_setValue(BRO3_FAV_TRADE_TL, list_tl);
@@ -41056,9 +41060,9 @@ function disp_favorite_trade(){
 					GM_setValue(BRO3_FAV_TRADE_UC, list_uc);
 					GM_setValue(BRO3_FAV_TRADE_C, list_c);
 				}
-	 
+
 				auto_delete_cno = "";
-	 
+
 				for ( var i = 0; i < l_length2; i++ ){
 					auto_delete_cno += document.getElementById("a"+i).value + ",";
 				}
@@ -41066,9 +41070,9 @@ function disp_favorite_trade(){
 				//alert(auto_delete_cno)
 				alert("保存しました");
 			}
-	 
+
 		}
-	 
+
 		// お気に入り検索
 		function seach_trade(){
 			if(GM_getValue(BRO3_FAV_TRADE_LENGTH)) l_length = GM_getValue(BRO3_FAV_TRADE_LENGTH);
@@ -41088,40 +41092,40 @@ function disp_favorite_trade(){
 			j$("ul[class=pager]").remove();
 
 			var cnt = 0;
-			var searchCount = 0; 
+			var searchCount = 0;
 			for(var i=0; i <= l_length; i++){
 				j$("#favoriteSearchProgress").html("<span>お気に入り検索実施中・・・" + parseInt(i+1) + "/" + parseInt(l_length) + "</span>");
 
 				var BRO3_FAV_TRADE_T	=  'bro3_fav_trade_t' + i + host;
 				var BRO3_FAV_TRADE_K	=  'bro3_fav_trade_k' + i + host;
-				var BRO3_FAV_TRADE_TL   =  'bro3_fav_trade_tl' + i + host;
-				var BRO3_FAV_TRADE_L    =  'bro3_fav_trade_l' + i + host;
-				var BRO3_FAV_TRADE_UR   =  'bro3_fav_trade_ur' + i + host;
-				var BRO3_FAV_TRADE_SR   =  'bro3_fav_trade_sr' + i + host;
+				var BRO3_FAV_TRADE_TL	=  'bro3_fav_trade_tl' + i + host;
+				var BRO3_FAV_TRADE_L	=  'bro3_fav_trade_l' + i + host;
+				var BRO3_FAV_TRADE_UR	=  'bro3_fav_trade_ur' + i + host;
+				var BRO3_FAV_TRADE_SR	=  'bro3_fav_trade_sr' + i + host;
 				var BRO3_FAV_TRADE_R	=  'bro3_fav_trade_r' + i + host;
-				var BRO3_FAV_TRADE_UC   =  'bro3_fav_trade_uc' + i + host;
+				var BRO3_FAV_TRADE_UC	=  'bro3_fav_trade_uc' + i + host;
 				var BRO3_FAV_TRADE_C	=  'bro3_fav_trade_c' + i + host;
-	 
-				var list_t  = "";
-				var list_k  = "";
+
+				var list_t	= "";
+				var list_k	= "";
 				var list_tl	 = 1;
 				var list_l	 = 1;
 				var list_ur	 = 1;
 				var list_sr	 = 1;
-				var list_r  = 1;
+				var list_r	= 1;
 				var list_uc	 = 1;
-				var list_c  = 1;
-	 
-				if(GM_getValue(BRO3_FAV_TRADE_T))   list_t  = GM_getValue(BRO3_FAV_TRADE_T);
-				if(GM_getValue(BRO3_FAV_TRADE_K))   list_k  = GM_getValue(BRO3_FAV_TRADE_K);
-				if(GM_getValue(BRO3_FAV_TRADE_TL))  list_tl = 1 - GM_getValue(BRO3_FAV_TRADE_TL);
-				if(GM_getValue(BRO3_FAV_TRADE_L))   list_l  = 1 - GM_getValue(BRO3_FAV_TRADE_L);
-				if(GM_getValue(BRO3_FAV_TRADE_UR))  list_ur = 1 - GM_getValue(BRO3_FAV_TRADE_UR);
-				if(GM_getValue(BRO3_FAV_TRADE_SR))  list_sr = 1 - GM_getValue(BRO3_FAV_TRADE_SR);
-				if(GM_getValue(BRO3_FAV_TRADE_R))   list_r  = 1 - GM_getValue(BRO3_FAV_TRADE_R);
-				if(GM_getValue(BRO3_FAV_TRADE_UC))  list_uc = 1 - GM_getValue(BRO3_FAV_TRADE_UC);
-				if(GM_getValue(BRO3_FAV_TRADE_C))   list_c  = 1 - GM_getValue(BRO3_FAV_TRADE_C);
-	 
+				var list_c	= 1;
+
+				if(GM_getValue(BRO3_FAV_TRADE_T))	list_t	= GM_getValue(BRO3_FAV_TRADE_T);
+				if(GM_getValue(BRO3_FAV_TRADE_K))	list_k	= GM_getValue(BRO3_FAV_TRADE_K);
+				if(GM_getValue(BRO3_FAV_TRADE_TL))	list_tl = 1 - GM_getValue(BRO3_FAV_TRADE_TL);
+				if(GM_getValue(BRO3_FAV_TRADE_L))	list_l	= 1 - GM_getValue(BRO3_FAV_TRADE_L);
+				if(GM_getValue(BRO3_FAV_TRADE_UR))	list_ur = 1 - GM_getValue(BRO3_FAV_TRADE_UR);
+				if(GM_getValue(BRO3_FAV_TRADE_SR))	list_sr = 1 - GM_getValue(BRO3_FAV_TRADE_SR);
+				if(GM_getValue(BRO3_FAV_TRADE_R))	list_r	= 1 - GM_getValue(BRO3_FAV_TRADE_R);
+				if(GM_getValue(BRO3_FAV_TRADE_UC))	list_uc = 1 - GM_getValue(BRO3_FAV_TRADE_UC);
+				if(GM_getValue(BRO3_FAV_TRADE_C))	list_c	= 1 - GM_getValue(BRO3_FAV_TRADE_C);
+
 				if(list_k != ""){
 					var conditions = "t="+list_t+"&k="+list_k+"&tl="+list_tl+"&r_l="+list_l+"&r_ur="+list_ur+"&r_sr="+list_sr+"&r_r="+list_r+"&r_uc="+list_uc+"&r_c="+list_c+"&lim=0";
 					searchCount += searchTradeAndDrawResult(conditions, 1000000);
@@ -41133,19 +41137,19 @@ function disp_favorite_trade(){
 			}
 			j$("#favoriteSearchProgress").text("お気に入り検索終了");
 		}
-	 
+
 	}
-	 
+
 	// @name		   bro3_tradecardidview
 	// @version		1.00
 	// @namespace	  http://twitter.com/utoutouuto
 	// @description	ブラウザ三国志：トレード画面でカードＩＤを表示させる
-	 
+
 	function showCardIdMain() {
 		var $xp = function (xp, dc) { return d.evaluate(xp, dc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null); };
-	 
+
 		var IdNodes = $xp('//div[starts-with(@id, "cardWindow_")]', d);
-	 
+
 		for (var i = 0, len = IdNodes.snapshotLength; i < len; i++ ) {
 			var targetNode = IdNodes.snapshotItem(i);
 			var cardId = targetNode.id.match(/[0-9]+/);
@@ -41156,11 +41160,11 @@ function disp_favorite_trade(){
 			targetNode.parentNode.appendChild(cardIdEL);
 		}
 	}
-	 
+
 	// @name		   3gokushijpzourijp_cardnolink
 	// @namespace	  http://3gokushijp.zouri.jp/cardnolink
 	// @description	カードNo欄,スキル欄にトレードへのリンクを追加します。Ver0.0.2
-	 
+
 	function append_hyperlink_to_card_number_trade(){
 		var busho_no_es=$a('//table[@class="tradeTables"]/tbody/tr[position()>1]/td[ position() = 1]');
 		for (var i = 0;i < busho_no_es.length;i++) {
@@ -41171,7 +41175,7 @@ function disp_favorite_trade(){
 			skill_es[i].innerHTML=addtradelink4skilltext(skill_es[i].innerHTML);
 		}
 	}
-	 
+
 	function append_hyperlink_to_card_number_deck(){
 			var busho_no_es=$a('//table[@class="statusParameter1"]//th[text() = "ID"]/following-sibling::*[1]');
 		for (var i = 0;i < busho_no_es.length;i++) {
@@ -41188,7 +41192,7 @@ function disp_favorite_trade(){
 			spimg_es[i].width="85";
 		}
 	}
-	 
+
 	function addtradelink4cardnotext(cardnotext){
 		if(cardnotext.search('(T)')>=0){
 		return cardnotext;
@@ -41217,12 +41221,12 @@ function disp_favorite_trade(){
 		}
 		return t[1]+'<a href="/card/trade.php?s=price&o=a&t=skill&k='+t[2]+'">'+t[2]+'</a>'+t[3]+'<a href="/card/trade.php?s=price&o=a&t=skill&k='+t[2]+t[3]+'">(T)</a>';
 	}
-	 
-	 
+
+
 	// @name		   bro3_score_price
 	// @namespace	  http://359.blog-sim.com/
 	// @description	ブラウザ三国志　スコア単価計算　（修行合成対応改造）
-	 
+
 	function BRO3_SCORE_view() {
 		var area = document.getElementsByClassName("left-box").item(0);
 		var dom1 = document.createElement("div")
@@ -41232,30 +41236,30 @@ function disp_favorite_trade(){
 		dom1.innerHTML += "<td>｜<input type=radio name=rarity value=UR checked>UR <input type=radio name=rarity value=SR>SR <input type=radio name=rarity value=R>R <input type=radio name=rarity value=UC>UC <input type=radio name=rarity value=C>C｜</td>"
 		dom1.innerHTML += "</tr></table>";
 		area.appendChild(dom1)
-	 
+
 		var txt = document.getElementsByClassName("tradeTables").item(0).innerHTML;
 		var regexp = /経験値\:([0-9]*)[\s\S]*?<td class=\"right\">([0-9]*)<\/td>\r?\n?[\t\s]*?<td class=\"right\"><strong>([0-9,]*?)<\/strong><\/td>/gm;
 		var matched = txt.match(regexp);
-	 
+
 		if (!matched) {
 			var len2 = 0;
 		}else{
 			var len2 = matched.length;
 		}
-	 
+
 		var exp = [];
 		var score = [];
 		var price = [];
-	 
+
 		for (var i = 0; i < len2; i++) {
 			matched[i].match(regexp);
 			exp[i] = parseInt(RegExp.$1);
 			score[i] = parseInt(RegExp.$2);
 			price[i] = parseInt(RegExp.$3.replace(",", ""));
-	 
+
 			document.getElementsByTagName("strong").item(i+1).innerHTML += "<br><small>score</small>\n";
 		}
-	 
+
 		document.getElementById("chk1").addEventListener("change",function(){SelectView();},false);
 		for(var i=0;i<4;i++){
 			document.getElementsByName("nation").item(i).addEventListener("change",function(){SelectView();},false);
@@ -41263,35 +41267,35 @@ function disp_favorite_trade(){
 		for(var i=0;i<5;i++){
 			document.getElementsByName("rarity").item(i).addEventListener("change",function(){SelectView();},false);
 		}
-	 
+
 		function SelectView(){
 			if( document.getElementById("chk1").checked == true ) { ViewExp(); }
 			else { ViewScore(); }
 		}
-	 
+
 		function ViewScore(){
 			for (var i = 0; i < len2; i++) {
 				document.getElementsByTagName("small").item(i).innerHTML = "sc: " + parseInt(score[i] / price[i]) + " /TP";
 			}
 		}
-	 
+
 		function ViewExp(){
 			var b_nation = "";
 			var nation = document.getElementsByName("nation");
 			for(var i=0;i<4;i++){
 				if(nation[i].checked) b_nation = nation[i].value;
 			}
-	 
+
 			var b_rarity = "";
 			var rarity = document.getElementsByName("rarity");
 			for(var i=0;i<5;i++){
 				if(rarity[i].checked) b_rarity = rarity[i].value;
 			}
-	 
+
 			var point = [];
 			var bonus = [];
 			var getexp = [];
-	 
+
 			for (var i = 0; i < len2; i++) {
 				point[i] = 40;
 				var k = i*2+1;
@@ -41299,41 +41303,41 @@ function disp_favorite_trade(){
 				var t_nation = document.evaluate('//td[@class=\"busho\"]//div[contains(@class, "cardStatus_rarerity")]',document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(i).className;
 				var t_skill3 = document.evaluate('//td[@class=\"skill\"]/div[3]',document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(i).innerHTML;
 				var t_skill2 = document.evaluate('//td[@class=\"skill\"]/div[2]',document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(i).innerHTML;
-	 
-				if(t_rarity == "UR")		{ point[i] += 40;   bonus[i] = 15000; }
-				else if(t_rarity == "SR")   { point[i] += 30;   bonus[i] = 6000; }
-				else if(t_rarity == "R")	{ point[i] += 20;   bonus[i] = 1000; }
-				else if(t_rarity == "UC")   { point[i] += 10;   bonus[i] = 25; }
+
+				if(t_rarity == "UR")		{ point[i] += 40;	bonus[i] = 15000; }
+				else if(t_rarity == "SR")	{ point[i] += 30;	bonus[i] = 6000; }
+				else if(t_rarity == "R")	{ point[i] += 20;	bonus[i] = 1000; }
+				else if(t_rarity == "UC")	{ point[i] += 10;	bonus[i] = 25; }
 				else if(t_rarity == "C")	{ point[i] += 5;	bonus[i] = 10; }
-	 
+
 				if(b_rarity == t_rarity) { point[i] += 4;}
 				if(t_nation.indexOf(b_nation) > 0) { point[i] += 4;}
-	 
+
 				if(t_skill2.indexOf("--") == -1){ point[i] += 4;}
 				if(t_skill3.indexOf("--") == -1){ point[i] += 6;}
-	 
+
 				getexp[i] = parseInt( exp[i] * point[i] / 100 ) + bonus[i];
-	 
+
 				document.getElementsByTagName("small").item(i).innerHTML = "+" + getexp[i] + "<br>exp: " + parseInt(getexp[i]/price[i]) + " /TP";
 			}
 		}
-	 
+
 		SelectView();
 	}
-	 
+
 	// @name		   bro3_bushodasu_AddDelCommand
 	// @namespace	  http://chaki.s27.xrea.com/br3/
 	// @description	mixi版ブラウザ三国志　ブショーダスに「破棄」メニュー追加
-	 
+
 	function AddDelCommand(){
-	 
+
 		var hrf = location.href;
 		var cord = hrf.replace(/^.*card=(-?[0-9]+)/, "$1");
 		var card = RegExp.$1;
 		//alert(card);
-	 
+
 		var id = document.evaluate("//*[@id='gray02Wrapper']//*[@name='ssid']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.value;
-	 
+
 		var footBtn = document.getElementsByClassName('center').item(1);
 		var nakami = "　<a href=javascript:void(0) id='haki'><img id='image' alt='このカードを破棄' width=184 height=52 class='fade' /></a>";
 		var t = document.createElement("span");
@@ -41341,12 +41345,12 @@ function disp_favorite_trade(){
 		footBtn.appendChild(t);
 		var link = document.getElementById("haki");
 		link.addEventListener("click",function(){if(confirm('このカードを破棄してよろしいですか？\n※破棄すると、BP30を獲得します。')){Del_Card(card,id)};},false)
-	 
+
 		var image = document.getElementById("image");
 	image.src = "data:image/pjpeg,%FF%D8%FF%E0%00%10JFIF%00%01%01%01%00%60%00%60%00%00%FF%E1%00ZExif%00%00MM%00*%00%00%00%08%00%05%03%01%00%05%00%00%00%01%00%00%00J%03%03%00%01%00%00%00%01%00%00%00%00Q%10%00%01%00%00%00%01%01%00%00%00Q%11%00%04%00%00%00%01%00%00%0B%13Q%12%00%04%00%00%00%01%00%00%0B%13%00%00%00%00%00%01%86%A0%00%00%B1%8F%FF%DB%00C%00%02%01%01%02%01%01%02%02%02%02%02%02%02%02%03%05%03%03%03%03%03%06%04%04%03%05%07%06%07%07%07%06%07%07%08%09%0B%09%08%08%0A%08%07%07%0A%0D%0A%0A%0B%0C%0C%0C%0C%07%09%0E%0F%0D%0C%0E%0B%0C%0C%0C%FF%DB%00C%01%02%02%02%03%03%03%06%03%03%06%0C%08%07%08%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%0C%FF%C0%00%11%08%007%00%B9%03%01%22%00%02%11%01%03%11%01%FF%C4%00%1F%00%00%01%05%01%01%01%01%01%01%00%00%00%00%00%00%00%00%01%02%03%04%05%06%07%08%09%0A%0B%FF%C4%00%B5%10%00%02%01%03%03%02%04%03%05%05%04%04%00%00%01%7D%01%02%03%00%04%11%05%12!1A%06%13Qa%07%22q%142%81%91%A1%08%23B%B1%C1%15R%D1%F0%243br%82%09%0A%16%17%18%19%1A%25%26'()*456789%3ACDEFGHIJSTUVWXYZcdefghijstuvwxyz%83%84%85%86%87%88%89%8A%92%93%94%95%96%97%98%99%9A%A2%A3%A4%A5%A6%A7%A8%A9%AA%B2%B3%B4%B5%B6%B7%B8%B9%BA%C2%C3%C4%C5%C6%C7%C8%C9%CA%D2%D3%D4%D5%D6%D7%D8%D9%DA%E1%E2%E3%E4%E5%E6%E7%E8%E9%EA%F1%F2%F3%F4%F5%F6%F7%F8%F9%FA%FF%C4%00%1F%01%00%03%01%01%01%01%01%01%01%01%01%00%00%00%00%00%00%01%02%03%04%05%06%07%08%09%0A%0B%FF%C4%00%B5%11%00%02%01%02%04%04%03%04%07%05%04%04%00%01%02w%00%01%02%03%11%04%05!1%06%12AQ%07aq%13%222%81%08%14B%91%A1%B1%C1%09%233R%F0%15br%D1%0A%16%244%E1%25%F1%17%18%19%1A%26'()*56789%3ACDEFGHIJSTUVWXYZcdefghijstuvwxyz%82%83%84%85%86%87%88%89%8A%92%93%94%95%96%97%98%99%9A%A2%A3%A4%A5%A6%A7%A8%A9%AA%B2%B3%B4%B5%B6%B7%B8%B9%BA%C2%C3%C4%C5%C6%C7%C8%C9%CA%D2%D3%D4%D5%D6%D7%D8%D9%DA%E2%E3%E4%E5%E6%E7%E8%E9%EA%F2%F3%F4%F5%F6%F7%F8%F9%FA%FF%DA%00%0C%03%01%00%02%11%03%11%00%3F%00%FD%EA%D4%F55%B5V%CB%60%2FR%2B%E5%0F%DA%FB%FE%0A%81%E1%7F%D9%A7_o%0Di%D6%F7%9E1%F1%DC%B1%89%13B%D3%A4U%FB%1A%91%95%92%EEf%F9-%A2%20%82%0Be%DB%23j05%C3%FF%00%C1f%FF%00%E0%A3%AD%FB%10%FC0%8BL%D0o-b%F1%FF%00%8D%E7%93O%D0%C4%E5Z%3B%15A%FB%FB%D7V%E1%84JW%0Ar%19%D9%06%0F%CC%2B%F0%F3P%FD%B3%ED%BE%1Ex%AE%3B%1F%F8H%26M__%BBi%EF%F5%1DH5%C0%BA%9D%DB%F7%97%17%0F%92%CEK%12s%9C%F2q%81_%1F%9Ef%F5%A0%FE%AF%84W%9E%FE%87%EC%1C%0D%C0%B41t%16e%9A%3BRn%D1W%B73%F3%7D%15%F4%D3V%FA%ABk%FA%E1%A7~%DB%3F%1C%FE0%A4%177%9E%3E%D1%3C%03g%E7L%82%C7%C2%FA%247r%600*%AFs~%B3%09%1C)%03)%0Cc%3C%E0t%AC%DF%1C%FE%D0%DF%14%BC%2B~!%B0%F8%D7%F1%1A%5B%EBC%E6%5D%99t%ED%12%EE(I%FB%A9%24md%A0%1E%9F*%ED%23%D8%F0%3E%18%F0G%C6%0B%9B%AF%05%EB%D7z%FF%00%C5%CDZ%D6%C2%C5dX%22%D1%26%8E%C2%D2%F0%86%18%20D%BEi%8C%A6I%20%EE%E3%15%F3%E7%C6%AF%DB%D6%3F%1Fx%FE_%07x%0B_%3E%0C%F8q%60b%8E%EF_q2%1DN%60%7F%7B3I%CB%B9w%60%A39%E1%07%AE%0F%C1%E1e%9Abk%C9%CE%A3%B2%D7F%F4%FC%B5%EC%91%FA%8E%23%872%DC%24%A2%A7N%9CS%D1.H%BB%F5%D5%B5%AA%5D%DD%FC%D9%FB%25%E0%3F%F8%2B%A7%C4%1F%85W%F0%C1%E3%DD%23L%F1%A6%85%18D%9BS%D0%AD%1FM%D5%A1Q%D5%E4%B3vx%A6%E7%A9%85%D0%F5%DB%1Bt%1Ft%FC%17%FD%A3%FC%2F%FBBx%22%CF%C4%DE%0F%D5%ED%B5%8D%0E%F57Gu%13%15%C1%18%DC%8C%84n%8EE%CF%CC%8E%03%03%C1%00%8A%FE~%FF%00gO%8Av%DA%8D%DE%9B%A1%5B%DFj%1E*%BD%91%18K%A9%B5%C1o1%1B%3C%BAm%1BW%A62%03q%92Mo%DBx%D7%C4%3E%0B%F1%87%88-t%7F%15%F8%C7%C1%FA%A0h%DE%ED%7C%3D%E2%0B%BD%25uE%04%ACr%C8%B0%3A%2B%BA%83%B7q%04%E3%15%EAa8%9A%AE%0A~%CE%B3r%8F%9E%EB%FE%07%AE%A7%91%9Bx%5D%85%CC%23%CF%86Q%A5%3E%EB%E1k%CE%3D%1Fn%5B%2F.%AB%FA)%B3%9B%CE%81N%08%E0u95%23%0C%F4%AF%E7%5D%3Fh%FF%00%1D%2B%7C%BF%1A~9%AA%82G%CB%F1%13WQ%F9y%F5%A9%A1%FCe%F8%8D%AF%A4%AF%17%C6%CF%8EQ%C7%18%C0i~%24j%E8%B27%F7%14%F9%FF%00x%FE%9D%2B%DD%FF%00%5E%F0%91%8F%C1%2F%C3%FC%CF%9B%97%81x%F5%EF%7Df%1F%F8%0C%8F%E8Tt%A2%BF%9D%B9%FF%00h%8F%1F%DANc%97%E3_%C7%84%962C%23%7CD%D5%C1%1F%F9%1E%ADh_%1C%BE%22k%B7%AB%0C%3F%1A%BE%3Ad%02Y%9F%E2%3E%AE%11%07l%9F%3E%87%C7x%3B%5D%D3%97%E1%FEa%FF%00%10%2F0J%FF%00Y%87%FE%03%23%FA%1A%A2%BF%9D%EDS%E3%FF%00%C4-%22%F1%A0%9F%E3W%C7uu8%DD%FF%00%0B%17W*%DE%E0%F9%FD(%D3%BE%3F%FCB%D5.R%0B%7F%8D%3F%1D%E4%95%CF%03%FE%166%AE%06%3B%92%7C%FE1B%E3%BC%25%AF%C9%2B%7C%BF%CC%7F%F1%02%B1%F6%BF%D6a%FF%00%80%C8%FE%88h%AF%E7%9F_%F8%DD%F1%13%C3%D7%1Bd%F8%DB%F1%CEDp%0AJ%9F%11%B5vF%F6%FF%00_%D6%A9C%FBF%F8%FAy%02%A7%C6%BF%8E%ECI%DA%02%FCD%D5%C9c%E9%FE%BE%85%C7xK%5E0%95%BE_%E6%0B%C0%AC%7BW%FA%CC%3F%F0%19%1F%D1-%15%FC%F6k%1F%18%FE%23%E8v%D0%CB%3F%C6%AF%8EL%8F%F7%DE%3F%88%FA%BB%08%8F%A3%0F%3F%83Yg%F6%92%F1%DA%E0%9F%8D%9F%1D%D7%DB%FE%16.%AEs%FF%00%91%E9G%8E%F0RWT%E5%F8%7F%991%F0%2F0z%ACL%3F%F0%19%1F%D1)L%9E%ADN%03%03%B9%AF%E7%B2_%8B%FF%00%12%93F%5B%C1%F1%A7%E3%A3%827%18%97%E26%B1%E6%AA%FF%00x%AF%DA%3E%EDe%8F%DAG%C7G%A7%C6%EF%8E%C4z%8F%88%9A%BE%0F%FEG%AA%5Cy%84kHK%F0%FF%001%AF%02%F3%07%FF%0010%FF%00%C0d%7FD%DB%7D%CD(%18%AF%E7%AFM%F8%C3%F1%2BU%D3%9A%EA%2F%8D%3F%1D6%0C%F9h%DF%125%60%F3%E3%AE%D1%E7%F3%8A%CC%FF%00%86%8E%F1%E0%EB%F1%B3%E3%B8%FA%FCE%D5%F3%FF%00%A3%E9%7F%AF%987%A2%84%BF%0F%F3%12%F0%2B%1F%7B%7Df%1F%F8%0C%8F%E8%9Bf%0Er%7F%3A%5E%B5%FC%F4%E8%3F%1A%BE!%EB%EC%FEW%C6%DF%8EQ%C7%18%24%C9'%C4%7D%5DU%8F%F7G%EF%FA%D1%A2~%D7%3F%16%BE%1Ak%CB%7B%A3%FCp%F8%C1g%ABY%12%17%FBS%C4%F3%EBv%DB%BB%06%B7%BDi%60q%D4a%90%9FB%0DTx%F3%06%E5%CB%C9%2F%C3%FC%C4%FC%0B%CC%5D%D4q0%BF%A4%8F%E8Z%8A%FC%F7%FF%00%82%5B%7F%C1a%EE%BFi%CF%19%C7%F0%C7%E2%8F%F6V%97%F1%01%E02h%DA%9E%9E%AD%15%8F%89%91T%97%026-%E4%5C%A8%1B%8C%7B%CA%B8%0EW%EE%E0~%80%E2%7Fo%FB%EC%7F%F15%F58%2C%C2%86.%9F%B5%A2%EE%8F%CAs%FE%1C%C7d%D8%B7%82%C7G%96K_%26%BA4%FA%AF%F8gf%7F1_%F0%5E%AF%8Aw%3F%B5%97%FC%15%83%C5ZLWbM%3F%C1%B7k%E1-8m8%89%A1%2C%D3%82%A3%A9%FBKJ7u%DB%C7N%2B%C9%FC9%FB%24k%DF%1C%B4%5D%5B%C3%96Kaeyd%F1%24%0B%3E%9D%1C%C9r%B9%05%CB%CB%86x%86%CE%01%00rrkG%F6%F3%9E%F7%C2%DF%F0U%1F%8Dmt%869%A2%F8%9F%AC%CF%1E%F1%C8%8E%5B%D9J%1E%7Bmd%20%F7%CDz%9F%87%3Fm%0DK%C3%7F%0C%BF%B1t%3B%1BK%7D%5Ex%1A%19.%8C%01%A6%3E%8C%1B%D7%1C%0A%FC%EF3%C5b!Z%F4%F5w%DF%CF%B9%FDg%90%E5te%94%C2%8C%15%97*O%5B%5DZ%DA%DB%CB%E6%CC%DF%D9o%F6%40%D2%FE%14%7CS%9F%C2%9A%EE%B1k%AB%E9%9A%7D%8B%DC%88-%1D%99!%94%AB%E22q%CE%0A%82Tq%D2%BE%91%FD%9F~%12%7C(%D6%BC5%A8h%1A%D2%DA%E8%AF%A9%22Aqg%A8%5B%C3%25%8D%F2%872%20Et%C2%80%FD%BB%15S_%14%7C%25%FD%AA%BCg%F0%DF%E2%86%AF6%89q%FD%97%A9%DDB%D1%FD%B2%EA%0F8%DC%0D%8C%18)%3Fu%B6%92%3D%3F%1A%ED%FE%1D%FCw%F1'%8C.u%3D%2B%E2O%8A%B4%9B%7F%0Ca%04%3AT%C1%FE%D7%1B%2B%0C0%00%02%AD%DF%E5%3D%0F%E3%5EN%22%96%25%CD%D5%94%B5%B2%DBw%7FC%D6%A9%87%A5*K%0FOHh%97%95%AF%7D%1A%B5%B6%B7%7F%2B%1Fn%F8%E7%C3%9E%11%F8K%A6%5E%DCi%B7vW%B7%D70G%09%7Bo*%2F%B0%A2%E0%00%15%14%02F%00%C9%C9%DA00%2B%E2%BF%8E%9F%10%DFO%F1%16%97%AB%DB%19%DC%19%DFO%95%D8%E0%9D%D8h%C9%FA8%FD%2B%8B%F1o%ED%09%E0%AF%86%5E%24%BC%84x%AEMJ%CA%DEW6%D1a%9E%E9%D3%1C%02%07%00%E4%E3%24%8C%E2%B9%8F%1A%FClO%1F%FC%13%D5%2F%925%89d%BD%85%EC%AD%D5A%956n%3Ed%8D%D0%13%C6%10s%8EOj%E7%A7%96%D5sR%A8%9BOK%BF%3D%0E%9C-L%3D%18%3At%EAs%CE%DF%97%92%D8%EB%AC%BE.h~'%D7%23%97S%96%E7E%8Ay%7F%D3%9E8L%F2%5B%C2%1B%E6%9E8%D5%86%E3%9C%82%A6%BDc%C1%D1%FC%1B%F8%9Fi%A8O%17%C6%7DJ%CBC%F0%E5%B8%9Ey.%B4e%B3%8E%02~%E2%A8%92%5D%F2%BB%11%FC*O%3F%40%DE%05%F0%03%C1%DE%11%F8%CF%FBB%E9%D6%3E%22%D4N%83gu%1E%E0%D0%DD-%AA%DC7%95%BA%20%25%7C%AA%12%C4%03%91%C9%26%AEj%DF%F0O%2F%8D%9E%2C%D5%A1%B2%7F%05A%0D%9Cg%CCi%AD%EF%ED%16%0B%83%C9%F3w%99%009%C9%23%D3%3D%05q%E2%B0%D8U%3Fe%3A%CE%93I%3D%5CR%B3%ED%CC%B5%DB%A3%D3C%D4%96*n%0B%F7%9C%AE%DAm%D7%AD%E4%9D%AD%D7%FE%09%DF%FC'%D7m%3Fh%AB%FDv%E2%0DZ%C3O%F0%F7%84%8E%2F%BCK%A9%B3%C1jaf%D9%19u%1F1%99%88%CA%A0%24%92px%15%E9~(%F8%07%A6%DD%8Bo%0A%F8%2F%E2%86%9B%AA%F8%96%F7I%8B%5E%83G%BE%B0%7D%3D%B5kwB%EA%EB%2B9%1B%8A%8C%88%8E%1B%9Cq%F7%8F%8B%FC%3B%F8w%A6%F8%B7%E0%7F%8A~%0B%EA%9A%FF%00%86%BE%1Ex%9FD%F1%8C%1A%95%EB%EAz%82%247%B6b%01%0B%20%91IY%1E7%25%F6%82O%3Cr%2B%D1%AE%3C)y%F1%03%F6%B1%D2%FE%2F%3C%D6%FE%12%F8%3B%E0%E9!%8FN%D6onV7%D4%A0%B2B%82(cf%F3%18I*%90%06%DECr%09%F9O%9B%8B%5C%B5d%E9%CF%95E6%93I%A7%A2%E5%E9%EF9%B6%EC%A3%D1y%15%3CUd%EF%CDkvJ%CD%FC%D3%7D%EDf%B4VZ%98%7F%0A%F4o%10~%D0%3A%3BZ%E8%F0%D9%CFo%A1%5E%25%95%D5%E5%EE%AB%05%A5%C4r%F0Y%3C%B9%189%402%07%07%18%C5z%2F%C6%0F%D9%3F%C7%1E%13%F8%85%AEh%FF%00%0Fl%A1%D5t%87%F2%E4%B7%92%7Db%D8j3%A7%92%1D%E3T%DC%AF%C3%17%E83%B5A%AF%9E%BE%0E%FC.%B6%FD%A2%BFh%1F%13x%BE%FBN%B6%F0%F7%814mrm%7F%5D%D5%EE%DCD-%91%E6y%96%D9W'%3B%D7%0A%14g%1Cu%3F%7B%D4%3Ffc%E2%DF%8A_%B6%E5%FF%00%C6%FDSC%9A%CB%C0%02mOP%83W%BA%C6%D8%AD%23%B7%96%DA8%C9%CEK%00P%7F%BD%D2%9E6%15)Ns%84%E2%A3%18%5D%C5%AF%B4%EC%D4o%CC%AE%DD%9E%DB.%9A%97_%19Z2r%8D%B4MZ%CD%AB%E8%D2n%EB%5D%1D%AD%DF%AD%D1%E6p%7C%7D%D3%7C9%A7.%8D%A8%CEo%84%CD%9B%92%AD%81b%FE%89%FE%D0%3C7%D2%A7%D6%BE4%D9x%12%CE%2B%8B9%22%BA%BD%BC%8C-%BD%C4d%BC1%260Xg%AC%AD%D4%8F%E1%CF%15%C2%7C9%FD%A0%E3%F8%01%A6%FD%82%F7%E1%EF%C3%9F%15%9DZ%E5%B5%09%2Fu%FD%04_M%10a%B7%CB%8EB%C3(%0A%E7%03%BB%1FZ%EA%7CM%FBl%5DhI%1A'%C1%EF%80%B7%167%00%BD%A4%F0%F8L%85%24%F1%B8fC%B5%C7%A1%19%CD%7B%13%C0%CF%DA%25%0AwO%FB%C9'%F2%E9%E9%D8%E8%A9%8C%9C%5C%97%25%ED%E7%F9%AB%7FOC%D0%FC%24%B2%A7%EC%B9%E2o%1F%5CK%A9_%EA6%9A%C4%3A%7B%D8%A3%07%81%E1%920%EF%23%80%0B%07%1B%81%04%9A%E6uO%8B~%09%D0%BE%19%E9%FA%C6%9D%AA_%EA%5E%25y%11%9E%CEX%80%B5%84%EF%942H%7D%40%10%B8%20%F2%09%18%AB%BF%00%BE-%F8%AF%F6l%FD%83%7Cg%E2m%1A%EDlu%D6%F1%9D%B0m%D1%24%B8W%80e%19_%23%04.1%D6%BC%8B%E3%97%C7%7B%AF%8B%D1i%DE%22_%0Dx%5BN%DB%03%C1%A9%CF%A5Z%1BQ%A81%20%83r%83*%24%5C%1C%3A%A8%CEk%9B%09%83%A9W%11R2W%82%9BI%A7m%92%7C%AD%5Bmti%DC%98bd%E5%255k%3B%F9%A5e%BA%B6%DE%8E%E7%D6%FF%00%00%BE%09%D9x%DF%C2%F7~9%D7%BE%26%F8li%87O%1B~%C7z%D1%BD%B5%E4%A8%A6(.7%C6T*n%C3%A2%8E0k%C8%3E%26%F8%93A%F0V%BB46%9E%25%D1%7CIo%02Gqqq%A34%CF%1A9b%AD%02%97%0A%0F%F7%B3%806%E3%06%BD%5B%F6U%F8%E9%AB%F8%8B%E1.%A1%ABx%5B%C3%1A%CE%93%E1o%04%CFl%20%F0g%87dV%D55%A9%DC%02%F7ws%B2%F9%86%1E%0E%161%F3%60%83%80%A2%BC%B3%F6%EA%F8%A3%E3%BB%1F%11%DE%B5%B7%82%C7%85%FE%1C%EA%3A%AA%5C-%94%FE%1F%8FM%9BWx%CA%BC%8F%3B%01%E6%B6%F6%DCO%23%20%E4%80I%AF%2B%03%1CD%F3%19%D0%ABktW%8A%B6%DAh%B5%95%9D%F4v%F3%D1%91G%15R5e)6%E3%DBM%16%9D-%7B%D9%DFGku%D0%F5o%17%FC3%F0%F6%A3%F1'F%D1%F4%BF%1C%EB%96w%DF%D8%AB%E2%1B%C9%2F%F4%C5H4%DB%0F%B2%99%F6%81%13%163*%85%060%A7%BF'%ADG%FBD%7C.%F0%AF%83%FE%1F%DCx%AF%40%F1%9CZ%A8%87F%D2%F5%0B%ABY%AD%26%8EI%FE%DB%92%B3%C4%CC%15F%F0%B28%88%E5%95P%EE%20%D7%B5%F8%B6%F3%5Cd%D5%7Cf%DAm%AD%DF%F6D7W%BA%0CPZ%2B%BD%DD%B4%9A-%AA%24%11%84%05%E4%0Dy%2C%88%03%12r%07%25q%5E%2B%FF%00%05%1E%9B%C4%83%F6t%BD%BB%B8y%F5H%FCE%ACX%CF%A7%AB%E9Q%C4%DE%0D%B3HD%DFg%99%E2%8Fz%CD%E6L%AB%B5%89%F9W%D4%D7%93%97c*%D7%C5Q%A3%CDet%9E%AB%7B%A6%D7%C3%D1y%ABt%BB%DF%96%962%ABt%E4%A4%DD%96%ABMZz%AF%87%B7%9A%B7%E7%DAx3%F6s%F0_%8B%3C3%A3%DF%C9%E2_%12Ocz%19%EC%F4%98%AF%B4%88%A6%BD%01%19%9A%E1%1B%EDEH%8C%8F%9Fq%DC%08%23%02%B8%EF%DA7%E1%FF%00%84%BE%1E%7C%1A%B1%F1f%9F%E2%FB%CF%12O%3C%A2%CA%12%B3%D9M%12%C8%1B%05ghg'%A6%E2%0An%FE%10q%5E%E5%FB9k%9E(%8F%C1%3E%18%FF%00%84%A7%C5%91%EA%12B.%D2%3B%E6k%8D-%F5%60c%96A%FE%8D%3D%A2%B4%86%25%07%E6F%DB%85%04%83%8A%F0%AF%F8(%F6%A1%E2%8DW%F6l%B66%5E%2C%86_%0C%3A%06%93%EC%F2O%A9%A6%BB%E6%CE%85%3C%CB%B4%B6Hb%08W%20nRFyn%2B%9F.%C5bj%E6%91%C3N~%EF5%AF%D1%AB%BF%2B%EBo%2F%3B-%A6%9E'%10%AB%FB%CE%E9%3D%B4%DB%5D6%F2%5E%7D%DD%B6%F9%1A%1F%DA%CF%C6%5E%0E%F8%9B%E1%7F%12%F8zf%B4o%01%EB%16%FA%AD%9E%20P%EB2L%9F%3B%9E%1B%E78%1Bs%F7I%07%AD%7F%60~%5B%FA%A7%E4%7F%C6%BF%8B%EF%19x%B3U%F1%0E%8B%F6Y-V%11%0C%A8%D7%868%82%19%E4%DE%06_%DF%1D%BB%90M%7Fh%3EY%F5O%CA%BF%A18j%92%84%26%A3%14%B6%EB%EA%7F%3F%F8%E9g%88%C2Mku%3D%D5%BA%C7E%E9%F9%DF%B9%FC%E1%7F%C1%CC%FF%00%B3%25%F7%C1o%DB%EA%E3%E2%24%10%CB%FD%85%F1J%DDX%DC%05%C2%5B%EA%16%AA%B1%3C%7Cp3%1A%C2%E0%F7%2C%DE%86%BE%03%D7%FF%00i%8Dk%C3%D76%A9ega%2C%7Bs%F6%88bfx%8E%3E%60I%18%1E%DE%D5%FDN%7F%C1J%BFa%9F%0D~%DE%1F%B3%FE%BB%E0%AF%10A%10%92%E3u%CE%99%7B%B3t%BAm%EA%AB%F9S%A7%B8%25%81%1D%D4%B2%F7%AF%E6%13%E3%CF%EC%C1%F1%07%F6%18%F8%B5y%E1O%88%1AL%BA%7D%FD%84%8C-.%D1%0BXkP%82v%CD%13t*%40%CE%09%CA%E7%AEA%15%96a%81P%AA%EAIs'v%BE%7F%E5%F9%7C%CFG%82%B8%96X%EC%BA%9E%02%9DOgV%09'%A7%D9VK%EF%5D%7B%AF5w~%CD%D6%9A%B7%C6%3D~f%8F%C4z7%87%EC%25%2C.%AF%EF%99%D9%A3%5Cg%00%20.%06F%3Bd%9A%F6%CF%89%FF%00%B3%0F%85t%8F%0B%CCt%CF%19x%A7%C5%FA%8BD%85%5E%1D6%05%B3%90%90%84%FC%E6Y%5C%8F%99%B2%5Bo*8%19%E3%CA%7C1%17%87%26%8E%1DoIkM%3E%FA%40d%90%CA%01%8E7%1C%93%F2%8C%F5%FF%00g%9A%F5%DF%D9%D7%F6%8B%BC%F1%EE%B5w%17%8E%BE!Z%7D%8E%DA%5D%B1%99m%E5%98L%8B%D0m%3BW%23%03%19%FE%95%F3%D8%9CKW%9D8m%BD%EF%7F%C1j~%97%87%C3T%8F-%3A%F5%1B%BD%F6Z%3F%CF%EE%3Eq%F8%8F%FB'%EA%1F%0D%7C7q%AEj%F6%B3%AC%97%93%ED%D3%ED%C2%22%B8%88%B6%03%C8%00%F9K%1C%E0zv%AD%8F%14%F8%A7I%B2%F0%25%B6%85c%0Cv%F2%C7%0A%861%9C%FE%F0cvO%7C%F1%CDw_%B7W%EDQc%F1SQ%8E%C3D%0E%9At%5B%227%1F%F2%D6%E7o%DD%3BG%DD8%EC2z%D7%B1%7F%C17%7F%E0%81%DF%10%BFo%3F%06%3F%8B%7CC%AE%5E%7C5%F0%CD%ECA%F4i.%B4%A6%B9%BE%D4%09%E4J%23%2F%1E%D8%8A%90C%9C%93%9E%01%CEGf%12%9D%7C%5C%23*%AA%CE%F7H%F2qx%FC%06K)T%9D%A3%16%95%DB%F9%DF%CD%B7%7B%24%AE%FC%AC%9D%BEU%B0%8A%C3%C6%3A%7CW%86%F6%1D%26k%1C%7D%B5%1B%81%B4r%1E0%3A%9C%F1%B7%A7J%CA%D7%BC%7D-%E5%F4%8Bh%D3Ac%86T%85%98%F3%9F%E3%23%A6%EC%F3_%B0%96%3F%F0g%5D%BC%F1)%FF%00%86%84%D4b!%40%23%FE%10%E0~%BF%F2%FDR%9F%F83j%CC%FF%00%CD%C5%EAc%B7%1E%0E%1F%FC%9D%5D%B1%C8%AB%DE%EE-%AE%9Bi%F8%9C%7F%F1%16%F2(AF%15%D2%7Dm%1A%9A%FF%00%E4%9F%F0%E7%E3%FD%95%8D%97%C4%3BT%8Bu%BD%96%B3%02%E1%99%B0%B1%5D%A0%00%12%7D%18%01%CF%AD%1E%26%F1%7C6%DFg%B2%B1%2Bu%0D%8A%AA%3C%F3%A0e%BA%23%FD%93%FC%1C%F4%EF%D4%D7%EC%0F%FCA%BBh%A3%03%F6%89%D4%88%F7%F0h%3F%FB%7DH%DF%F0g%05%A3%F2%DF%B4V%A3%9C%E7%FED%D1%D7%FF%00%03%A9%3C%8F%10%9D%E5%1D%3A%2B%AF%F3%2F%FE%22%E6B%A2%F9k%25'%BB%E5%A9%AF%FEI%FF%00%0E~%3Eh%3A%E4Z%F5%8C%9AM%FD%E4%F6~y_%22%60%C4G%95%CE%D8%E4Q%C1%5EN%18%F2%B9%C0%ABZ%EF%89f%F0%9F%87%7F%B0m5%09%EE%25g%CD%D6%C9O%90%87%FEy%A8%CE%0F%3C%93_%AFI%FF%00%06pZ%A2%E0~%D1Z%97%FE%11%A3%FF%00%93%A9%5B%FE%0C%E0%B5%DB%CF%ED%15%A8%E0%F5%FF%00%8A4%7F%F2u%0F%22%AE%E5%ACt%DE%DAo%F7%84%7C%5D%C8%94%2C%AB%FB%DB_%96%A6%DF%F8%07%E2~%3B%E9%BE4%87XY%2Cux%E2%1Au%C1%CCF(%C2%FD%85%CFFA%FD%D3%FCK%DF%ADj%FD%B9%3E%19i3%40.%AD%B5%2B%CB%96%0Fn%83%12Cl%3F%86c%9E%92%10x%03%D6%BF%5CO%FC%19%BFh%1B%3F%F0%D1Z%91'%9E%7C%1C%3F%F9%3A%9D%FF%00%10qZ%E7%8F%DA'Q%E9%8E%3C%1A%07%FE%DFT%CF%24%AC%DD%B9t%EA%B4%FF%00%3F%F8p%A7%E2%E6D%95%DDu%CD%D1%F2%D4%FF%00%E4%3E%EE%C7%E3%C6%9D%F1OP%8E%D6K%0B%AB%9B%8B%8D%16%EEa5%ED%80%99%96%0B%A9%008%99%D782%80N%1C%8C%F3%D6%B5%B4%B3%A7%F8%05f%D4%E0%BEMF%D2%F16%5BY%60%131%F4%98%1E%06%DF%D6%BF%5C%3F%E2%0D%FBF%CB%1F%DA%2FS%DD%9F%FA%13%87%FF%00'R%8F%F83z%D4%A8%FF%00%8C%8A%D4q%FF%00bh%FF%00%E4%EA%A9d5%DB%E5%8Cm%DDi%AF%E2M%3F%172%18%EB*%C9%BE%8F%96%A6%9F%F9!%F8%EB%A5%7CZ%D74Ms%FBF%C3Q%B8%B2%BC%25%B35%A4%86%DEGS%81%B3*A%D81%C0%ED%81%5D6%A9%E29%FCaqo%E2%0DC%C5%1A%AD%FD%8D%88%C7%91%7Dy%25%CD%C4%12%1E%B0%A6%F2~V%E7%07%D0%F3_%AC%3F%F1%06%E5%98'%FE2%2FR%CF%FD%89%C3%FF%00%93%A9%EB%FF%00%06n%DA%A1%E3%F6%8A%D4y%FF%00%A94%7F%F2uL%F8~%AB%7C%D1%85%9E%DFgn%DB%8E%9F%8B%99%1Aw%A9%5D%3F%FBv%A6%9F%F9!%F8%F7%07%C5%FDkA%D5%EE%AE4%3B%EB%BD%03%ED%0C%9B%05%85%C3%5B%98%D69%04%882%84tuV%1F%ED(%3DEl%D9x%9A%EF%C5%F6%17%F2%C5%E2%7DKH7%EE%B2%EB%B1%3D%EC%9E%5D%F6%D6%0E%B2%95%CF%EF%1C8%07%0D%9EFk%F5%9C%7F%C1%9BVa%8F%FCdV%A7%92%7F%E8N%1F%FC%9DO_%F83v%D06%7F%E1%A2%B5%2C%FF%00%D8%9A%0F%FE%DFUO%87%EA%EF%18Y%F7%F7%7F%CC%98x%B7%916%FD%ADt%D3%FE%EDO%97%D8%3F%23%BCO%FBA%F8%A3V%F1%C4z%D4~%23%D7%A4%D4%EC%E3x%60%BF%B9%BE%96K%B0%1D%0ClK%96%DC7%2B0%C0%3D%18%8E%95%1F%86%BCM%A8x%83%C1%3A%8E%81%0E%BD%A8ipK%1A%CBuh%2F%9E%2B%3DI%10%86%FD%ECa%82%B3%AE%01%1C%1F%BB%9E%B5%FA%E8%BF%F0f%DD%A2%F1%FF%00%0D%15%A9%F1%FF%00Rp%FF%00%E4%EA%E8%3E%1B%7F%C1%9E%DE%09%D2%3CI%1C%9E%2F%F8%D7%E2%CF%11i%09%91%25%9E%9B%A2%C5%A6K!%E3%FEZ%BC%D3%E0%10H%23g%7C%821%CC%BC%82%A4b%94!k%5B%F9z%7C%C5%FF%00%11k%22%D5%CA%B2k%B7-O%92%5E%E6%9EG%E7%0F%FC%13%BB%F6O%D6%BF%E0%A5%FF%00%B6W%85%7C%0D%A4%D8%5D%5Cx'F%BD%83Q%F1v%A8%B1%EC%02%CE%23%99%1AW%03%01%E5%03b%0EN%5B%9E%99%1F%D5~%0F%F7%A4%FC%87%F8W%93~%C8%7F%B1%8F%C3%1F%D8k%E1%BF%FC%22_%0C%BC%2Fa%E1%BD%2F%22%5B%99%23%0D%25%D6%A3%20%FF%00%96%D3%CC%FF%00%3C%AC2pI!w%1Cm%07%15%EB%99%3F%DDo%CCW%D2%E58%18%60%E9%F2%DA%ED%FF%00_%D7%DD%D0%FC%1F%8F%F8%CE%7CA%8D%8DT%AD%08_%96%FB%EBk%BE%B6%D9i~%97%DD%D8%AF%A8i%91%DD%82J)c%DF%1C%FF%00%9E%07%E5%5E%11%FBV~%C3%DE%01%FD%AC%7C%11q%A1x%EF%C3%3AO%88t%D9%5C%C9%1F%DA%A2%06%5Bw%23%1EdN%00h%DCp7)%07%D4%D1Ez%B5)BK%96J%E8%F8%9C.*%B5%09%AA%94d%E3%25%B3N%CC%FC%B8%F8%EF%FF%00%06%A7%E8%8F%A9%DC%DC%FC8%F8%9D%ADx%5E%CERY4%FDR%D1u%18%94%93%C2%2C%81%E3eA%D0e%5C%E0%0C%96%3C%D7%99x_%FE%0DJ%F8%81s~%23%D5%FE0%E8V%B6Hs%E6YiRO3%F6%CE%19%E3%03%3E%C6%8A%2B%CC%96WB%F7W%FE%BDO%B6%C3q%DEs%1A%7C%9E%D2%F6%DBE%A7%DDd%FEi%9Fg~%C4%DF%F0n%0F%C1%AF%D9%C3R%B4%D7u%C4%BC%F8%91%E2%5B%7D%AC%B3%EB%BB%0D%942%0EK%C7l%01Q%C9%24%072c%8Ex%CD~%91%F8%3F%C1%16%BE%1E%B4%8D%22%868%F6%00%00P%068%C7%F2%A2%8A%ED%A1%86%A5O%E0G%CDf%B9%C63%1D%25%2CT%DC%BF%04%BD%12%D1%7C%91%D1%C7%18%89%00%00%00%3D)%D8%1E%94Q%5Dg%86%14%9BG%A0%A2%8AV%40%2FJ%3A%D1E0%13h%3D%85(%18%14Q%40%06(%A2%8A%000%3D%05%18%A2%8AV%40%14QE0%0A0(%A2%8B%00%81%15I%20%00O%24%E3%AD.%07%A0%A2%8A%2C%07%FF%D9";
-	 
+
 	}
-	 
+
 	function Del_Card(card_id,id) {
 		var data = "deck_file=&target_card="+card_id+"&mode=del&p=1&ssid="+id;
 		GM_xmlhttpRequest({
@@ -41357,11 +41361,11 @@ function disp_favorite_trade(){
 			onload:function(x){location.href="http://" + host + "/busyodas/busyodas.php";}
 		});
 	}
-	 
+
 	// @name		   bro3_Trading_support
 	// @namespace	  3gokushi-elmore
 	// @description	bro3_Trading_supportと同機能改造版
-	 
+
 	function TradingSupport(){
 		jQuery.noConflict();
 		j$ = jQuery;
@@ -41394,7 +41398,7 @@ function disp_favorite_trade(){
 						"<a href='" + tradeUrl + cardId + "' target='_blank'>トレード画面を表示</a>" +
 						"<div id='searchPrice' style='height:23px;'>" +
 							"<input type='button' value='即落札価格を検索'>" +
-						"</div>" + 
+						"</div>" +
 					"</div>"
 				);
 				j$(this).append(linkHtml);
@@ -41422,13 +41426,13 @@ function disp_favorite_trade(){
 			}
 		);
 	}
-	 
+
 	function ExhibitSupport(){
 		var area = "";
 		if(path.indexOf("/card/trade_card.php") != -1) area = "cardColmn";
 		else if(path.indexOf("/busyodas/busyodas_result.php") != -1) area = "back";
 		var cards = document.evaluate('//*[@class=\"'+area+'\"]',document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-	 
+
 		for (var i = 0; i < cards.snapshotLength; i++){
 			var card = cards.snapshotItem(i);
 			var target = "";
@@ -41452,12 +41456,12 @@ function disp_favorite_trade(){
 					}
 				);
 			}
-	 
+
 			var html = document.createElement("div")
 			html.align = "center";
 			html.style.position = "relative";
 			html.style.zIndex = "10";
-	 
+
 			var div01 = document.createElement("div")
 			div01.id = "DIV01"+i;
 			var child5 = document.createElement("input")
@@ -41479,7 +41483,7 @@ function disp_favorite_trade(){
 			child7.id = "BT3"+i;
 			child7.addEventListener("click",simu(i),false)
 			div01.appendChild(child7);
-	 
+
 			// 499TP出品
 			var div03 = document.createElement("div")
 			div03.id = "DIV03"+i;
@@ -41520,7 +41524,7 @@ function disp_favorite_trade(){
 			html.appendChild(div02);
 			html.appendChild(div03);
 			card.appendChild(html);
-	 
+
 			if(path.indexOf("/card/trade_card.php") != -1 ){
 				if(target.indexOf("このカードを出品する") != -1){
 					div01.style.display = "block";
@@ -41544,7 +41548,7 @@ function disp_favorite_trade(){
 				}
 			}
 		}
-	 
+
 		function ExhibitCard(n,i,price,btnid) {
 			return function() {
 				var txt = document.getElementById("TXT"+i);
@@ -41563,7 +41567,7 @@ function disp_favorite_trade(){
 					ex_dom.id = "ex_dom";
 					ex_dom.style.display = "none";
 					document.body.appendChild(ex_dom)
-	
+
 					ssid = document.evaluate("//*[@id='ex_dom']//*[@id='gray02Wrapper']//*[@name='ssid']", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 				}
 				var id = ssid.snapshotItem(0).value;
@@ -41576,7 +41580,7 @@ function disp_favorite_trade(){
 					data: data,
 					onload:function(x){change_mes();}
 				});
-	 
+
 				function change_mes(){
 					var dom = document.createElement("div");
 					var url = "http://"+host+"/card/exhibit_list.php";
@@ -41591,7 +41595,7 @@ function disp_favorite_trade(){
 				}
 			}
 		}
-	 
+
 		function Deprotect(n,i){
 			return function() {
 				var id = document.evaluate("//*[@id='gray02Wrapper']//*[@name='ssid']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.value;
@@ -41604,19 +41608,19 @@ function disp_favorite_trade(){
 					data: data,
 					onload:function(x){change_btn();}
 				});
-	 
+
 				function change_btn(){
 					var div01 = document.getElementById("DIV01"+i);
 					var div02 = document.getElementById("DIV02"+i);
 					var div03 = document.getElementById("DIV03"+i);
-	 
+
 					div01.style.display = "block";
 					div02.style.display = "none";
 					div03.style.display = "block";
 				}
 			}
 		}
-	 
+
 		function simu(i){
 			return function() {
 				var price = document.getElementById('TXT'+i).value;
@@ -41627,20 +41631,20 @@ function disp_favorite_trade(){
 				alert("出品価格："+price+"\n手数料："+commission+"\n受取価格："+value);
 			}
 		}
-	 
+
 	}
-	 
-	 
+
+
 	// @name		   ----
 	// @namespace	  http://chaki.s27.xrea.com/br3/
 	// @description	即落札補助　ｂｙきの。
-	 
+
 	function ImmBid(){
 		var table = document.evaluate('//*[@class=\"tradeTables\"]//tr',document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 		var exhibit_cid = [];
 		var exhibit_id = [];
 		var address = [];
-	 
+
 		for(var i=0; i < table.snapshotLength; i++){
 			var td = document.createElement("TD");
 			td.innerHTML = "";
@@ -41651,8 +41655,8 @@ function disp_favorite_trade(){
 				exhibit_cid[i] = parseInt(RegExp.$1);
 				exhibit_id[i] = parseInt(RegExp.$2);
 				address[i] = RegExp.$3.replace(/\&amp;/g, "&");
-	 
-	 
+
+
 				var btn = document.createElement("INPUT");
 				btn.type = "button";
 				btn.value = "落札";
@@ -41662,7 +41666,7 @@ function disp_favorite_trade(){
 			}
 			table.snapshotItem(i).appendChild(td);
 		}
-	 
+
 		function ImmBidSend(cid,id,add,i) {
 			return function() {
 				var data = "exhibit_cid="+cid+"&exhibit_id="+id+add+"&buy_btn=落札する";
@@ -41673,7 +41677,7 @@ function disp_favorite_trade(){
 					data: data,
 					onload:function(x){change_mes();}
 				});
-	 
+
 				function change_mes(){
 					document.getElementById("IB_BT"+i).value = "完了";
 					document.getElementById("IB_BT"+i).style.backgroundColor = "blue";
@@ -41682,11 +41686,11 @@ function disp_favorite_trade(){
 			}
 		}
 	}
-	 
+
 	// @name		   ----
 	// @namespace	  http://chaki.s27.xrea.com/br3/
 	// @description	カード画面マウスオーバー表示　ｂｙきの。
-	 
+
 	function OverMouse(){
 			var dtt = document.getElementsByClassName("thickbox");
 			var card_id = [];
@@ -41694,12 +41698,12 @@ function disp_favorite_trade(){
 				var regexp = /inlineId=cardWindow_([0-9]*)/
 				dtt.item(i).href.match(regexp);
 				card_id[i] = parseInt(RegExp.$1);
-	 
+
 				dtt.item(i).addEventListener("mouseover",popup(card_id[i],i),false);
 				dtt.item(i).addEventListener("mouseout",popdown(card_id[i],i),false);
 			}
 	}
-	 
+
 	function popup(cid,i) {
 		return function(e) {
 			var x, y;
@@ -41724,12 +41728,12 @@ function disp_favorite_trade(){
 			box.style.display="none";
 		}
 	}
-	 
-	 
+
+
 	// @name		   ----
 	// @namespace	  http://chaki.s27.xrea.com/br3/
 	// @description	ブショーダスライトで特定のカードを自動破棄　ｂｙきの。
-	 
+
 	function AutoDelete(){
 		var type = document.evaluate('//*[@id=\"gray02Wrapper\"]//h3', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML;
 		if( type.indexOf("ブショーダスライト") != -1 ){
@@ -41740,12 +41744,12 @@ function disp_favorite_trade(){
 			bp_btn.match(regexp);
 			bp = parseInt(RegExp.$1);
 			// alert(bp);
-	 
+
 			if( auto_delete_cno.indexOf(cardno) != -1 ){
 				var hrf = location.href;
 				var cord = hrf.replace(/^.*card=(-?[0-9]+)/, "$1");
 				var card = RegExp.$1;
-	 
+
 				if( bp >= 70 ){
 					//破棄してもう一枚
 					document.getElementsByName("del_card_id").item(0).value = card ;
@@ -41755,7 +41759,7 @@ function disp_favorite_trade(){
 //					var id = j$.cookie('SSID');
 					var id = document.evaluate("//*[@id='gray02Wrapper']//*[@name='ssid']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.value;
 					Del_Card(card,id);
-	 
+
 				}
 			}else{
 				if( auto_bushodasu_mode == "2"){
@@ -41781,12 +41785,12 @@ function disp_favorite_trade(){
 						card2.appendChild(div);
 					}
 				}
-	 
+
 			}
-	 
+
 		}
 	}
-	 
+
 	function NewBushodasu(bp){
 		if( bp >= 100 ){
 			document.getElementsByName("del_card_id").item(0).value = 0 ;
@@ -41808,11 +41812,11 @@ function disp_favorite_trade(){
 			GM_setValue(BRO3_AUTO_DELETE_LENGTH, Math.floor(l_length2) + 1 )
 		}
 	}
-	 
+
 	// @name		   ----
 	// @namespace	  http://chaki.s27.xrea.com/br3/
 	// @description	トレード報告書簡を削除　ｂｙきの。
-	 
+
 	function DeleteTradeReport(){
 		var area = document.getElementsByName("message_form").item(0);
 		var ul = document.createElement("ul");
@@ -41821,16 +41825,16 @@ function disp_favorite_trade(){
 		ul.innerHTML += "<input type='checkbox' id='chkflg1'>既読書簡も削除<br>"
 		ul.innerHTML += "<p id=a1 style='display:none'> 未読運営書簡を削除しています... <span id=a2>0</span> / <span id=a3>0</span> </p>";
 		area.appendChild(ul);
-	 
+
 		document.getElementById("btn1").addEventListener("click",function(){DelMessage("0");},false)
 		document.getElementById("btn2").addEventListener("click",function(){DelMessage("1");},false)
 	}
-	 
+
 	function DelMessage(x){
 		if(x == 0) var title="カードを落札しました";
 		if(x == 1) var title="出品したカードが落札されました";
 		var sender = '\n<span class="notice">ブラウザ三国志運営チーム</span>\n';
-	 
+
 		var s = '//table[@class=\"commonTables\"]//tr[@class=\"unread\"]';
 		var s2 = '//table[@class=\"commonTables\"]//tr';
 		var t = "";
@@ -41838,29 +41842,29 @@ function disp_favorite_trade(){
 		var address = [];
 		var id = [];
 		var p = document.getElementsByName("p").item(0).value;
-	 
+
 		document.getElementById("a1").style.display = "block";
-	 
+
 		var table = document.evaluate(s, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 		for( var i = 1; i < table.snapshotLength + 1 ; i++){
 			if( i > 1 ) t = "[" + i + "]";
 			var title_r = document.evaluate( s + t + "/td[2]",document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML;
 			var sender_r = document.evaluate( s + t + "/td[3]",document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML;
-	 
-	 
+
+
 			if( title_r.indexOf(title)!=-1 && sender_r == sender ){
 				id[cnt] = document.evaluate( s + t + "/td/input",document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.value;
 				address[cnt] = document.evaluate( s + t + "/td[2]/a",document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.href;
 				cnt += 1;
 			}
 		}
-	 
+
 		document.getElementById("a3").innerHTML = id.length;
-	 
+
 		for( var i = 0; i < id.length; i++){
 			var dom = document.createElement("div");
 			dom.innerHTML = getContentFromURL(address[i]);
-	 
+
 			var data = "mode=inbox&p="+p+"&chk[]="+id[i];
 			GM_xmlhttpRequest({
 				method:"POST",
@@ -41869,10 +41873,10 @@ function disp_favorite_trade(){
 				data: data,
 				onload:function(x){}
 			});
-	 
+
 			document.getElementById("a2").innerHTML = i+1;
 		}
-	 
+
 		if( document.getElementById("chkflg1").checked == true ){
 			var table2 = document.evaluate(s2, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 			for( var i = 3; i < table2.snapshotLength + 1 ; i++){
@@ -41880,7 +41884,7 @@ function disp_favorite_trade(){
 				var tr2 = document.evaluate( s2 + t ,document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 				var title_r2 = document.evaluate( s2 + t + "/td[2]",document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML;
 				var sender_r2 = document.evaluate( s2 + t + "/td[3]",document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML;
-	 
+
 				if( tr2.className.indexOf("unread") == -1 && title_r2.indexOf(title)!=-1 && sender_r2 == sender ){
 					document.evaluate( s2 + t + "/td/input",document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.checked = true;
 				}
@@ -41893,13 +41897,13 @@ function disp_favorite_trade(){
 			location.reload();
 		}
 	}
-	 
-	 
-	 
+
+
+
 	// @name		   ----
 	// @namespace	  http://chaki.s27.xrea.com/br3/
 	// @description	自動治癒スキル発動　ｂｙきの。
-	 
+
 	function AH_STEP1(){
 		jQuery.noConflict();
 		j$ = jQuery;
@@ -41963,11 +41967,11 @@ function disp_favorite_trade(){
 		GM_setValue(BRO3_AUTO_HEAL_B_ID, b_id);
 		GM_setValue(BRO3_AUTO_HEAL_S_NO, skillNo);
 		GM_setValue(BRO3_AUTO_HEAL_V_ID, v_id);
-	 
+
 		auto_heal_flg = 3;
-	 
+
 		GM_setValue(BRO3_AUTO_HEAL_FLG, auto_heal_flg);
-	
+
 		var deckset = AH_setDeck0(b_id,v_id);
 	}
 
@@ -41985,10 +41989,10 @@ function disp_favorite_trade(){
 			});
 			return;
 	}
-	 
+
 	if(GM_getValue(BRO3_AUTO_HEAL_B_ID))	var b_id	= GM_getValue(BRO3_AUTO_HEAL_B_ID);
 	if(GM_getValue(BRO3_AUTO_HEAL_V_ID))	var v_id	= GM_getValue(BRO3_AUTO_HEAL_V_ID);
-	 
+
 	if(auto_heal_flg == 2){var tID = setTimeout(function(){AH_STEP2()},500);};
 	if(auto_heal_flg == 3){var tID = setTimeout(function(){AH_STEP3()},500);};
 	if(auto_heal_flg == 4){var tID = setTimeout(function(){AH_STEP4()},500);};
@@ -41997,7 +42001,7 @@ function disp_favorite_trade(){
 	if(auto_heal_flg == 7){var tID = setTimeout(function(){AH_STEP7()},500);};
 	if(auto_heal_flg == 8){var tID = setTimeout(function(){AH_STEP8()},500);};
 	if(auto_heal_flg > 30){var tID = setTimeout(function(){AH_STEP31()},500);};
-	 
+
 	if(auto_heal_flg >= 2 && path.indexOf("/card/")!=-1){
 		var prtElm = document.getElementById("gray02Wrapper");
 		var chdElm = document.getElementsByTagName("h2").item(0);
@@ -42012,7 +42016,7 @@ function disp_favorite_trade(){
 		newElm.id = "ah_text";
 		prtElm.insertBefore(newElm, chdElm);
 	}
-	 
+
 	if(path.indexOf("/card/domestic_setting.php")!=-1 && document.body.innerHTML.indexOf("設定されている武将を解除する")!=-1){
 		var id = document.evaluate('//form[@method="get"]/input[@name="id"]/@value',document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.textContent;
 		var btn = document.createElement("input");
@@ -42027,13 +42031,13 @@ function disp_favorite_trade(){
 			AH_STEP5();
 		}
 	}
-	 
+
 	function AH_STEP2(){
 		auto_heal_flg = 3;
 		GM_setValue(BRO3_AUTO_HEAL_FLG, auto_heal_flg);
 		location.href = "http://"+host+"/village_change.php?village_id="+v_id+"&from=menu&page=/card/domestic_setting.php" ;
 	}
-	 
+
 	function AH_STEP3(){
 		if( path.indexOf("domestic_setting.php") != -1){
 			if(document.body.innerHTML.indexOf("設定されている武将を解除する")!=-1){
@@ -42057,7 +42061,7 @@ function disp_favorite_trade(){
 			location.href = "http://"+host+"/village_change.php?village_id="+v_id+"&from=menu&page=/card/domestic_setting.php" ;
 		}
 	}
-	 
+
 	function AH_STEP31(){
 		if( path.indexOf("domestic_setting.php") != -1){
 			var chkbox = document.evaluate('//*[@id="card_radio_'+b_id+'"]',document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -42073,7 +42077,7 @@ function disp_favorite_trade(){
 			}else{
 				auto_heal_flg = 1;
 				document.getElementById("ah_text").innerHTML = "　自動スキル：　<b>武将がセットできなかったため動作を停止しました</b>"
-	 
+
 				GM_setValue(BRO3_AUTO_HEAL_FLG, auto_heal_flg);
 				GM_setValue(BRO3_AUTO_HEAL_B_ID, 0);
 				GM_setValue(BRO3_AUTO_HEAL_S_NO, 0);
@@ -42083,16 +42087,16 @@ function disp_favorite_trade(){
 			location.href = "http://"+host+"/village_change.php?village_id="+v_id+"&from=menu&page=/card/domestic_setting.php" ;
 		}
 	}
-	 
+
 	function AH_STEP4(){
 		var b_tbl = document.evaluate('//*[@class="general"]',document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-	 
+
 		for(var i = 0; i < b_tbl.snapshotLength; i++){
 			if( b_tbl.snapshotItem(i).innerHTML.indexOf("内政中") == -1 ){
 				continue;
 			}else{
 				var s_no = parseInt(GM_getValue(BRO3_AUTO_HEAL_S_NO)) + 3;		// 2014.06.25
-	 
+
 				var target = '//*[@class="general"]['+(i+1)+']//td';	// 2014.06.25
 				var skl_num = document.evaluate(target,document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 				for(var k = 0; k < AH_list.length; k++){
@@ -42114,16 +42118,16 @@ function disp_favorite_trade(){
 			}
 		}
 	}
-	 
+
 	function AH_STEP5(){
 		auto_heal_flg = 6;
 		GM_setValue(BRO3_AUTO_HEAL_FLG, auto_heal_flg);
 		document.getElementsByTagName("form").item(2).submit();
 	}
-	 
+
 	function AH_STEP6(){
 		auto_heal_flg = 1;
-	 
+
 		var ssid = getSSID();
 		var data = "mode=unset&target_card="+b_id+"&wild_card_flg=&inc_point=&btn_change_flg=&l=&ssid="+ssid;
 		GM_xmlhttpRequest({
@@ -42132,42 +42136,42 @@ function disp_favorite_trade(){
 			headers:{"Content-type":"application/x-www-form-urlencoded"},
 			data: data,
 			onload:function(x){
-	 
+
 				// 2014.06.25 追加
 				GM_setValue(BRO3_AUTO_HEAL_FLG, auto_heal_flg);
 				GM_setValue(BRO3_AUTO_HEAL_B_ID, 0);
 				GM_setValue(BRO3_AUTO_HEAL_S_NO, 0);
 				GM_setValue(BRO3_AUTO_HEAL_V_ID, 0);
-	 
+
 				location.href = "http://"+host+"/card/deck.php";
 			}
-	 
+
 		});
 	}
-	 
+
 	function AH_STEP7(){
 		auto_heal_flg = 1;
-	 
+
 		GM_setValue(BRO3_AUTO_HEAL_FLG, auto_heal_flg);
 		GM_setValue(BRO3_AUTO_HEAL_B_ID, 0);
 		GM_setValue(BRO3_AUTO_HEAL_S_NO, 0);
 		GM_setValue(BRO3_AUTO_HEAL_V_ID, 0);
-	 
+
 		document.getElementById("target_card").value = b_id;
 		document.getElementById("mode").value='unset';
 		document.getElementById("deck_file").submit();
 	}
-	 
+
 	function AH_STEP8(){
 		auto_heal_flg = 1;
 		document.getElementById("ah_text").innerHTML = "　自動スキル：　<b>内政武将がセットされていたため動作を停止しました</b>"
-	 
+
 		GM_setValue(BRO3_AUTO_HEAL_FLG, auto_heal_flg);
 		GM_setValue(BRO3_AUTO_HEAL_B_ID, 0);
 		GM_setValue(BRO3_AUTO_HEAL_S_NO, 0);
 		GM_setValue(BRO3_AUTO_HEAL_V_ID, 0);
 	}
-	 
+
 	function getSSID(){
 		jQuery.noConflict();
 		j$ = jQuery;
@@ -42176,19 +42180,19 @@ function disp_favorite_trade(){
 	}
 
 	//AUTO_HEALここまで//
-	 
-	 
+
+
 	// @name		   ----
 	// @namespace	  http://chaki.s27.xrea.com/br3/
 	// @description	未取得カード自動収集　ｂｙきの。
-	 
+
 	function CardCollect(){
 		jQuery.noConflict();
 		j$ = jQuery;
 
 		var doc = j$("div[class=progress-bars]").before(
 			"<div style='border: 4px double black;'>" +
-				"<span id='searchCheckBoxes' style='vertical-align:bottom; margin-left:8px;'>" + 
+				"<span id='searchCheckBoxes' style='vertical-align:bottom; margin-left:8px;'>" +
 					"<b>" +
 					"<input type='checkbox' id='searchL'>L&nbsp;" +
 					"<input type='checkbox' id='searchUR'>UR&nbsp;" +
@@ -42317,7 +42321,7 @@ function disp_favorite_trade(){
 								"<td>&nbsp;<b style='color:" + ccolor + ";'>" + name + "</b></td>" +
 								"<td>&nbsp;<b>" + cost + "</b></td>" +
 								"<td style='color:" + color + "; text-align:right;'>&nbsp;<b>" + tpText + "</b></td>" +
-								buyButton + 
+								buyButton +
 							"</tr>"
 						);
 
@@ -42338,7 +42342,7 @@ function disp_favorite_trade(){
 		j$("#search").html("<span style='margin-left:8px; color:black;'><b>検索終了</b></span>");
 	}
 	//CARD COLLECTここまで//
-	 
+
 	// @name		   ----
 	// @namespace	  http://chaki.s27.xrea.com/br3/
 	// @description	即落札カードリスト　ｂｙきの。
@@ -42455,14 +42459,14 @@ function disp_favorite_trade(){
 
 		return searchResult.length;
 	}
-	
-	 
+
+
 	// ==UserScript==
 	// @name		   bro3_misc
 	// @namespace	  Miscellaneous Tool
 	// @description	トレードカードリスト by いかりや長介@一決
 	function bro3_misc(){
-	 
+
 		if(location.pathname=="/card/exhibit_list.php"){
 			var m="";
 			if (document.getElementsByClassName("trade_commission_info").item(0) == null) {
@@ -42476,7 +42480,7 @@ function disp_favorite_trade(){
 			t.style.fontSize = "12px";
 			t.innerHTML = "出品中カードへのダイレクトリンク<br><textarea id=direct_link_lists rows=11 cols=93></textarea>";
 			s.parentNode.insertBefore(t, s);
-	 
+
 			var target = "//*[@id='gray02Wrapper']//*[@class='trade']/a/@href";
 			var link = document.evaluate(target, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 			for (var i = 0; i< link.snapshotLength; i++){
@@ -42500,7 +42504,7 @@ function disp_favorite_trade(){
 			})
 		}
 	}
-	 
+
 	function AutoBid(b){
 		if(b.length==0){
 			j$("#direct_link_lists").val("");
@@ -42543,11 +42547,11 @@ function disp_favorite_trade(){
 			setTimeout(function(){AutoBid(b)},500)
 		}
 	}
-	 
+
 	// @name		   ----
 	// @namespace	  http://chaki.s27.xrea.com/br3/
 	// @description	軍極セット　ｂｙきの。
-	 
+
 	function bulk_set(){
 		jQuery.noConflict();
 		j$ = jQuery;
@@ -43101,7 +43105,7 @@ function disp_favorite_trade(){
 		var xmlhttp = new XMLHttpRequest();
 		xmlhttp.open('GET', url, false);
 		xmlhttp.send();
-	
+
 		if (xmlhttp.status == 200){
 			return xmlhttp.responseText;
 		}
@@ -43128,7 +43132,7 @@ function disp_route_view(){
 	var worldKey = location.hostname;
 	var location_map = "/map.php";
 	var location_bigmap = "/big_map.php";
-	
+
 	if(location.pathname !=location_map && location.pathname !=location_bigmap) return;
 
 	// GM変数
@@ -43143,10 +43147,10 @@ function disp_route_view(){
 	}
 	// GM変数ロード
 	loadValue();
-	
+
 	// ページ読み込み完了後に本処理開始
 	window.addEventListener("load", function() { pre_main(); }, false);
-	
+
 	////////////////////////////////////////////////////////
 	// １．地図上にルート情報を表示
 	// ２．ルート登録用の設定表示追加
@@ -43159,7 +43163,7 @@ function disp_route_view(){
 		}
 		addBtn();
 	}
-	
+
 	// ボタン付加
 	function addBtn() {
 		var div = d.createElement("div");
@@ -43167,7 +43171,7 @@ function disp_route_view(){
 			div.style.paddingBottom = "2px";
 		var tgnd = $xp1('//div[@id="change-map-scale"]/h4', d);
 		tgnd.parentNode.replaceChild(div , tgnd);
-		
+
 		var routeBtn = d.createElement("input");
 			routeBtn.type = "button"
 			routeBtn.id = "routeBtn";
@@ -43176,7 +43180,7 @@ function disp_route_view(){
 		routeBtn.addEventListener("click", function() {
 			addRouteArea();
 		}, false);
-		
+
 		var showBtn = d.createElement("input");
 			showBtn.type = "button"
 			showBtn.id = "showBtn";
@@ -43186,7 +43190,7 @@ function disp_route_view(){
 			onOffRoute();
 		}, false);
 	}
-	
+
 	var routeShowFlg = true;
 	// 表示／非表示切り変え
 	function onOffRoute() {
@@ -43206,7 +43210,7 @@ function disp_route_view(){
 			routeShowFlg = true;
 		}
 	}
-	
+
 	// 座標がルートと一致していればtrueを返す
 	function chkRouteXY(x, y) {
 		var xy = "(XXX,YYY)";
@@ -43220,7 +43224,7 @@ function disp_route_view(){
 		}
 		return false;
 	}
-	
+
 	// 全体地図に画像を表示させる
 	// 11×11～21×21表示時
 	function createRouteImg() {
@@ -43228,16 +43232,16 @@ function disp_route_view(){
 		var mapScale = getMapScale();
 		var centerX = parseInt(getParameter("x"));
 		var centerY = parseInt(getParameter("y"));
-		if (isNaN(centerX)) { centerX = 0; } 
-		else if (centerX > 600) { centerX = 600; } 
+		if (isNaN(centerX)) { centerX = 0; }
+		else if (centerX > 600) { centerX = 600; }
 		else if (centerX < -600) { centerX = -600; }
-		if (isNaN(centerY)) { centerY = 0; } 
-		else if (centerY > 600) { centerY = 600; } 
+		if (isNaN(centerY)) { centerY = 0; }
 		else if (centerY > 600) { centerY = 600; }
-		
+		else if (centerY > 600) { centerY = 600; }
+
 		var topX = centerX - parseInt((mapScale - 1) / 2);
 		var topY = centerY + parseInt((mapScale - 1) / 2);
-		
+
 		for (var i = 0, len = Math.pow(mapScale, 2); i < len; i++) {
 			var x = topX + parseInt(i / mapScale);
 			var y = topY - parseInt(i % mapScale);
@@ -43254,7 +43258,7 @@ function disp_route_view(){
 			$xp1('//div[@id="mapsAll"]', d).appendChild(img);
 		}
 	}
-	
+
 	//地図幅の取得
 	function getMapScale() {
 		var sort15 = document.evaluate('//*[@id="change-map-scale"]/ul/li[@class="sort15 now"]',
@@ -43262,13 +43266,13 @@ function disp_route_view(){
 		if (sort15.snapshotLength != 0) {
 			return 15;
 		}
-		
+
 		var sort21 = document.evaluate('//*[@id="change-map-scale"]/ul/li[@class="sort21 now"]',
 			document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 		if (sort21.snapshotLength != 0) {
 			return 21;
 		}
-		
+
 		return 11;
 	}
 	//URLパラメータ取得
@@ -43277,7 +43281,7 @@ function disp_route_view(){
 		if (str.length < 2) {
 			return "";
 		}
-		
+
 		var params = str[1].split("&");
 		for (var i = 0; i < params.length; i++) {
 			var keyVal = params[i].split("=");
@@ -43287,13 +43291,13 @@ function disp_route_view(){
 		}
 		return "";
 	}
-	
+
 	// 全体地図にルートを表示する
 	// 51×51表示時
 	function createRouteBig() {
 		var css = "div#map51-content div ul li.routeOp div { background:purple; opacity: 0.6; }";
 		GM_addStyle(css);
-		
+
 		var areaArray = $xp('//div[@id="map51-content"]/div/ul/li/div/a', d);
 		for (var i = 0, len = areaArray.snapshotLength; i < len; i++ ) {
 			areaArray.snapshotItem(i).href.match(/x=([-0-9]+).+?y=([-0-9]+)/);
@@ -43305,23 +43309,23 @@ function disp_route_view(){
 			}
 		}
 	}
-	
+
 	// 設定表示
 	var routeOpShowFlg = false;
 	function addRouteArea(){
 		if (routeOpShowFlg) { $("#route_opbase").remove(); routeOpShowFlg = false; return; }
 		routeOpShowFlg = true;
-		
+
 		var css = "table.route_op { border: 2px solid black; border-collapse: collapse; margin: 5px; }" +
 				".route_op th { border: 2px solid black; border-collapse: collapse; color: white; background-color: gray; padding : 0px; }" +
 				".route_op td { border: 2px solid black; border-collapse: collapse; color: black; background-color: white; padding : 2px; } ";
 		GM_addStyle(css);
-		
+
 		var baseEL = d.createElement("div");
 			baseEL.id = "route_opbase";
 		var tableEL = d.createElement("table");
 			tableEL.className = "route_op";
-			
+
 		var trEL2 = d.createElement("tr");
 		var tdEL2 = d.createElement("td");
 			tdEL2.colSpan = 2;
@@ -43335,7 +43339,7 @@ function disp_route_view(){
 			tdEL2.appendChild(textAreaEL);
 			trEL2.appendChild(tdEL2);
 			tableEL.appendChild(trEL2);
-			
+
 		var trEL = d.createElement("tr");
 		var thEL = d.createElement("th");
 		var btnEL = d.createElement("input");
@@ -43348,12 +43352,12 @@ function disp_route_view(){
 			tdEL.innerHTML = "※１行ごとに(x座標,y座標)とコメントが含まれる形式で記入";
 			trEL.appendChild(tdEL);
 			tableEL.appendChild(trEL);
-			
+
 			baseEL.appendChild(tableEL);
 		var tgnd = $xp1('//div[@id="mapboxInner"]', d);
 			tgnd.insertBefore(baseEL, tgnd.firstChild);
 	}
-	
+
 	// ルート登録
 	function setRoute() {
 		if (!confirm("ルート情報を上書き更新します。\n※入力規則に沿わない行は無視されます。")) { return; }
@@ -43365,7 +43369,7 @@ function disp_route_view(){
 				if (location.pathname == location_map) {
 					var xy = inputArray[i].match(/\([-0-9]+,[-0-9]+\)/);
 					var xy1 = inputArray[i].match(/[-0-9]+,[-0-9]+/);
-					
+
 					//if (!!xy) { routeSet.push(xy); }
 					if (!!xy && !!xy1) {
 						//title＆alt変更
@@ -43383,7 +43387,7 @@ function disp_route_view(){
 								$("#mapOverlayMap").html(txt.replace("新領地" + xy1, inputArray[i]));
 							}
 						}
-						
+
 						routeSet.push(inputArray[i]);
 						WKROUTE.push(xy);
 					}
@@ -43408,10 +43412,10 @@ function disp_route_view(){
 		onOffRoute();
 		onOffRoute();
 	}
-	
+
 	var icon001 = "data:image/png;base64," +
 	"iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAKSUlEQVRo3u3b2ZJj2VXG8f/a+0ipeUpJOc/ZVVlNV7TbjR2GHsB2t4ngCiK44QkIbngF4Im45AG4JAyY6HbXlJWZVVmZqXmetffiQqrqrslRo4Gwtu4l/XT22etbK3REP/k1f0jL8Ae2FuAFeAFegBfgBXgBXoAX4AV4AV6AF+AFeAFegBfgBXgBXoAX4AV4AV6AF+A3XsHv/RNl/gKDlRBWLQBTmeJ1jMf//wcLAmIIEyEiKUIsEZEEYUkAHlXFMaHrq3SpM9Xh+4IH7x1qCAhJlKQUyJttUrJF3n5K0ewz0Bpdfw/HiAkjWnpFzZ9S9+f0tIHT0buGB+8NGhAmLAmSpkBedlm1H7EbfMmmuUGMJGJmW3ukA2rujC6P6Ps6ddmjJPeo+lOaek5PWzgdoej/PbDBYCRMXNIkZYW82WXNfsKe/YJNe40ocRBhTJ++7xCVFDFJkghuMuWIpr8krSdk3SZ1/4CSv0fVn9D0F/S1iWPytnB5J/8AMBhCEiVGhqzdYNnssGp+wmHwGatml7BEMQhTHdKlxsDXmTLCqycsGXJmi6jEMQgTxtT8JTV/j4Y/ewZ+yVDbbwN/O7DBECZG3CyTkXUKdo91+zMO7Z9SMBuEJYKijOkz1BZOB0wYMdQ2fW3hdALAksRJmy2ysklEYsgc3tASZXeHhj+h5h9Q9nepuBPaXDHwHTzT14W/2ZYWsUSIkZAiebNNzmyzaT/nwP6MnF0hRAhVz1A7DLXFlAFTHTHWAX1t0KZE3Z0zpIMgpGSFrq/Rto9IyQYZ2SAqcYqyRdau0jTXKesdcm6LvJxS8nepyiltf8VQuyjuVeHBa0OjJEmbFZbNDsuyz5b9gsPgJ6RNDkuAV0efJiNt4Rgz0SFj7dOjTtuXqPkHVP0pNX9KR2tYArJmg6I5oKD7ZEyVjlySNGukZZ2IxCnIJhldoSnXKdnb5NwWNT+DV9wJHS0x0sGrwF9tS4tYYqRIyxp5u0vR3GAn+IJd8zEJSWHF4pnS1yZDbeN1woQBQ+3S1zpNvZxDT6i6U1p6SZ82qu7J/Z+SIjmzPYObfbJmk4TkSZgV0maNCAksholOaFHlyn9Hxd2i6k4p+TtU/QltLTNmiKp7M7AhICppcmaTojmgaD9iz3zOZnBEVGZfYMqYvjaYaAenE0YMGGmXrlZp+ktq/oyanlJ1p7S1zIDOC7+QwbAkcRJSIG92KZpD8maXrN0gzjIJUyRl1oiSfAJvU+PSfUfJfUNNT7lyd6j4E7paZaKDF13tF4MNAXHJkjNbFO0hq/IJB8HnrAZ7s9ICTHU0g9LFMWGsfQbaoeMrNPXRfNueUfMP6WqZIf3f9cs/tZuWiJOSIgW7R0EOKNh9MrJGwiwTkzxJWSEqKQIsE6Z0tMaF+y1X7jdU/SlX/g41d0qb6rM1/HlwQJiC3WPNfMh28AXX7JdPTlyAiQ4YaJPxD6B9bdL2ZRp6TtXNoHU9p+/rjOm/UVqaHYyJGdwcULQHFGSPtFkjIctEJUvCrBCT9A/gdc7dN5Tcb6j6Ey78Lar+lJ6v4Zg8DzYYls0OfxT6Wz4N/TWrZouoxFA8o/nBM9U+Ux0z0i59mrR9ibo+fAJt6CP62nxnefgxPGNWZ/D5Vk+bVeIsE5UMCVMkJhkCLFMcXW1y5W9Rmn5DTc+4dLe48L+l7ctPgzPyS/4i8g/cCN0kLSksliljpjpgTI+R9uj7Jh2t0PKX1HR+EPlT2r5En/Z763geV4iMrM+utjmgYPZImRXi5IhImoQpkpRZtVBgSI+yu89D9++cuV9ze/pv35elo+Af+VX4b8iaJKoTutQIEyKQMFYCxFtG2qOhj7jyt7lw31J2x7S5YuR7TBm/q7z7wqXzcjegQ2t6SdWcUJUDVoIPyMseObOFeBAzJSbLRCROkgxx+zF5s0tE1mn50tN12IhBEDwep2OQAFHBi0fmmCkjBtqip41Zvf09YJ+F92jQ921alOhoBR84liRO0uQRLOCY6ABLCJGAJGmuB5/RU/0efGv6zzT9f/P10t9zPTgibpYRYMIAryOmTDFYklJgzRwRlhhxl6Mq7yTjvvb2XiJOXLLETY6AMAaLoijuSaWxEsKjDBgw0C6A/ae1v/v+jSY8pOL/i5EGZGSdqIkTJoYXy0SHIJ6wxIiQImGyJCRPXJZZkiiCQcXhdArvCW0wRCRBRjbYCm6yY3/MdvAjiuaQpBSJSJqY5IhIEiOP422PK3+P2+5f+W7yL8+f0jGTYVl2WDU3uRb8JYfBH5MyGcDMS1KdifZxTOYndYOGv5gnnrtU9Y0y7it1YwnJs2y2KZpDiuaArNkkKQXipkBqnsYen9RDujT8Q6r+LhV3n0fuW87cfz59D3s8fd9kIiM6WqOhJ5z6jzg0X7MX+hFJ0oRknYkZMPANLCGWiBOzGdKySk7fOOO+FGpliQQ5snaLFXNI0RySlQ1SpkjSbJCWNSISf5K+qpS5cN9Qdt/S8BfU9QF1/4CWL9HTxsuj5bMZd9V+zAf2a3btTeKSBGBMj6E2v7/idOn4Kg199LoZ97mJiZUlYqTImi2Kdp8Vc42c2SQlK2TMDhnZYGneZ48Z0/JlLh/naz3h0t2i6uYxk9GrNw/PZtw1+2OuBV+xbT98EjNHdBloA6dDpowZaJseNeru/FUz7lMzsKiZ1duCHLBqr5Ez22TMOlmzT9ZsECEy/9wRDX9Fxd+m5u9T9SdcudtU/H3aWn5R+Hn1AcCzGXfVfsp1+ys2gw+IagyAIR2G2pzDR7NsrZX5vfTyjDubblnCEiNr1sjLPqv2OnmzQ9Zss2wOyZp1whJBVBkynG1Xf0zdn1HzDyj5O5T9fVr+kpH2XnYbvf7E49mMux78lCP7FRv2gLBEgceNfxOnIyYMGWh7Dj9/LuMqjkAi8/d7DN1j2exTtEfkZJVAlhCdlZeGP6fpT2n6i/n45y5lf0zDX8xa0989BXnzEc+zGXfD/glHwS/nM6wI4BloezYI0BFTRvS1RUfL1P1Dyv6Yqj9lqB1ikqFoDimYfYr2BqvmiIysEJgwqrMc39BzWv6ctpaezLnK7vh1J5tvP8R7NuNu2M84Cn7BitkiJEsInr42GWl7fsVnSW2Wx0t4pgSyxLK5zpr9kAx5AhPGq2OoPZr6iK6/pKOV+Q91j4o7oebP6FJ/3dm1vLPnlh5PRbJmg4IcsB36M67bP6dg1gnLEo7prK3UDlNmY5+R9ghJmozZJEGWQAI8niFdWu6CnlboaIWmf0TZH1P2x9T8GR2tvGk3Ju/8QS0RS1zSZGSDFXONLfslN4JfsGyLhAijOFq+jGcW8mcpTfC42emuVQZao+NrNPWCijumovcpu/t0tcxIe2/Tjcl7ezLth+OhFfMB28HP+TD4OVlTIE4CFWGofaY6oq1lelqet6F9mv6CijuhosdU/DENf8mI3ivX8f8V8A/hMcmwbLZYMdfYCb7ip6G/wmA4cf/BUK+Y6pAJQ0b06GiF8vQeFT2m7s9fOgN7w/U/gJwikcN63vMAAAAASUVORK5CYII=";
-	
+
 }
 //end
 
@@ -43468,9 +43472,9 @@ function disp_bro3_dasu(){
 	var VERSION = "2014.07.11";						 // バージョン情報
 	var HOST = location.hostname;					   //アクセスURLホスト
 	var OPT_SEASON = "DF";							  // 標準は変更しない
-	
+
 	var SukesukeFlg;									//自動ダス設定画面での設定
-	
+
 	// 画像リソース配列
 	var bg_waku		 = [];						   // 枠なし
 	var bg_waku_d	   = [];						   // １段
@@ -43488,73 +43492,73 @@ function disp_bro3_dasu(){
 	//			   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0
 	var OPT_OTHER = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 	var DrawResult = ["","","","","","","","","",""];
-	
+
 	var g_MD="";
-	
+
 	// 保存データデリミタ
 	var DELIMIT1 = "#$%";
 	var DELIMIT2 = "&?@";
 	var DELIMIT3 = "{=]";
 	var DELIMIT4 = "|-/";
-	
+
 	var Skill_List = [
-		[ "剣兵の進撃",	  1 ],   [ "騎兵の進撃",	  2 ],   [ "槍兵の進撃",	  3 ],   [ "弓兵の進撃",	  4 ],   [ "兵器の進撃",	  5 ],
-		[ "剣兵の強撃",	  6 ],   [ "騎兵の強撃",	  7 ],   [ "槍兵の強撃",	  8 ],   [ "弓兵の強撃",	  9 ],   [ "兵器の強撃",	 10 ],
-		[ "剣兵の猛撃",	 11 ],   [ "騎兵の猛撃",	 12 ],   [ "槍兵の猛撃",	 13 ],   [ "弓兵の猛撃",	 14 ],   [ "兵器の猛撃",	 15 ],
-		[ "剣兵の極撃",	 16 ],   [ "騎兵の極撃",	 17 ],   [ "槍兵の極撃",	 18 ],   [ "弓兵の極撃",	 19 ],   [ "兵器の極撃",	 20 ],
+		[ "剣兵の進撃",	  1 ],	 [ "騎兵の進撃",	  2 ],	 [ "槍兵の進撃",	  3 ],	 [ "弓兵の進撃",	  4 ],	 [ "兵器の進撃",	  5 ],
+		[ "剣兵の強撃",	  6 ],	 [ "騎兵の強撃",	  7 ],	 [ "槍兵の強撃",	  8 ],	 [ "弓兵の強撃",	  9 ],	 [ "兵器の強撃",	 10 ],
+		[ "剣兵の猛撃",	 11 ],	 [ "騎兵の猛撃",	 12 ],	 [ "槍兵の猛撃",	 13 ],	 [ "弓兵の猛撃",	 14 ],	 [ "兵器の猛撃",	 15 ],
+		[ "剣兵の極撃",	 16 ],	 [ "騎兵の極撃",	 17 ],	 [ "槍兵の極撃",	 18 ],	 [ "弓兵の極撃",	 19 ],	 [ "兵器の極撃",	 20 ],
 		[ "剣兵突撃",	   21 ],   [ "騎兵突撃",	   22 ],   [ "槍兵突撃",	   23 ],   [ "弓兵突撃",	   24 ],   [ "兵器突撃",	   25 ],
 		[ "剣兵突覇",	   26 ],   [ "騎兵突覇",	   27 ],   [ "槍兵突覇",	   28 ],   [ "弓兵突覇",	   29 ],   [ "兵器突覇",	   30 ],
-		[ "騎兵の進攻",	 32 ],   [ "槍兵の進攻",	 33 ],   [ "弓兵の進攻",	 34 ],
+		[ "騎兵の進攻",	 32 ],	 [ "槍兵の進攻",	 33 ],	 [ "弓兵の進攻",	 34 ],
 		[ "奇計百出",	   36 ],   [ "英雄",		   37 ],   [ "覇道",		   38 ],   [ "豪傑",		   39 ],   [ "一騎当千",	   40 ],
-		[ "蛮族の襲撃",	 41 ],   [ "蛮王の襲撃",	 42 ],   [ "趁火打劫",	   43 ],
-	
+		[ "蛮族の襲撃",	 41 ],	 [ "蛮王の襲撃",	 42 ],	 [ "趁火打劫",	   43 ],
+
 		[ "剣兵防御",	   51 ],   [ "騎兵防御",	   52 ],   [ "槍兵防御",	   53 ],   [ "弓兵防御",	   54 ],   [ "兵器防御",	   55 ],
 		[ "剣兵方陣",	   56 ],   [ "騎兵方陣",	   57 ],   [ "槍兵方陣",	   58 ],   [ "弓兵方陣",	   59 ],   [ "兵器方陣",	   60 ],
-		[ "騎兵の聖域",	 62 ],   [ "槍兵の聖域",	 63 ],   [ "弓兵の聖域",	 64 ],
+		[ "騎兵の聖域",	 62 ],	 [ "槍兵の聖域",	 63 ],	 [ "弓兵の聖域",	 64 ],
 		[ "騎兵堅守",	   67 ],   [ "槍兵堅守",	   68 ],   [ "弓兵堅守",	   69 ],
 		[ "八卦の陣",	   71 ],   [ "鉄壁",		   72 ],   [ "守護神",		 73 ],
-	
+
 		[ "剣兵行軍",	   81 ],   [ "騎兵行軍",	   82 ],   [ "槍兵行軍",	   83 ],   [ "弓兵行軍",	   84 ],   [ "兵器行軍",	   85 ],
 		[ "剣兵強行",	   86 ],   [ "騎兵強行",	   87 ],   [ "槍兵強行",	   88 ],   [ "弓兵強行",	   89 ],   [ "兵器強行",	   90 ],
-		[ "急速援護",	   91 ],   [ "千里行",		 92 ],   [ "神速",		   93 ],
-	
+		[ "急速援護",	   91 ],   [ "千里行",		 92 ],	 [ "神速",		   93 ],
+
 		[ "伐採知識",	   101 ],  [ "石切知識",	   102 ],  [ "製鉄知識",	   103 ],  [ "食糧知識",	   104 ],
 		[ "伐採技術",	   106 ],  [ "石切技術",	   107 ],  [ "製鉄技術",	   101 ],  [ "食糧技術",	   109 ],
-	
+
 		[ "練兵訓練",	   111 ],  [ "厩舎訓練",	   112 ],  [ "兵舎訓練",	   113 ],  [ "弓兵訓練",	   114 ],  [ "兵器訓練",	   115 ],
 		[ "練兵修練",	   116 ],  [ "厩舎修練",	   117 ],  [ "兵舎修練",	   118 ],  [ "弓兵修練",	   119 ],  [ "兵器修練",	   120 ],
 		[ "呉の治世",	   121 ],  [ "王佐の才",	   122 ],  [ "仁君",	   123 ],
-	
+
 		[ "加工知識",	   126 ],  [ "加工技術",	   127 ],  [ "農林技術",	   129 ]
 	];
 	var $ = function(id) { return d.getElementById(id); };
 	var $x = function(xp,dc) { return d.evaluate(xp, dc||d, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; };
 	var $a = function(xp,dc) { var r = d.evaluate(xp, dc||d, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null); var a=[]; for(var i=0; i<r.snapshotLength; i++){ a.push(r.snapshotItem(i)); } return a; };
 	var $e = function(e,t,f) { if (!e) return; e.addEventListener(t, f, false); };
-	
+
 	// 色設定
 	var COLOR_FRAME = "#333333";	// 枠背景色
-	var COLOR_BASE  = "#654634";	// 拠点リンク色
+	var COLOR_BASE	= "#654634";	// 拠点リンク色
 	var COLOR_TITLE = "#FFCC00";	// 各BOXタイトル背景色
-	var COLOR_BACK  = "#FFF2BB";	// 各BOX背景色
-		
+	var COLOR_BACK	= "#FFF2BB";	// 各BOX背景色
+
 	var lv_list = [
-		[	14	 ,   80  ,   16  ,   03  ,	1 ] ,
-		[	40	 ,   71  ,   21  ,   06  ,	2 ] ,
-		[	66	 ,   62  ,   25  ,   10  ,	3 ] ,
-		[	92	 ,   53  ,   27  ,   13  ,	7 ] ,
-		[   118	 ,   46  ,   28  ,   17  ,	9 ] ,
-		[   144	 ,   39  ,   28  ,   19  ,   14 ] ,
-		[   170	 ,   34  ,   27  ,   22  ,   17 ] ,
-		[   196	 ,   29  ,   26  ,   24  ,   21 ] ,
-		[   224	 ,   26  ,   24  ,   21  ,   29 ] ,
-		[   250	 ,   24  ,   22  ,   20  ,   34 ] ,
-		[   276	 ,   23  ,   20  ,   18  ,   39 ] ,
-		[   302	 ,   20  ,   18  ,   16  ,   46 ] ,
-		[   328	 ,   17  ,   16  ,   14  ,   53 ] ,
-		[   999	 ,	0  ,	0  ,	0  ,	0 ]
+		[	14	 ,	 80  ,	 16  ,	 03  ,	1 ] ,
+		[	40	 ,	 71  ,	 21  ,	 06  ,	2 ] ,
+		[	66	 ,	 62  ,	 25  ,	 10  ,	3 ] ,
+		[	92	 ,	 53  ,	 27  ,	 13  ,	7 ] ,
+		[	118	 ,	 46  ,	 28  ,	 17  ,	9 ] ,
+		[	144	 ,	 39  ,	 28  ,	 19  ,	 14 ] ,
+		[	170	 ,	 34  ,	 27  ,	 22  ,	 17 ] ,
+		[	196	 ,	 29  ,	 26  ,	 24  ,	 21 ] ,
+		[	224	 ,	 26  ,	 24  ,	 21  ,	 29 ] ,
+		[	250	 ,	 24  ,	 22  ,	 20  ,	 34 ] ,
+		[	276	 ,	 23  ,	 20  ,	 18  ,	 39 ] ,
+		[	302	 ,	 20  ,	 18  ,	 16  ,	 46 ] ,
+		[	328	 ,	 17  ,	 16  ,	 14  ,	 53 ] ,
+		[	999	 ,	0  ,	0  ,	0  ,	0 ]
 	];
-	
+
 	var scr_list = [
 		[		25 , 66.67	 ],  [	   225 , 66.56	 ],  [	   625 , 66.44	 ],  [	  1225 , 66.33	 ],  [	  2025 , 66.22	 ],  [	  3025 , 66.10	 ],  [	  4225 , 65.99	 ],  [	  5625 , 65.87	 ],
 		[	  7225 , 65.75	 ],  [	  9025 , 65.64	 ],  [	 11025 , 65.52	 ],  [	 13225 , 65.40	 ],  [	 15625 , 65.28	 ],  [	 18225 , 65.16	 ],  [	 21025 , 65.03	 ],  [	 24025 , 64.91	 ],
@@ -43568,29 +43572,29 @@ function disp_bro3_dasu(){
 		[	525625 , 56.14	 ],  [	540225 , 55.95	 ],  [	555025 , 55.76	 ],  [	570025 , 55.56	 ],  [	585225 , 55.36	 ],  [	600625 , 55.16	 ],  [	616225 , 54.95	 ],  [	632025 , 54.75	 ],
 		[	648025 , 54.55	 ],  [	664225 , 54.34	 ],  [	680625 , 54.13	 ],  [	697225 , 53.92	 ],  [	714025 , 53.71	 ],  [	731025 , 53.49	 ],  [	748225 , 53.27	 ],  [	765625 , 53.05	 ],
 		[	783225 , 52.83	 ],  [	801025 , 52.61	 ],  [	819025 , 52.38	 ],  [	837225 , 52.15	 ],  [	855625 , 51.92	 ],  [	874225 , 51.69	 ],  [	893025 , 51.46	 ],  [	912025 , 51.22	 ],
-		[	931225 , 50.98	 ],  [	950625 , 50.74	 ],  [	970225 , 50.50	 ],  [	990025 , 50.25	 ],  [   1010025 , 50.00	 ],  [   1030225 , 49.75	 ],  [   1050625 , 49.49	 ],  [   1071225 , 49.23	 ],
-		[   1092025 , 48.97	 ],  [   1113025 , 48.71	 ],  [   1134225 , 48.45	 ],  [   1155625 , 48.18	 ],  [   1177225 , 47.91	 ],  [   1199025 , 47.64	 ],  [   1221025 , 47.36	 ],  [   1243225 , 47.08	 ],
-		[   1265625 , 46.80	 ],  [   1288225 , 46.52	 ],  [   1311025 , 46.23	 ],  [   1334025 , 45.93	 ],  [   1357225 , 45.62	 ],  [   1380625 , 45.31	 ],  [   1404225 , 45.00	 ],  [   1428025 , 44.68	 ],
-		[   1452025 , 44.36	 ],  [   1476225 , 44.03	 ],  [   1500625 , 43.70	 ],  [   1525225 , 43.36	 ],  [   1550025 , 43.02	 ],  [   1575025 , 42.68	 ],  [   1600225 , 42.33	 ],  [   1625625 , 41.98	 ],
-		[   1651225 , 41.62	 ],  [   1677025 , 41.26	 ],  [   1703025 , 40.89	 ],  [   1729225 , 40.52	 ],  [   1755625 , 40.14	 ],  [   1782225 , 39.76	 ],  [   1809025 , 39.37	 ],  [   1836025 , 38.98	 ],
-		[   1863225 , 38.58	 ],  [   1890625 , 38.18	 ],  [   1918225 , 37.77	 ],  [   1946025 , 37.36	 ],  [   1974025 , 36.94	 ],  [   2002225 , 36.51	 ],  [   2030625 , 36.09	 ],  [   2059225 , 35.65	 ],
-		[   2088025 , 35.21	 ],  [   2117025 , 34.77	 ],  [   2146225 , 34.32	 ],  [   2175625 , 33.86	 ],  [   2205225 , 33.40	 ],  [   2235025 , 32.93	 ],  [   2265025 , 32.46	 ],  [   2295225 , 31.98	 ],
-		[   2325625 , 31.50	 ],  [   2356225 , 31.01	 ],  [   2387025 , 30.52	 ],  [   2418025 , 30.02	 ],  [   2449225 , 29.52	 ],  [   2480625 , 29.01	 ],  [   2512225 , 28.49	 ],  [   2544025 , 27.97	 ],
-		[   2576025 , 27.45	 ],  [   2608225 , 26.92	 ],  [   2640625 , 26.38	 ],  [   2673225 , 25.84	 ],  [   2706025 , 25.30	 ],  [   2739025 , 24.74	 ],  [   2772225 , 24.19	 ],  [   2805625 , 23.63	 ],
-		[   2839225 , 23.07	 ],  [   2873025 , 22.50	 ],  [   2907025 , 21.92	 ],  [   2941225 , 21.35	 ],  [   2975625 , 20.77	 ],  [   3010225 , 20.18	 ],  [   3045025 , 19.59	 ],  [   3080025 , 19.00	 ],
-		[   3115225 , 18.40	 ],  [   3150625 , 17.80	 ],  [   3186225 , 17.20	 ],  [   3222025 , 16.60	 ],  [   3258025 , 15.99	 ],  [   3294225 , 15.38	 ],  [   3330625 , 14.76	 ],  [   3367225 , 14.15	 ],
-		[   3404025 , 13.53	 ],  [   3441025 , 12.91	 ],  [   3478225 , 12.28	 ],  [   3515625 , 11.65	 ],  [   3553225 , 11.01	 ],  [   3591025 , 10.37	 ],  [   3629025 ,  9.73	 ],  [   3667225 ,  9.09	 ],
-		[   3705625 ,  9.09	 ],  [   3744225 ,  9.09	 ],  [   3783025 ,  9.09	 ],  [   3822025 ,  9.09	 ],  [   3861225 ,  9.09	 ],  [   3900625 ,  9.09	 ],  [   3940225 ,  9.09	 ],  [   3980025 ,  9.09	 ],
-		[   4020025 ,  9.09	 ],  [   4060225 ,  9.09	 ],  [   4100625 ,  9.09	 ],  [   4141225 ,  9.09	 ],  [   4182025 ,  9.09	 ],  [   4223025 ,  9.09	 ],  [   4264225 ,  9.09	 ],  [   4305625 ,  9.09	 ],
-		[   4347225 ,  9.09	 ],  [   4389025 ,  9.09	 ],  [   4431025 ,  9.09	 ],  [   4473225 ,  9.09	 ],  [   4515625 ,  9.09	 ],  [   4558225 ,  9.09	 ],  [   4601025 ,  9.09	 ],  [   4644025 ,  9.09	 ],
-		[   4687225 ,  9.09	 ],  [   4730625 ,  9.09	 ],  [   4774225 ,  9.09	 ],  [   4818025 ,  9.09	 ],  [   4862025 ,  9.09	 ],  [   4906225 ,  9.09	 ],  [   4950625 ,  9.09	 ],  [   4995225 ,  9.09	 ],
-		[   5040025 ,  9.09	 ],  [	 999999999 ,  0.00	 ]
+		[	931225 , 50.98	 ],  [	950625 , 50.74	 ],  [	970225 , 50.50	 ],  [	990025 , 50.25	 ],  [	 1010025 , 50.00	 ],  [	 1030225 , 49.75	 ],  [	 1050625 , 49.49	 ],  [	 1071225 , 49.23	 ],
+		[	1092025 , 48.97	 ],  [	 1113025 , 48.71	 ],  [	 1134225 , 48.45	 ],  [	 1155625 , 48.18	 ],  [	 1177225 , 47.91	 ],  [	 1199025 , 47.64	 ],  [	 1221025 , 47.36	 ],  [	 1243225 , 47.08	 ],
+		[	1265625 , 46.80	 ],  [	 1288225 , 46.52	 ],  [	 1311025 , 46.23	 ],  [	 1334025 , 45.93	 ],  [	 1357225 , 45.62	 ],  [	 1380625 , 45.31	 ],  [	 1404225 , 45.00	 ],  [	 1428025 , 44.68	 ],
+		[	1452025 , 44.36	 ],  [	 1476225 , 44.03	 ],  [	 1500625 , 43.70	 ],  [	 1525225 , 43.36	 ],  [	 1550025 , 43.02	 ],  [	 1575025 , 42.68	 ],  [	 1600225 , 42.33	 ],  [	 1625625 , 41.98	 ],
+		[	1651225 , 41.62	 ],  [	 1677025 , 41.26	 ],  [	 1703025 , 40.89	 ],  [	 1729225 , 40.52	 ],  [	 1755625 , 40.14	 ],  [	 1782225 , 39.76	 ],  [	 1809025 , 39.37	 ],  [	 1836025 , 38.98	 ],
+		[	1863225 , 38.58	 ],  [	 1890625 , 38.18	 ],  [	 1918225 , 37.77	 ],  [	 1946025 , 37.36	 ],  [	 1974025 , 36.94	 ],  [	 2002225 , 36.51	 ],  [	 2030625 , 36.09	 ],  [	 2059225 , 35.65	 ],
+		[	2088025 , 35.21	 ],  [	 2117025 , 34.77	 ],  [	 2146225 , 34.32	 ],  [	 2175625 , 33.86	 ],  [	 2205225 , 33.40	 ],  [	 2235025 , 32.93	 ],  [	 2265025 , 32.46	 ],  [	 2295225 , 31.98	 ],
+		[	2325625 , 31.50	 ],  [	 2356225 , 31.01	 ],  [	 2387025 , 30.52	 ],  [	 2418025 , 30.02	 ],  [	 2449225 , 29.52	 ],  [	 2480625 , 29.01	 ],  [	 2512225 , 28.49	 ],  [	 2544025 , 27.97	 ],
+		[	2576025 , 27.45	 ],  [	 2608225 , 26.92	 ],  [	 2640625 , 26.38	 ],  [	 2673225 , 25.84	 ],  [	 2706025 , 25.30	 ],  [	 2739025 , 24.74	 ],  [	 2772225 , 24.19	 ],  [	 2805625 , 23.63	 ],
+		[	2839225 , 23.07	 ],  [	 2873025 , 22.50	 ],  [	 2907025 , 21.92	 ],  [	 2941225 , 21.35	 ],  [	 2975625 , 20.77	 ],  [	 3010225 , 20.18	 ],  [	 3045025 , 19.59	 ],  [	 3080025 , 19.00	 ],
+		[	3115225 , 18.40	 ],  [	 3150625 , 17.80	 ],  [	 3186225 , 17.20	 ],  [	 3222025 , 16.60	 ],  [	 3258025 , 15.99	 ],  [	 3294225 , 15.38	 ],  [	 3330625 , 14.76	 ],  [	 3367225 , 14.15	 ],
+		[	3404025 , 13.53	 ],  [	 3441025 , 12.91	 ],  [	 3478225 , 12.28	 ],  [	 3515625 , 11.65	 ],  [	 3553225 , 11.01	 ],  [	 3591025 , 10.37	 ],  [	 3629025 ,	9.73	 ],  [	 3667225 ,	9.09	 ],
+		[	3705625 ,  9.09	 ],  [	 3744225 ,	9.09	 ],  [	 3783025 ,	9.09	 ],  [	 3822025 ,	9.09	 ],  [	 3861225 ,	9.09	 ],  [	 3900625 ,	9.09	 ],  [	 3940225 ,	9.09	 ],  [	 3980025 ,	9.09	 ],
+		[	4020025 ,  9.09	 ],  [	 4060225 ,	9.09	 ],  [	 4100625 ,	9.09	 ],  [	 4141225 ,	9.09	 ],  [	 4182025 ,	9.09	 ],  [	 4223025 ,	9.09	 ],  [	 4264225 ,	9.09	 ],  [	 4305625 ,	9.09	 ],
+		[	4347225 ,  9.09	 ],  [	 4389025 ,	9.09	 ],  [	 4431025 ,	9.09	 ],  [	 4473225 ,	9.09	 ],  [	 4515625 ,	9.09	 ],  [	 4558225 ,	9.09	 ],  [	 4601025 ,	9.09	 ],  [	 4644025 ,	9.09	 ],
+		[	4687225 ,  9.09	 ],  [	 4730625 ,	9.09	 ],  [	 4774225 ,	9.09	 ],  [	 4818025 ,	9.09	 ],  [	 4862025 ,	9.09	 ],  [	 4906225 ,	9.09	 ],  [	 4950625 ,	9.09	 ],  [	 4995225 ,	9.09	 ],
+		[	5040025 ,  9.09	 ],  [	 999999999 ,  0.00	 ]
 	];
-	
+
 	( function() {
-	
+
 		console.log("*** Start bro3_dasu ***");
-	
+
 		LoadSettingBox();
 
 		// Lvup時のポイント振り分け画面
@@ -43735,11 +43739,11 @@ function disp_bro3_dasu(){
 		// 背景画像の差替
 		switch (OPT_SEASON) {
 			case "OL":
-				GM_addStyle("div#villageSpring  { background:url('" + GM_getResourceURL("old_village") + "') no-repeat scroll left top transparent}");  // 本拠地
+				GM_addStyle("div#villageSpring  { background:url('" + GM_getResourceURL("old_village") + "') no-repeat scroll left top transparent}");	// 本拠地
 				GM_addStyle("div#villageSummer  { background:url('" + GM_getResourceURL("old_village") + "') no-repeat scroll left top transparent}");
 				GM_addStyle("div#villageAutumn  { background:url('" + GM_getResourceURL("old_village") + "') no-repeat scroll left top transparent}");
 				GM_addStyle("div#villageWinter  { background:url('" + GM_getResourceURL("old_village") + "') no-repeat scroll left top transparent}");
-				GM_addStyle("div#mapSpring	  { background:url('" + GM_getResourceURL("old_map") + "')	 no-repeat scroll left top transparent}");  // 拠点
+				GM_addStyle("div#mapSpring	  { background:url('" + GM_getResourceURL("old_map") + "')	 no-repeat scroll left top transparent}");	// 拠点
 				GM_addStyle("div#mapSummer	  { background:url('" + GM_getResourceURL("old_map") + "')	 no-repeat scroll left top transparent}");
 				GM_addStyle("div#mapAutumn	  { background:url('" + GM_getResourceURL("old_map") + "')	 no-repeat scroll left top transparent}");
 				GM_addStyle("div#mapWinter	  { background:url('" + GM_getResourceURL("old_map") + "')	 no-repeat scroll left top transparent}");
@@ -43753,26 +43757,26 @@ function disp_bro3_dasu(){
 				GM_addStyle("div#mapWinter	  { background:url('" + GM_getResourceURL("Spring_map") + "')	 no-repeat scroll left top transparent}");
 				break;
 			case "SU":
-				GM_addStyle("div#villageSpring  { background:url('" + GM_getResourceURL("Summer_village") + "') no-repeat scroll left top transparent}");   // 本拠地
+				GM_addStyle("div#villageSpring  { background:url('" + GM_getResourceURL("Summer_village") + "') no-repeat scroll left top transparent}");	// 本拠地
 				GM_addStyle("div#villageAutumn  { background:url('" + GM_getResourceURL("Summer_village") + "') no-repeat scroll left top transparent}");
 				GM_addStyle("div#villageWinter  { background:url('" + GM_getResourceURL("Summer_village") + "') no-repeat scroll left top transparent}");
-				GM_addStyle("div#mapSpring	  { background:url('" + GM_getResourceURL("Summer_map") + "')	 no-repeat scroll left top transparent}");   // 拠点
+				GM_addStyle("div#mapSpring	  { background:url('" + GM_getResourceURL("Summer_map") + "')	 no-repeat scroll left top transparent}");	 // 拠点
 				GM_addStyle("div#mapAutumn	  { background:url('" + GM_getResourceURL("Summer_map") + "')	 no-repeat scroll left top transparent}");
 				GM_addStyle("div#mapWinter	  { background:url('" + GM_getResourceURL("Summer_map") + "')	 no-repeat scroll left top transparent}");
 				break;
 			case "AU":
-				GM_addStyle("div#villageSpring  { background:url('" + GM_getResourceURL("Autumn_village") + "') no-repeat scroll left top transparent}");   // 本拠地
+				GM_addStyle("div#villageSpring  { background:url('" + GM_getResourceURL("Autumn_village") + "') no-repeat scroll left top transparent}");	// 本拠地
 				GM_addStyle("div#villageSummer  { background:url('" + GM_getResourceURL("Autumn_village") + "') no-repeat scroll left top transparent}");
 				GM_addStyle("div#villageWinter  { background:url('" + GM_getResourceURL("Autumn_village") + "') no-repeat scroll left top transparent}");
-				GM_addStyle("div#mapSpring	  { background:url('" + GM_getResourceURL("Autumn_map") + "')	 no-repeat scroll left top transparent}");   // 拠点
+				GM_addStyle("div#mapSpring	  { background:url('" + GM_getResourceURL("Autumn_map") + "')	 no-repeat scroll left top transparent}");	 // 拠点
 				GM_addStyle("div#mapSummer	  { background:url('" + GM_getResourceURL("Autumn_map") + "')	 no-repeat scroll left top transparent}");
 				GM_addStyle("div#mapWinter	  { background:url('" + GM_getResourceURL("Autumn_map") + "')	 no-repeat scroll left top transparent}");
 				break;
 			case "WI":
-				GM_addStyle("div#villageSpring  { background:url('" + GM_getResourceURL("Winter_village") + "') no-repeat scroll left top transparent}");   // 本拠地
+				GM_addStyle("div#villageSpring  { background:url('" + GM_getResourceURL("Winter_village") + "') no-repeat scroll left top transparent}");	// 本拠地
 				GM_addStyle("div#villageSummer  { background:url('" + GM_getResourceURL("Winter_village") + "') no-repeat scroll left top transparent}");
 				GM_addStyle("div#villageAutumn  { background:url('" + GM_getResourceURL("Winter_village") + "') no-repeat scroll left top transparent}");
-				GM_addStyle("div#mapSpring	  { background:url('" + GM_getResourceURL("Winter_map") + "')	 no-repeat scroll left top transparent}");   // 拠点
+				GM_addStyle("div#mapSpring	  { background:url('" + GM_getResourceURL("Winter_map") + "')	 no-repeat scroll left top transparent}");	 // 拠点
 				GM_addStyle("div#mapSummer	  { background:url('" + GM_getResourceURL("Winter_map") + "')	 no-repeat scroll left top transparent}");
 				GM_addStyle("div#mapAutumn	  { background:url('" + GM_getResourceURL("Winter_map") + "')	 no-repeat scroll left top transparent}");
 				break;
@@ -43795,15 +43799,15 @@ function disp_bro3_dasu(){
 					default:	season_tag = "err";	 break;
 				}
 				if (season_tag == "err") { break; }
-	
+
 				if (elements[i].src.match("facility/facility_")){
 					switch (elements[i].src.substring(elements[i].src.lastIndexOf("_") - 3).substring(0, 3)) {
-						case "216"  :   change_flg = true;	  break;	  // 雀
-						case "205"  :   change_flg = true;	  break;	  // 城
-						case "220"  :   change_flg = true;	  break;	  // 村
-						case "222"  :   change_flg = true;	  break;	  // 砦
-						case "101"  :   change_flg = true;	  break;	  // 森
-						default	 :   change_flg = false;	 break;
+						case "216"	:	change_flg = true;	  break;	  // 雀
+						case "205"	:	change_flg = true;	  break;	  // 城
+						case "220"	:	change_flg = true;	  break;	  // 村
+						case "222"	:	change_flg = true;	  break;	  // 砦
+						case "101"	:	change_flg = true;	  break;	  // 森
+						default	 :	 change_flg = false;	 break;
 					}
 				}
 				// チップ画像の差替
@@ -43814,16 +43818,16 @@ function disp_bro3_dasu(){
 						elements[i].src = elements[i].src.replace("_autumn",season_tag);
 						elements[i].src = elements[i].src.replace("_winter",season_tag);
 					} else {
-						if (season_tag != "_spring")	{   elements[i].src = elements[i].src.replace("_spring",season_tag);	}
-						if (season_tag != "_summer")	{   elements[i].src = elements[i].src.replace("_summer",season_tag);	}
-						if (season_tag != "_autumn")	{   elements[i].src = elements[i].src.replace("_autumn",season_tag);	}
-						if (season_tag != "_winter")	{   elements[i].src = elements[i].src.replace("_winter",season_tag);	}
+						if (season_tag != "_spring")	{	elements[i].src = elements[i].src.replace("_spring",season_tag);	}
+						if (season_tag != "_summer")	{	elements[i].src = elements[i].src.replace("_summer",season_tag);	}
+						if (season_tag != "_autumn")	{	elements[i].src = elements[i].src.replace("_autumn",season_tag);	}
+						if (season_tag != "_winter")	{	elements[i].src = elements[i].src.replace("_winter",season_tag);	}
 					}
 				}
 			}
 		}
 	}
-	
+
 	//--------------------------------------
 	// 武将スキル表示
 	//--------------------------------------
@@ -43860,7 +43864,7 @@ function disp_bro3_dasu(){
 		}
 
 		// 所持スキルを表示
-		if( location.pathname == "/user/" || location.pathname == "/card/deck.php"  || location.pathname == "/card/trade_card.php"){
+		if( location.pathname == "/user/" || location.pathname == "/card/deck.php"	|| location.pathname == "/card/trade_card.php"){
 			// プロフィール画面、デッキ画面
 			j$("div[class*=cardWrapper]").each(
 				function(){
@@ -44013,7 +44017,7 @@ function disp_bro3_dasu(){
 		// 合計LV・スコアの計算
 		var total_lv	= parseInt(baseLv) + parseInt(useLv);
 		var total_score = parseInt(baseScore) + parseInt(useScore);
-	
+
 		var score_table = 0;
 		var lv_table	= 0;
 		for (var x = 0; x < scr_list.length; x++) {
@@ -44022,7 +44026,7 @@ function disp_bro3_dasu(){
 			}
 		}
 		score_table = x;
-	
+
 		for (var x = 0; x < lv_list.length; x++) {
 			if (lv_list[x][0] > total_lv) {
 				break;
@@ -44040,12 +44044,12 @@ function disp_bro3_dasu(){
 		var pointAtk = parseFloat(card_list[useCardNo].a)  * 0.094;		// 攻撃
 		var pointDef = parseFloat(card_list[useCardNo].d1) * 0.094;		// 防御
 		var pointInt = parseFloat(card_list[useCardNo].i)  * 0.0016;		// 知力
-	
+
 		// 実際に割り振ったポイント数の計算
 		var AlloPointAtk = parseInt((useAtk - parseFloat(card_list[useCardNo].a))  / pointAtk + 0.5);		// 攻撃
 		var AlloPointDef = parseInt((useDef - parseFloat(card_list[useCardNo].d1)) / pointDef + 0.5);		// 防御
 		var AlloPointInt = parseInt((useInt - parseFloat(card_list[useCardNo].i))  / pointInt + 0.5);		// 知力
-	
+
 		// 合成レシピ並び替え用配列
 		var SkillArray = [];
 
@@ -44072,13 +44076,13 @@ function disp_bro3_dasu(){
 			SkillArray.push( {"point":AlloPointInt, "n":"知", "skill": gousei_skill[card_list[useCardNo].bs][2], "probability":0.00, "flg":1 });		// 知力
 			SkillArray.push( {"point":0,			"n":"隠", "skill": gousei_skill[card_list[useCardNo].bs][3], "probability":0.00, "flg":0 });		//
 		}
-	
+
 		SkillArray.sort(
 			function(a,b){
 				if(a.point < b.point) return 1;
 				if(a.point > b.point) return -1;
-				if(a.flg   < b.flg  ) return 1;
-				if(a.flg   > b.flg  ) return -1;
+				if(a.flg   < b.flg	) return 1;
+				if(a.flg   > b.flg	) return -1;
 				return 0;
 			}
 		);
@@ -44170,17 +44174,17 @@ function disp_bro3_dasu(){
 	// =================================================================================================================================================================================
 	// サブルーチン
 	// =================================================================================================================================================================================
-	
+
 	function addOpenSettingHtml() {
-	
-	
+
+
 		var sidebar = d.evaluate('//*[@id="busyodasTab"]',d, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-	
-	
+
+
 		//自動ダス設定リンク
 		var addOpenSetting = d.createElement("input");
 		addOpenSetting.id = "OpenSetting";
-	
+
 		addOpenSetting.type = "button";
 		addOpenSetting.value = "自動ダス設定";
 		addOpenSetting.href = "javascript:void(0);";
@@ -44190,17 +44194,17 @@ function disp_bro3_dasu(){
 		addOpenSetting.style.marginBottom = "5px";
 		addOpenSetting.style.color = "#000000";
 		addOpenSetting.style.cursor = "pointer";
-	
+
 		addOpenSetting.addEventListener("click", function() {
-	
+
 			LoadSettingBox();	   // 設定をロード
-	
+
 			closeSettingBox();
 			openSettingBilderBox();
 		}, true);
-	
+
 		sidebar.snapshotItem(0).appendChild(addOpenSetting);
-	
+
 		//ノーマル実行リンク
 		if ( d.body.innerHTML.match(/busyodasNormalTabCurrent/) ) {
 			var addStart1 = d.createElement("input");
@@ -44212,19 +44216,19 @@ function disp_bro3_dasu(){
 			addStart1.style.marginLeft = "10px";
 			addStart1.style.color = "#000000";
 			addStart1.style.cursor = "pointer";
-	
+
 			addStart1.addEventListener("click", function() {
-	
+
 				LoadSettingBox();	   // 設定をロード
-	
+
 				var p = parseInt(j$("div[class=busyodasCurrency] dd").eq(0).text());
 				j$("div[class=sysMes busyodasCardInfo]").text().match(/残り(\d+)枚/);	   // 2013.01.17 修正
 				var q = parseInt(RegExp.$1);
-	
+
 				DrawResult = ["","","","","","","","","",""];
 				autoDasu(p, q, "0", "0", 0);
 			}, true);
-	
+
 			sidebar.snapshotItem(0).appendChild(addStart1);
 		}
 
@@ -44239,19 +44243,19 @@ function disp_bro3_dasu(){
 			addStart1.style.marginLeft = "10px";
 			addStart1.style.color = "#000000";
 			addStart1.style.cursor = "pointer";
-	
+
 			addStart1.addEventListener("click", function() {
-	
+
 				LoadSettingBox();	   // 設定をロード
-	
+
 				var p = parseInt(j$("div[class=busyodasCurrency] dd").eq(2).text());   // 2が小麗, 1が大鳳
 				j$("div[class=sysMes busyodasCardInfo]").text().match(/残り(\d+)枚/);	   // 2013.01.17 修正
 				var q = parseInt(RegExp.$1);
-	
+
 				DrawResult = ["","","","","","","","","",""];
-				autoDasu(p, q, "0", "0", 700);   // got_type 700は小麗
+				autoDasu(p, q, "0", "0", 700);	 // got_type 700は小麗
 			}, true);
-	
+
 			sidebar.snapshotItem(0).appendChild(addStart1);
 
 			var assStart2 = d.createElement("input");
@@ -44263,26 +44267,26 @@ function disp_bro3_dasu(){
 			assStart2.style.marginLeft = "10px";
 			assStart2.style.color = "#000000";
 			assStart2.style.cursor = "pointer";
-	
+
 			assStart2.addEventListener("click", function() {
-	
+
 				LoadSettingBox();	   // 設定をロード
-	
+
 				var p = parseInt(j$("div[class=busyodasCurrency] dd").eq(1).text());   // 2が小麗, 1が大鳳
 				j$("div[class=sysMes busyodasCardInfo]").text().match(/残り(\d+)枚/);	   // 2013.01.17 修正
 				var q = parseInt(RegExp.$1);
-	
+
 				DrawResult = ["","","","","","","","","",""];
-				autoDasu(p, q, "0", "0", 600);   // got_type 600は大鳳
+				autoDasu(p, q, "0", "0", 600);	 // got_type 600は大鳳
 			}, true);
-	
+
 			sidebar.snapshotItem(0).appendChild(assStart2);
 		}
 	}
 
-	
+
 	function autoDasu(total_bp, zan_maisu, hakiid, oldcardno, got_type){
-	
+
 		var maisu;
 		if (got_type == 0) {
 			if (total_bp / 100 >= zan_maisu) {
@@ -44301,11 +44305,11 @@ function disp_bro3_dasu(){
 
 		j$("input[name=送信]").attr("onClick").split(",")[2].match(/\'([a-z0-9]+)\'/);
 		var ssid = RegExp.$1;
-	
+
 		// 引ける枚数が０枚で破棄カードがある場合
 		if (maisu <= 0) {
 			// 履歴をインクリメント
-			for (i=9;i>0;i--){  DrawResult[i] = DrawResult[i-1];	}
+			for (i=9;i>0;i--){	DrawResult[i] = DrawResult[i-1];	}
 			DrawResult[0] = "自動ブショーダスを終了しました。<br>";
 			var ViewDrawResult = "";
 			// 表示データを作成
@@ -44313,7 +44317,7 @@ function disp_bro3_dasu(){
 				j$("#CardInfo").html(ViewDrawResult);
 			if (hakiid != 0 && got_type == 0) {
 				var c = {};
-				c['label['  + hakiid + ']']		 = "";
+				c['label['	+ hakiid + ']']		 = "";
 				c['delete[' + hakiid + ']']		 = hakiid;
 				c['ssid']						   = ssid;
 				c['send']						   = "send";
@@ -44336,7 +44340,7 @@ function disp_bro3_dasu(){
 				return;
 			}
 		}
-	
+
 		// カードを１枚引く
 		var c={};
 		c['ssid'] = ssid;
@@ -44347,18 +44351,18 @@ function disp_bro3_dasu(){
 		} else {
 			c['tab'] = "normal";
 		}
-	
+
 		if (hakiid > 0) {
-			c['label['  + hakiid + ']'] = "";
+			c['label['	+ hakiid + ']'] = "";
 			c['delete[' + hakiid + ']'] = hakiid;
 			c['card']		   = hakiid;
 		}
 		// ここまで
-	
+
 		j$(document.body).append("<div id=AjaxTempDOM>");
 		j$("#AjaxTempDOM").hide();
 		j$("#AjaxTempDOM").load("http://" + HOST + "/busyodas/busyodas.php #gray02Wrapper", c, function () {
-	
+
 			// 2013.01.17 修正
 			var a = j$("input[class=delete]", this).attr("value");
 			var cardno = j$("span[class=cardno]", this).eq(0).text();
@@ -44369,11 +44373,11 @@ function disp_bro3_dasu(){
 
 			// 2013.01.17 ここまで
 				var h = " が当たりました!";
-	
+
 				var j = 0;			  // 破棄カード
 				var l = 0;			  // 減少BP
 				var m = 0;			  // カード増加枚数
-	
+
 			if (checkDestruction(cardno) == 0) {
 				if (got_type == 0) {
 					l = 100;			// 減少BP
@@ -44391,9 +44395,9 @@ function disp_bro3_dasu(){
 				}
 				m = 0;			  // カード増加枚数（破棄するから0枚増加)
 				h = " を自動削除しました！";
-	
+
 			}
-	
+
 			if ( got_type == 0 ){
 				h += "</td><td width=300>  保持BP:" + total_bp + " 残" + zan_maisu + "枚 破棄ID:" + hakiid; // 2013.01.17 修正
 			} else {
@@ -44403,10 +44407,10 @@ function disp_bro3_dasu(){
 				DrawResult[i] = DrawResult[i-1];
 			}
 			// 2013.01.17 修正
-				if (rate == "C")			{   DrawResult[0] = "<center><table><tr><td width=30><span id=card_rarityC>"  + '<font style="color:#000000; font-weight: bold;">' + rate + "</font></span></td><td width=140>" + name + " (No." + cardno + ")</td><td width=180><span id=result_msg>" + h + "</span></td></tr></table></center>";
-				} else if (rate == "UC")	{   DrawResult[0] = "<center><table><tr><td width=30><span id=card_rarityUC>" + '<font style="color:#ffa200; font-weight: bold;">' + rate + "</font></span></td><td width=140>" + name + " (No." + cardno + ")</td><td width=180><span id=result_msg>" + h + "</span></td></tr></table></center>";
-				} else if (rate == "R")	 {   DrawResult[0] = "<center><table><tr><td width=30><span id=card_rarityR>"  + '<font style="color:#00c5ff; font-weight: bold;">' + rate + "</font></span></td><td width=140>" + name + " (No." + cardno + ")</td><td width=180><span id=result_msg>" + h + "</span></td></tr></table></center>";
-				} else if (rate == "SR")	{   DrawResult[0] = "<center><table><tr><td width=30><span id=card_raritySR>" + '<font style="color:#ff4242; font-weight: bold;">' + rate + "</font></span></td><td width=140>" + name + " (No." + cardno + ")</td><td width=180><span id=result_msg>" + h + "</span></td></tr></table></center>";
+				if (rate == "C")			{	DrawResult[0] = "<center><table><tr><td width=30><span id=card_rarityC>"  + '<font style="color:#000000; font-weight: bold;">' + rate + "</font></span></td><td width=140>" + name + " (No." + cardno + ")</td><td width=180><span id=result_msg>" + h + "</span></td></tr></table></center>";
+				} else if (rate == "UC")	{	DrawResult[0] = "<center><table><tr><td width=30><span id=card_rarityUC>" + '<font style="color:#ffa200; font-weight: bold;">' + rate + "</font></span></td><td width=140>" + name + " (No." + cardno + ")</td><td width=180><span id=result_msg>" + h + "</span></td></tr></table></center>";
+				} else if (rate == "R")	 {	 DrawResult[0] = "<center><table><tr><td width=30><span id=card_rarityR>"  + '<font style="color:#00c5ff; font-weight: bold;">' + rate + "</font></span></td><td width=140>" + name + " (No." + cardno + ")</td><td width=180><span id=result_msg>" + h + "</span></td></tr></table></center>";
+				} else if (rate == "SR")	{	DrawResult[0] = "<center><table><tr><td width=30><span id=card_raritySR>" + '<font style="color:#ff4242; font-weight: bold;">' + rate + "</font></span></td><td width=140>" + name + " (No." + cardno + ")</td><td width=180><span id=result_msg>" + h + "</span></td></tr></table></center>";
 				} else {						DrawResult[0] = "<center><table><tr><td width=30><span id=card_rarity>"   + '<font style="color:#f236fe; font-weight: bold;">' + rate + "</font></span></td><td width=140>" + name + " (No." + cardno + ")</td><td width=180><span id=result_msg>" + h + "</span></td></tr></table></center>";
 				}
 			// ここまで
@@ -44414,23 +44418,23 @@ function disp_bro3_dasu(){
 			for (i=0;i<10;i++){
 				ViewDrawResult += DrawResult[i];
 			}
-	
+
 				j$("#CardInfo").html(ViewDrawResult);
 				setTimeout(function () {
 				autoDasu(total_bp - l, zan_maisu - m, j, cardno, got_type)
 			}, 1000)
-	
+
 		});
 	}
-	
+
 	function addSettingHtml(vId) {
-	
+
 		var popupLeft = GM_getValue(location.hostname + PGNAME + "_popup_left", 10);
 		var popupTop  = GM_getValue(location.hostname + PGNAME + "_popup_top", 10);
 		if (popupLeft < 0) popupLeft = 0;
 		if (popupTop < 0) popupTop = 0;
-	
-	
+
+
 		//表示コンテナ作成
 		var SettingContainer = d.createElement("div");
 		SettingContainer.id = "SettingContainer";
@@ -44446,11 +44450,11 @@ function disp_bro3_dasu(){
 		SettingContainer.style.padding = "2px";
 		SettingContainer.style.MozBorderRadius = "4px";
 		SettingContainer.style.zIndex = 50000;
-	
-	
+
+
 		SettingContainer.setAttribute('vId', vId);
 		d.body.appendChild(SettingContainer);
-	
+
 		$e(SettingContainer, "mousedown", function(event){
 			if( event.target != $("SettingContainer")) {return false;}
 			g_MD="SettingContainer";
@@ -44458,7 +44462,7 @@ function disp_bro3_dasu(){
 			g_MY=event.pageY-parseInt(this.style.top,10);
 			event.preventDefault();
 		});
-	
+
 		$e(d, "mousemove", function(event){
 			if(g_MD != "SettingContainer") return true;
 			var SettingContainer = $("SettingContainer");
@@ -44471,44 +44475,44 @@ function disp_bro3_dasu(){
 			GM_setValue(location.hostname + PGNAME + "_popup_left", popupLeft);
 			GM_setValue(location.hostname + PGNAME + "_popup_top", popupTop);
 		});
-	
+
 		$e(d, "mouseup", function(event){ g_MD=""; });
-	
+
 		var title = d.createElement("span");
 		title.style.color = "#FFFFFF";
 		title.style.font = 'bold 120% "ＭＳ ゴシック"';
 		title.style.margin = "2px";
 		title.innerHTML = "Auto Bushou Das ";
-	
+
 		var version = d.createElement("span");
 		version.style.color = COLOR_TITLE;
 		version.style.font = '96% "ＭＳ ゴシック"';
 		version.style.margin = "2px";
 		version.innerHTML = " Ver." + VERSION;
-	
+
 		var storageLimit = d.createElement("span");
 		storageLimit.style.color = "#FFFFFF";
 		storageLimit.style.font = '110% "ＭＳ Ｐゴシック"';
 		storageLimit.style.margin = "2px";
-	
+
 		SettingContainer.appendChild(title);
 		SettingContainer.appendChild(version);
-	
+
 		// ===== 攻撃系 =====
 		var Attack_Box = d.createElement("table");
 			Attack_Box.style.border = "solid 2px black";
 			Attack_Box.style.margin = "0px 4px 4px 0px";
 			Attack_Box.style.width = "100%";
-	
+
 		var tr1 = d.createElement("tr");
 		var td1 = d.createElement("td");	td1.colSpan = 5;	td1.style.backgroundColor = COLOR_TITLE;	ccreateText(td1, "dummy", "■ 攻撃系 ■", 0 );
 		var tr2 = d.createElement("tr");	tr2.style.backgroundColor = COLOR_BACK;	 tr2.style.border = "solid 1px black";
-		var td21 = d.createElement("td");   td21.style.padding = "3px";		 td21.style.verticalAlign = "top";   td21.style.width = "120px";
-		var td22 = d.createElement("td");   td22.style.padding = "3px";		 td22.style.verticalAlign = "top";   td22.style.width = "120px";
-		var td23 = d.createElement("td");   td23.style.padding = "3px";		 td23.style.verticalAlign = "top";   td23.style.width = "120px";
-		var td24 = d.createElement("td");   td24.style.padding = "3px";		 td24.style.verticalAlign = "top";   td24.style.width = "120px";
-		var td25 = d.createElement("td");   td25.style.padding = "3px";		 td25.style.verticalAlign = "top";   td25.style.width = "120px";
-	
+		var td21 = d.createElement("td");	td21.style.padding = "3px";		 td21.style.verticalAlign = "top";	 td21.style.width = "120px";
+		var td22 = d.createElement("td");	td22.style.padding = "3px";		 td22.style.verticalAlign = "top";	 td22.style.width = "120px";
+		var td23 = d.createElement("td");	td23.style.padding = "3px";		 td23.style.verticalAlign = "top";	 td23.style.width = "120px";
+		var td24 = d.createElement("td");	td24.style.padding = "3px";		 td24.style.verticalAlign = "top";	 td24.style.width = "120px";
+		var td25 = d.createElement("td");	td25.style.padding = "3px";		 td25.style.verticalAlign = "top";	 td25.style.width = "120px";
+
 		Attack_Box.appendChild(tr1);
 		tr1.appendChild(td1);
 		Attack_Box.appendChild(tr2);
@@ -44517,63 +44521,63 @@ function disp_bro3_dasu(){
 		tr2.appendChild(td23);
 		tr2.appendChild(td24);
 		tr2.appendChild(td25);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME1" , OPT_DOME[1] , " 剣兵の進撃 ", "剣兵の進撃を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME2" , OPT_DOME[2] , " 騎兵の進撃 ", "騎兵の進撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME3" , OPT_DOME[3] , " 槍兵の進撃 ", "槍兵の進撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME4" , OPT_DOME[4] , " 弓兵の進撃 ", "弓兵の進撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td25, "OPT_DOME5" , OPT_DOME[5] , " 兵器の進撃 ", "兵器の進撃を付与・LVUPできる武将を残します。", 0);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME6"  , OPT_DOME[6]  , " 剣兵の強撃 ", "剣兵の強撃を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME7"  , OPT_DOME[7]  , " 騎兵の強撃 ", "騎兵の強撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME8"  , OPT_DOME[8]  , " 槍兵の強撃 ", "槍兵の強撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME9"  , OPT_DOME[9]  , " 弓兵の強撃 ", "弓兵の強撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td25, "OPT_DOME10" , OPT_DOME[10] , " 兵器の強撃 ", "兵器の強撃を付与・LVUPできる武将を残します。", 0);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME11" , OPT_DOME[11] , " 剣兵の猛撃 ", "剣兵の猛撃を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME12" , OPT_DOME[12] , " 騎兵の猛撃 ", "騎兵の猛撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME13" , OPT_DOME[13] , " 槍兵の猛撃 ", "槍兵の猛撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME14" , OPT_DOME[14] , " 弓兵の猛撃 ", "弓兵の猛撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td25, "OPT_DOME15" , OPT_DOME[15] , " 兵器の猛撃 ", "兵器の猛撃を付与・LVUPできる武将を残します。", 0);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME16" , OPT_DOME[16] , " 剣兵の極撃 ", "剣兵の極撃を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME17" , OPT_DOME[17] , " 騎兵の極撃 ", "騎兵の極撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME18" , OPT_DOME[18] , " 槍兵の極撃 ", "槍兵の極撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME19" , OPT_DOME[19] , " 弓兵の極撃 ", "弓兵の極撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td25, "OPT_DOME20" , OPT_DOME[20] , " 兵器の極撃 ", "兵器の極撃を付与・LVUPできる武将を残します。", 0);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME21" , OPT_DOME[21] , " 剣兵突撃 ", "剣兵突撃を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME22" , OPT_DOME[22] , " 騎兵突撃 ", "騎兵突撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME23" , OPT_DOME[23] , " 槍兵突撃 ", "槍兵突撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME24" , OPT_DOME[24] , " 弓兵突撃 ", "弓兵突撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td25, "OPT_DOME25" , OPT_DOME[25] , " 兵器突撃 ", "兵器突撃を付与・LVUPできる武将を残します。", 0);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME26" , OPT_DOME[26] , " 剣兵突覇 ", "剣兵突覇を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME27" , OPT_DOME[27] , " 騎兵突覇 ", "騎兵突覇を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME28" , OPT_DOME[28] , " 槍兵突覇 ", "槍兵突覇を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME29" , OPT_DOME[29] , " 弓兵突覇 ", "弓兵突覇を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td25, "OPT_DOME30" , OPT_DOME[30] , " 兵器突覇 ", "兵器突覇を付与・LVUPできる武将を残します。", 0);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME31" , OPT_DOME[31] , " 剣兵の進攻 ", "剣兵の進攻を付与・LVUPできる武将を残します。", 5);
-		ccreateCheckBox(td22, "OPT_DOME32" , OPT_DOME[32] , " 騎兵の進攻 "  , "騎兵の進攻を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td23, "OPT_DOME33" , OPT_DOME[33] , " 槍兵の進攻 "  , "槍兵の進攻を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td24, "OPT_DOME34" , OPT_DOME[34] , " 弓兵の進攻 "  , "弓兵の進攻を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td25, "OPT_DOME35" , OPT_DOME[35] , " 兵器の進攻 "  , "兵器の進攻を付与・LVUPできる武将を残します。", 0);
-	
+		ccreateCheckBox(td22, "OPT_DOME32" , OPT_DOME[32] , " 騎兵の進攻 "	, "騎兵の進攻を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td23, "OPT_DOME33" , OPT_DOME[33] , " 槍兵の進攻 "	, "槍兵の進攻を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td24, "OPT_DOME34" , OPT_DOME[34] , " 弓兵の進攻 "	, "弓兵の進攻を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td25, "OPT_DOME35" , OPT_DOME[35] , " 兵器の進攻 "	, "兵器の進攻を付与・LVUPできる武将を残します。", 0);
+
 		ccreateCheckBox(td21, "OPT_DOME36" , OPT_DOME[36] , " 剣兵速攻 ", "剣兵速攻を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME37" , OPT_DOME[37] , " 騎兵速攻 "  , "騎兵速攻を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME38" , OPT_DOME[38] , " 槍兵速攻 "  , "槍兵速攻を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME39" , OPT_DOME[39] , " 弓兵速攻 "  , "弓兵速攻を付与・LVUPできる武将を残します。", 0);
 			ccreateText(td25, "OPT_DOME40" , " 　 "		 , "", 0);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME41" , OPT_DOME[41] , " 奇計百出 "	, "奇計百出を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME42" , OPT_DOME[42] , " 英雄 "		, "英雄を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME43" , OPT_DOME[43] , " 覇道 "		, "覇道を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME44" , OPT_DOME[44] , " 豪傑 "		, "豪傑を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td25, "OPT_DOME45" , OPT_DOME[45] , " 一騎当千 "	, "一騎当千を付与・LVUPできる武将を残します。", 0);
-	
-		ccreateCheckBox(td21, "OPT_DOME46" , OPT_DOME[46] , " 蛮族の襲撃 "  , "蛮族の襲撃を付与・LVUPできる武将を残します。", 5);
-		ccreateCheckBox(td22, "OPT_DOME47" , OPT_DOME[47] , " 蛮王の襲撃 "  , "蛮王の襲撃を付与・LVUPできる武将を残します。", 0);
+
+		ccreateCheckBox(td21, "OPT_DOME46" , OPT_DOME[46] , " 蛮族の襲撃 "	, "蛮族の襲撃を付与・LVUPできる武将を残します。", 5);
+		ccreateCheckBox(td22, "OPT_DOME47" , OPT_DOME[47] , " 蛮王の襲撃 "	, "蛮王の襲撃を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME48" , OPT_DOME[48] , " 趁火打劫 "	, "趁火打劫を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME49" , OPT_DOME[49] , " 闘将突貫 "  , "闘将突貫を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td25, "OPT_DOME50" , OPT_DOME[50] , " 謀反の進攻 "	, "謀反の進攻を付与・LVUPできる武将を残します。", 0);
@@ -44583,16 +44587,16 @@ function disp_bro3_dasu(){
 			Defense_Box.style.border = "solid 2px black";
 			Defense_Box.style.margin = "0px 4px 4px 0px";
 			Defense_Box.style.width = "100%";
-	
+
 		var tr1 = d.createElement("tr");
 		var td1 = d.createElement("td");	td1.colSpan = 5;	td1.style.backgroundColor = COLOR_TITLE;	ccreateText(td1, "dummy", "■ 防御系 ■", 0 );
 		var tr2 = d.createElement("tr");	tr2.style.backgroundColor = COLOR_BACK;	 tr2.style.border = "solid 1px black";
-		var td21 = d.createElement("td");   td21.style.padding = "3px";	 td21.style.verticalAlign = "top";   td21.style.width = "120px";
-		var td22 = d.createElement("td");   td22.style.padding = "3px";	 td22.style.verticalAlign = "top";   td22.style.width = "120px";
-		var td23 = d.createElement("td");   td23.style.padding = "3px";	 td23.style.verticalAlign = "top";   td23.style.width = "120px";
-		var td24 = d.createElement("td");   td24.style.padding = "3px";	 td24.style.verticalAlign = "top";   td24.style.width = "120px";
-		var td25 = d.createElement("td");   td25.style.padding = "3px";	 td25.style.verticalAlign = "top";   td25.style.width = "120px";
-	
+		var td21 = d.createElement("td");	td21.style.padding = "3px";	 td21.style.verticalAlign = "top";	 td21.style.width = "120px";
+		var td22 = d.createElement("td");	td22.style.padding = "3px";	 td22.style.verticalAlign = "top";	 td22.style.width = "120px";
+		var td23 = d.createElement("td");	td23.style.padding = "3px";	 td23.style.verticalAlign = "top";	 td23.style.width = "120px";
+		var td24 = d.createElement("td");	td24.style.padding = "3px";	 td24.style.verticalAlign = "top";	 td24.style.width = "120px";
+		var td25 = d.createElement("td");	td25.style.padding = "3px";	 td25.style.verticalAlign = "top";	 td25.style.width = "120px";
+
 		Defense_Box.appendChild(tr1);
 		tr1.appendChild(td1);
 		Defense_Box.appendChild(tr2);
@@ -44601,52 +44605,52 @@ function disp_bro3_dasu(){
 		tr2.appendChild(td23);
 		tr2.appendChild(td24);
 		tr2.appendChild(td25);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME61" , OPT_DOME[61] , " 剣兵防御 ", "剣兵防御を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME62" , OPT_DOME[62] , " 騎兵防御 ", "騎兵防御を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME63" , OPT_DOME[63] , " 槍兵防御 ", "槍兵防御を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME64" , OPT_DOME[64] , " 弓兵防御 ", "弓兵防御を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td25, "OPT_DOME65" , OPT_DOME[65] , " 兵器防御 ", "兵器防御を付与・LVUPできる武将を残します。", 0);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME66" , OPT_DOME[66] , " 剣兵方陣 ", "剣兵方陣を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME67" , OPT_DOME[67] , " 騎兵方陣 ", "騎兵方陣を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME68" , OPT_DOME[68] , " 槍兵方陣 ", "槍兵方陣を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME69" , OPT_DOME[69] , " 弓兵方陣 ", "弓兵方陣を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td25, "OPT_DOME70" , OPT_DOME[70] , " 兵器方陣 ", "兵器方陣を付与・LVUPできる武将を残します。", 0);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME71" , OPT_DOME[71] , " 剣兵の聖域 ", "剣兵の聖域を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME72" , OPT_DOME[72] , " 騎兵の聖域 ", "騎兵の聖域を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME73" , OPT_DOME[73] , " 槍兵の聖域 ", "槍兵の聖域を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME74" , OPT_DOME[74] , " 弓兵の聖域 ", "弓兵の聖域を付与・LVUPできる武将を残します。", 0);
 			ccreateText(td25, "OPT_DOME75" , " 　 "		 , "", 0);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME76" , OPT_DOME[76] , " 剣兵堅守 ", "剣兵堅守を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME77" , OPT_DOME[77] , " 騎兵堅守 ", "騎兵堅守を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME78" , OPT_DOME[78] , " 槍兵堅守 ", "槍兵堅守を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME79" , OPT_DOME[79] , " 弓兵堅守 ", "弓兵堅守を付与・LVUPできる武将を残します。", 0);
 			ccreateText(td25, "OPT_DOME80" , " 　 "		 , "", 0);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME81" , OPT_DOME[81] , " 八卦の陣 ", "八卦の陣を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME82" , OPT_DOME[82] , " 鉄壁 "	, "鉄壁を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td23, "OPT_DOME83" , OPT_DOME[83] , " 守護神 "  , "守護神を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td23, "OPT_DOME83" , OPT_DOME[83] , " 守護神 "	, "守護神を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME84" , OPT_DOME[84] , " 守護防陣 "  , "守護防陣を付与・LVUPできる武将を残します。", 0);
 			ccreateText(td25, "OPT_DOME85" , " 　 "		 , "", 0);
-	
+
 		// ===== 進軍系 =====
 		var Anabasis_Box = d.createElement("table");
 			Anabasis_Box.style.border = "solid 2px black";
 			Anabasis_Box.style.margin = "0px 4px 4px 0px";
 			Anabasis_Box.style.width = "100%";
-	
+
 		var tr1 = d.createElement("tr");
 		var td1 = d.createElement("td");	td1.colSpan = 5;	td1.style.backgroundColor = COLOR_TITLE;	ccreateText(td1, "dummy", "■ 進軍系 ■", 0 );
 		var tr2 = d.createElement("tr");	tr2.style.backgroundColor = COLOR_BACK;	 tr2.style.border = "solid 1px black";
-		var td21 = d.createElement("td");   td21.style.padding = "3px";	 td21.style.verticalAlign = "top";   td21.style.width = "120px";
-		var td22 = d.createElement("td");   td22.style.padding = "3px";	 td22.style.verticalAlign = "top";   td22.style.width = "120px";
-		var td23 = d.createElement("td");   td23.style.padding = "3px";	 td23.style.verticalAlign = "top";   td23.style.width = "120px";
-		var td24 = d.createElement("td");   td24.style.padding = "3px";	 td24.style.verticalAlign = "top";   td24.style.width = "120px";
-		var td25 = d.createElement("td");   td25.style.padding = "3px";	 td25.style.verticalAlign = "top";   td25.style.width = "120px";
-	
+		var td21 = d.createElement("td");	td21.style.padding = "3px";	 td21.style.verticalAlign = "top";	 td21.style.width = "120px";
+		var td22 = d.createElement("td");	td22.style.padding = "3px";	 td22.style.verticalAlign = "top";	 td22.style.width = "120px";
+		var td23 = d.createElement("td");	td23.style.padding = "3px";	 td23.style.verticalAlign = "top";	 td23.style.width = "120px";
+		var td24 = d.createElement("td");	td24.style.padding = "3px";	 td24.style.verticalAlign = "top";	 td24.style.width = "120px";
+		var td25 = d.createElement("td");	td25.style.padding = "3px";	 td25.style.verticalAlign = "top";	 td25.style.width = "120px";
+
 		Anabasis_Box.appendChild(tr1);
 		tr1.appendChild(td1);
 		Anabasis_Box.appendChild(tr2);
@@ -44655,39 +44659,39 @@ function disp_bro3_dasu(){
 		tr2.appendChild(td23);
 		tr2.appendChild(td24);
 		tr2.appendChild(td25);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME91" , OPT_DOME[91] , " 剣兵行軍 ", "剣兵行軍を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME92" , OPT_DOME[92] , " 騎兵行軍 ", "騎兵行軍を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME93" , OPT_DOME[93] , " 槍兵行軍 ", "槍兵行軍を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME94" , OPT_DOME[94] , " 弓兵行軍 ", "弓兵行軍を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td25, "OPT_DOME95" , OPT_DOME[95] , " 兵器行軍 ", "兵器行軍を付与・LVUPできる武将を残します。", 0);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME96" , OPT_DOME[96] , " 剣兵強行 ", "剣兵強行を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME97" , OPT_DOME[97] , " 騎兵強行 ", "騎兵強行を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME98" , OPT_DOME[98] , " 槍兵強行 ", "槍兵強行を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME99" , OPT_DOME[99] , " 弓兵強行 ", "弓兵強行を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td25, "OPT_DOME100" , OPT_DOME[100] , " 兵器強行 ", "兵器強行を付与・LVUPできる武将を残します。", 0);
-	
+
 		ccreateCheckBox(td21, "OPT_DOME101" , OPT_DOME[101] , " 急速援護 ", "急速援護を付与・LVUPできる武将を残します。", 5);
 		ccreateCheckBox(td22, "OPT_DOME102" , OPT_DOME[102] , " 千里行 "  , "千里行を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME103" , OPT_DOME[103] , " 神速 "	, "神速を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td24, "OPT_DOME104" , OPT_DOME[104] , " 烈速 "	, "烈速を付与・LVUPできる武将を残します。", 0);
-	
+
 		// ===== 内政系 =====
 		var Politics_Box = d.createElement("table");
 			Politics_Box.style.border = "solid 2px black";
 			Politics_Box.style.margin = "0px 4px 4px 0px";
 			Politics_Box.style.width = "100%";
-	
+
 		var tr1 = d.createElement("tr");
 		var td1 = d.createElement("td");	td1.colSpan = 5;	td1.style.backgroundColor = COLOR_TITLE;	ccreateText(td1, "dummy", "■ 内政系 ■", 0 );
 		var tr2 = d.createElement("tr");	tr2.style.backgroundColor = COLOR_BACK;	 tr2.style.border = "solid 1px black";
-		var td21 = d.createElement("td");   td21.style.padding = "3px";	 td21.style.verticalAlign = "top";   td21.style.width = "120px";
-		var td22 = d.createElement("td");   td22.style.padding = "3px";	 td22.style.verticalAlign = "top";   td22.style.width = "120px";
-		var td23 = d.createElement("td");   td23.style.padding = "3px";	 td23.style.verticalAlign = "top";   td23.style.width = "120px";
-		var td24 = d.createElement("td");   td24.style.padding = "3px";	 td24.style.verticalAlign = "top";   td24.style.width = "120px";
-		var td25 = d.createElement("td");   td25.style.padding = "3px";	 td25.style.verticalAlign = "top";   td25.style.width = "120px";
-	
+		var td21 = d.createElement("td");	td21.style.padding = "3px";	 td21.style.verticalAlign = "top";	 td21.style.width = "120px";
+		var td22 = d.createElement("td");	td22.style.padding = "3px";	 td22.style.verticalAlign = "top";	 td22.style.width = "120px";
+		var td23 = d.createElement("td");	td23.style.padding = "3px";	 td23.style.verticalAlign = "top";	 td23.style.width = "120px";
+		var td24 = d.createElement("td");	td24.style.padding = "3px";	 td24.style.verticalAlign = "top";	 td24.style.width = "120px";
+		var td25 = d.createElement("td");	td25.style.padding = "3px";	 td25.style.verticalAlign = "top";	 td25.style.width = "120px";
+
 		Politics_Box.appendChild(tr1);
 		tr1.appendChild(td1);
 		Politics_Box.appendChild(tr2);
@@ -44696,52 +44700,52 @@ function disp_bro3_dasu(){
 		tr2.appendChild(td23);
 		tr2.appendChild(td24);
 		tr2.appendChild(td25);
-	
-		ccreateCheckBox(td21, "OPT_DOME111" , OPT_DOME[111] , " 伐採知識 "  , "伐採知識を付与・LVUPできる武将を残します。", 5);
-		ccreateCheckBox(td22, "OPT_DOME112" , OPT_DOME[112] , " 石切知識 "  , "石切知識を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td23, "OPT_DOME113" , OPT_DOME[113] , " 製鉄知識 "  , "製鉄知識を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td24, "OPT_DOME114" , OPT_DOME[114] , " 食糧知識 "  , "食糧知識を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td25, "OPT_DOME115" , OPT_DOME[115] , " 農林知識 "  , "農林知識を付与・LVUPできる武将を残します。", 0);
-	
-		ccreateCheckBox(td21, "OPT_DOME116" , OPT_DOME[116] , " 伐採技術 "  , "伐採知識を付与・LVUPできる武将を残します。", 5);
-		ccreateCheckBox(td22, "OPT_DOME117" , OPT_DOME[117] , " 石切技術 "  , "石切知識を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td23, "OPT_DOME118" , OPT_DOME[118] , " 製鉄技術 "  , "製鉄知識を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td24, "OPT_DOME119" , OPT_DOME[119] , " 食糧技術 "  , "食糧知識を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td25, "OPT_DOME120" , OPT_DOME[120] , " 農林技術 "  , "農林技術を付与・LVUPできる武将を残します。", 0);
-	
-		ccreateCheckBox(td21, "OPT_DOME121" , OPT_DOME[121] , " 練兵訓練 "  , "練兵訓練を付与・LVUPできる武将を残します。", 5);
-		ccreateCheckBox(td22, "OPT_DOME122" , OPT_DOME[122] , " 厩舎訓練 "  , "厩舎訓練を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td23, "OPT_DOME123" , OPT_DOME[123] , " 兵舎訓練 "  , "兵舎修練を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td24, "OPT_DOME124" , OPT_DOME[124] , " 弓兵訓練 "  , "弓兵訓練を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td25, "OPT_DOME125" , OPT_DOME[125] , " 兵器訓練 "  , "兵器訓練を付与・LVUPできる武将を残します。", 0);
-	
-		ccreateCheckBox(td21, "OPT_DOME126" , OPT_DOME[126] , " 練兵修練 "  , "練兵修練を付与・LVUPできる武将を残します。", 5);
-		ccreateCheckBox(td22, "OPT_DOME127" , OPT_DOME[127] , " 厩舎修練 "  , "厩舎修練を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td23, "OPT_DOME128" , OPT_DOME[128] , " 兵舎修練 "  , "兵舎修練を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td24, "OPT_DOME129" , OPT_DOME[129] , " 弓兵修練 "  , "弓兵修練を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td25, "OPT_DOME130" , OPT_DOME[130] , " 兵器修練 "  , "兵器修練を付与・LVUPできる武将を残します。", 0);
-	
-		ccreateCheckBox(td21, "OPT_DOME131" , OPT_DOME[131] , " 呉の治世 "  , "呉の治世を付与・LVUPできる武将を残します。", 5);
-		ccreateCheckBox(td22, "OPT_DOME132" , OPT_DOME[132] , " 王佐の才 "  , "王佐の才を付与・LVUPできる武将を残します。", 0);
+
+		ccreateCheckBox(td21, "OPT_DOME111" , OPT_DOME[111] , " 伐採知識 "	, "伐採知識を付与・LVUPできる武将を残します。", 5);
+		ccreateCheckBox(td22, "OPT_DOME112" , OPT_DOME[112] , " 石切知識 "	, "石切知識を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td23, "OPT_DOME113" , OPT_DOME[113] , " 製鉄知識 "	, "製鉄知識を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td24, "OPT_DOME114" , OPT_DOME[114] , " 食糧知識 "	, "食糧知識を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td25, "OPT_DOME115" , OPT_DOME[115] , " 農林知識 "	, "農林知識を付与・LVUPできる武将を残します。", 0);
+
+		ccreateCheckBox(td21, "OPT_DOME116" , OPT_DOME[116] , " 伐採技術 "	, "伐採知識を付与・LVUPできる武将を残します。", 5);
+		ccreateCheckBox(td22, "OPT_DOME117" , OPT_DOME[117] , " 石切技術 "	, "石切知識を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td23, "OPT_DOME118" , OPT_DOME[118] , " 製鉄技術 "	, "製鉄知識を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td24, "OPT_DOME119" , OPT_DOME[119] , " 食糧技術 "	, "食糧知識を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td25, "OPT_DOME120" , OPT_DOME[120] , " 農林技術 "	, "農林技術を付与・LVUPできる武将を残します。", 0);
+
+		ccreateCheckBox(td21, "OPT_DOME121" , OPT_DOME[121] , " 練兵訓練 "	, "練兵訓練を付与・LVUPできる武将を残します。", 5);
+		ccreateCheckBox(td22, "OPT_DOME122" , OPT_DOME[122] , " 厩舎訓練 "	, "厩舎訓練を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td23, "OPT_DOME123" , OPT_DOME[123] , " 兵舎訓練 "	, "兵舎修練を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td24, "OPT_DOME124" , OPT_DOME[124] , " 弓兵訓練 "	, "弓兵訓練を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td25, "OPT_DOME125" , OPT_DOME[125] , " 兵器訓練 "	, "兵器訓練を付与・LVUPできる武将を残します。", 0);
+
+		ccreateCheckBox(td21, "OPT_DOME126" , OPT_DOME[126] , " 練兵修練 "	, "練兵修練を付与・LVUPできる武将を残します。", 5);
+		ccreateCheckBox(td22, "OPT_DOME127" , OPT_DOME[127] , " 厩舎修練 "	, "厩舎修練を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td23, "OPT_DOME128" , OPT_DOME[128] , " 兵舎修練 "	, "兵舎修練を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td24, "OPT_DOME129" , OPT_DOME[129] , " 弓兵修練 "	, "弓兵修練を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td25, "OPT_DOME130" , OPT_DOME[130] , " 兵器修練 "	, "兵器修練を付与・LVUPできる武将を残します。", 0);
+
+		ccreateCheckBox(td21, "OPT_DOME131" , OPT_DOME[131] , " 呉の治世 "	, "呉の治世を付与・LVUPできる武将を残します。", 5);
+		ccreateCheckBox(td22, "OPT_DOME132" , OPT_DOME[132] , " 王佐の才 "	, "王佐の才を付与・LVUPできる武将を残します。", 0);
 		ccreateCheckBox(td23, "OPT_DOME133" , OPT_DOME[133] , " 仁君 "	  , "仁君を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td24, "OPT_DOME134" , OPT_DOME[134] , " 加工知識 "  , "加工知識を付与・LVUPできる武将を残します。", 0);
-		ccreateCheckBox(td25, "OPT_DOME135" , OPT_DOME[135] , " 加工技術 "  , "加工技術を付与・LVUPできる武将を残します。", 0);
-	
+		ccreateCheckBox(td24, "OPT_DOME134" , OPT_DOME[134] , " 加工知識 "	, "加工知識を付与・LVUPできる武将を残します。", 0);
+		ccreateCheckBox(td25, "OPT_DOME135" , OPT_DOME[135] , " 加工技術 "	, "加工技術を付与・LVUPできる武将を残します。", 0);
+
 		// ===== チェック範囲 ====
 		var Other_Box2 = d.createElement("table");
 			Other_Box2.style.border = "solid 2px black";
 			Other_Box2.style.margin = "0px 4px 4px 0px";
 			Other_Box2.style.width = "100%";
-	
+
 		var tr1 = d.createElement("tr");
-		var td1 = d.createElement("td");	td1.colSpan = 11;   td1.style.backgroundColor = COLOR_TITLE;	ccreateText(td1, "dummy", "■ チェック範囲 ■", 0 );
+		var td1 = d.createElement("td");	td1.colSpan = 11;	td1.style.backgroundColor = COLOR_TITLE;	ccreateText(td1, "dummy", "■ チェック範囲 ■", 0 );
 		var tr2 = d.createElement("tr");	tr2.style.backgroundColor = COLOR_BACK;	 tr2.style.border = "solid 1px black";
-		var td21 = d.createElement("td");   td21.style.padding = "3px";	 td21.style.verticalAlign = "top";   td21.style.width = "120px";
-		var td22 = d.createElement("td");   td22.style.padding = "3px";	 td22.style.verticalAlign = "top";   td22.style.width = "120px";
-		var td23 = d.createElement("td");   td23.style.padding = "3px";	 td23.style.verticalAlign = "top";   td23.style.width = "120px";
-		var td24 = d.createElement("td");   td24.style.padding = "3px";	 td24.style.verticalAlign = "top";   td24.style.width = "120px";
-		var td25 = d.createElement("td");   td25.style.padding = "3px";	 td25.style.verticalAlign = "top";   td25.style.width = "120px";
-	
+		var td21 = d.createElement("td");	td21.style.padding = "3px";	 td21.style.verticalAlign = "top";	 td21.style.width = "120px";
+		var td22 = d.createElement("td");	td22.style.padding = "3px";	 td22.style.verticalAlign = "top";	 td22.style.width = "120px";
+		var td23 = d.createElement("td");	td23.style.padding = "3px";	 td23.style.verticalAlign = "top";	 td23.style.width = "120px";
+		var td24 = d.createElement("td");	td24.style.padding = "3px";	 td24.style.verticalAlign = "top";	 td24.style.width = "120px";
+		var td25 = d.createElement("td");	td25.style.padding = "3px";	 td25.style.verticalAlign = "top";	 td25.style.width = "120px";
+
 		Other_Box2.appendChild(tr1);
 		tr1.appendChild(td1);
 		Other_Box2.appendChild(tr2);
@@ -44750,30 +44754,30 @@ function disp_bro3_dasu(){
 		tr2.appendChild(td23);
 		tr2.appendChild(td24);
 		tr2.appendChild(td25);
-	
+
 		ccreateCheckBox(td21, "OPT_OTHER101" , OPT_OTHER[101] , " 初期スキル "		, "初期スキルのチェックを行います。"		, 5);
 		ccreateCheckBox(td22, "OPT_OTHER102" , OPT_OTHER[102] , " 攻撃振り "	  , "攻撃振りレシピのチェックを行います。"	, 1);
 		ccreateCheckBox(td23, "OPT_OTHER103" , OPT_OTHER[103] , " 防御振り "	  , "防御合成レシピのチェックを行います。"	, 1);
 		ccreateCheckBox(td24, "OPT_OTHER104" , OPT_OTHER[104] , " 知力振り "	  , "知力合成レシピのチェックを行います。"	, 1);
 		ccreateCheckBox(td25, "OPT_OTHER105" , OPT_OTHER[105] , " 隠し "		  , "隠し合成レシピのチェックを行います。"	, 1);
 		ccreateCheckBox(td21, "OPT_OTHER106" , OPT_OTHER[106] , " コモン強制破棄 "	, "レアリティが「Ｃ」のカードは破棄します。"	, 5);
-	
+
 		// ===== 画面表示系 ====
 		var Other_Box3 = d.createElement("table");
 			Other_Box3.style.border = "solid 2px black";
 			Other_Box3.style.margin = "0px 4px 4px 0px";
 			Other_Box3.style.width = "100%";
-	
+
 		var tr1 = d.createElement("tr");
-		var td1 = d.createElement("td");	td1.colSpan = 11;   td1.style.backgroundColor = COLOR_TITLE;	ccreateText(td1, "dummy", "■ 画面表示系 ■", 0 );
+		var td1 = d.createElement("td");	td1.colSpan = 11;	td1.style.backgroundColor = COLOR_TITLE;	ccreateText(td1, "dummy", "■ 画面表示系 ■", 0 );
 		var tr2 = d.createElement("tr");	tr2.style.backgroundColor = COLOR_BACK;	 tr2.style.border = "solid 1px black";
-		var td21 = d.createElement("td");   td21.style.padding = "3px";		 td21.style.verticalAlign = "top";
-		var td22 = d.createElement("td");   td22.style.padding = "3px";		 td22.style.verticalAlign = "top";
-		var td23 = d.createElement("td");   td23.style.padding = "3px";		 td23.style.verticalAlign = "top";
-		var td24 = d.createElement("td");   td24.style.padding = "3px";		 td24.style.verticalAlign = "top";
-		var td25 = d.createElement("td");   td25.style.padding = "3px";		 td25.style.verticalAlign = "top";
-		var td26 = d.createElement("td");   td26.style.padding = "3px";		 td26.style.verticalAlign = "top";
-	
+		var td21 = d.createElement("td");	td21.style.padding = "3px";		 td21.style.verticalAlign = "top";
+		var td22 = d.createElement("td");	td22.style.padding = "3px";		 td22.style.verticalAlign = "top";
+		var td23 = d.createElement("td");	td23.style.padding = "3px";		 td23.style.verticalAlign = "top";
+		var td24 = d.createElement("td");	td24.style.padding = "3px";		 td24.style.verticalAlign = "top";
+		var td25 = d.createElement("td");	td25.style.padding = "3px";		 td25.style.verticalAlign = "top";
+		var td26 = d.createElement("td");	td26.style.padding = "3px";		 td26.style.verticalAlign = "top";
+
 		Other_Box3.appendChild(tr1);
 		tr1.appendChild(td1);
 		Other_Box3.appendChild(tr2);
@@ -44783,96 +44787,96 @@ function disp_bro3_dasu(){
 		tr2.appendChild(td24);
 		tr2.appendChild(td25);
 		tr2.appendChild(td26);
-	
+
 		td21.appendChild( createRadioBtn ( 'DF', '変更しない' ) );
 		td22.appendChild( createRadioBtn ( 'OL', '旧モード' ) );
 		td23.appendChild( createRadioBtn ( 'SP', '春に変更' ) );
 		td24.appendChild( createRadioBtn ( 'SU', '夏に変更' ) );
 		td25.appendChild( createRadioBtn ( 'AU', '秋に変更' ) );
 		td26.appendChild( createRadioBtn ( 'WI', '冬に変更' ) );
-	
+
 		ccreateCheckBox(td21, "OPT_OTHER107" , OPT_OTHER[107] , " すけすけモード "	, "カード枠を半透明にします。"			  , 5);
-	
+
 		// ===== その他 =====
 		var Other_Box = d.createElement("table");
 			Other_Box.style.border = "solid 2px black";
 			Other_Box.style.margin = "0px 4px 4px 0px";
 			Other_Box.style.width = "100%";
 	//	  Other_Box.style.width = "420px";
-	
+
 		var tr1 = d.createElement("tr");
-		var td1 = d.createElement("td");	td1.colSpan = 11;   td1.style.backgroundColor = COLOR_TITLE;	ccreateText(td1, "dummy", "■ その他の設定 ■", 0 );
+		var td1 = d.createElement("td");	td1.colSpan = 11;	td1.style.backgroundColor = COLOR_TITLE;	ccreateText(td1, "dummy", "■ その他の設定 ■", 0 );
 		var tr2 = d.createElement("tr");	tr2.style.backgroundColor = COLOR_BACK;	 tr2.style.borderStyle = "solid solid none  solid"; tr2.style.borderColor = "black"; tr2.style.borderWidth = "1px";
 		var tr3 = d.createElement("tr");	tr3.style.backgroundColor = COLOR_BACK;	 tr3.style.borderStyle = "none  solid none  solid"; tr3.style.borderColor = "black"; tr3.style.borderWidth = "1px";
 		var tr4 = d.createElement("tr");	tr4.style.backgroundColor = COLOR_BACK;	 tr4.style.borderStyle = "none  solid none  solid"; tr4.style.borderColor = "black"; tr4.style.borderWidth = "1px";
 		var tr5 = d.createElement("tr");	tr5.style.backgroundColor = COLOR_BACK;	 tr5.style.borderStyle = "none  solid none  solid"; tr5.style.borderColor = "black"; tr5.style.borderWidth = "1px";
 		var tr6 = d.createElement("tr");	tr6.style.backgroundColor = COLOR_BACK;	 tr6.style.borderStyle = "none  solid none  solid"; tr6.style.borderColor = "black"; tr6.style.borderWidth = "1px";
 		var tr9 = d.createElement("tr");	tr9.style.backgroundColor = COLOR_BACK;	 tr9.style.borderStyle = "none  solid solid solid"; tr9.style.borderColor = "black"; tr9.style.borderWidth = "1px";
-	
-		var td021 = d.createElement("td");   td021.style.padding = "2px";	 td021.style.verticalAlign = "top";
-		var td022 = d.createElement("td");   td022.style.padding = "2px";	 td022.style.verticalAlign = "top";
-		var td023 = d.createElement("td");   td023.style.padding = "2px";	 td023.style.verticalAlign = "top";
-		var td024 = d.createElement("td");   td024.style.padding = "2px";	 td024.style.verticalAlign = "top";
-		var td025 = d.createElement("td");   td025.style.padding = "2px";	 td025.style.verticalAlign = "top";
-		var td026 = d.createElement("td");   td026.style.padding = "2px";	 td026.style.verticalAlign = "top";
-		var td027 = d.createElement("td");   td027.style.padding = "2px";	 td027.style.verticalAlign = "top";
-		var td028 = d.createElement("td");   td028.style.padding = "2px";	 td028.style.verticalAlign = "top";
-		var td029 = d.createElement("td");   td029.style.padding = "2px";	 td029.style.verticalAlign = "top";
-		var td030 = d.createElement("td");   td030.style.padding = "2px";	 td030.style.verticalAlign = "top";
-		var td031 = d.createElement("td");   td031.style.padding = "2px";	 td031.style.verticalAlign = "top";
-	
-		var td121 = d.createElement("td");   td121.style.padding = "2px";	 td121.style.verticalAlign = "top";
-		var td122 = d.createElement("td");   td122.style.padding = "2px";	 td122.style.verticalAlign = "top";
-		var td123 = d.createElement("td");   td123.style.padding = "2px";	 td123.style.verticalAlign = "top";
-		var td124 = d.createElement("td");   td124.style.padding = "2px";	 td124.style.verticalAlign = "top";
-		var td125 = d.createElement("td");   td125.style.padding = "2px";	 td125.style.verticalAlign = "top";
-		var td126 = d.createElement("td");   td126.style.padding = "2px";	 td126.style.verticalAlign = "top";
-		var td127 = d.createElement("td");   td127.style.padding = "2px";	 td127.style.verticalAlign = "top";
-		var td128 = d.createElement("td");   td128.style.padding = "2px";	 td128.style.verticalAlign = "top";
-		var td129 = d.createElement("td");   td129.style.padding = "2px";	 td129.style.verticalAlign = "top";
-		var td130 = d.createElement("td");   td130.style.padding = "2px";	 td130.style.verticalAlign = "top";
-		var td131 = d.createElement("td");   td131.style.padding = "2px";	 td131.style.verticalAlign = "top";
-	
-		var td221 = d.createElement("td");   td221.style.padding = "2px";	 td221.style.verticalAlign = "top";
-		var td222 = d.createElement("td");   td222.style.padding = "2px";	 td222.style.verticalAlign = "top";
-		var td223 = d.createElement("td");   td223.style.padding = "2px";	 td223.style.verticalAlign = "top";
-		var td224 = d.createElement("td");   td224.style.padding = "2px";	 td224.style.verticalAlign = "top";
-		var td225 = d.createElement("td");   td225.style.padding = "2px";	 td225.style.verticalAlign = "top";
-		var td226 = d.createElement("td");   td226.style.padding = "2px";	 td226.style.verticalAlign = "top";
-		var td227 = d.createElement("td");   td227.style.padding = "2px";	 td227.style.verticalAlign = "top";
-		var td228 = d.createElement("td");   td228.style.padding = "2px";	 td228.style.verticalAlign = "top";
-		var td229 = d.createElement("td");   td229.style.padding = "2px";	 td229.style.verticalAlign = "top";
-		var td230 = d.createElement("td");   td230.style.padding = "2px";	 td230.style.verticalAlign = "top";
-		var td231 = d.createElement("td");   td231.style.padding = "2px";	 td231.style.verticalAlign = "top";
-	
-		var td321 = d.createElement("td");   td321.style.padding = "2px";	 td321.style.verticalAlign = "top";
-		var td322 = d.createElement("td");   td322.style.padding = "2px";	 td322.style.verticalAlign = "top";
-		var td323 = d.createElement("td");   td323.style.padding = "2px";	 td323.style.verticalAlign = "top";
-		var td324 = d.createElement("td");   td324.style.padding = "2px";	 td324.style.verticalAlign = "top";
-		var td325 = d.createElement("td");   td325.style.padding = "2px";	 td325.style.verticalAlign = "top";
-		var td326 = d.createElement("td");   td326.style.padding = "2px";	 td326.style.verticalAlign = "top";
-		var td327 = d.createElement("td");   td327.style.padding = "2px";	 td327.style.verticalAlign = "top";
-		var td328 = d.createElement("td");   td328.style.padding = "2px";	 td328.style.verticalAlign = "top";
-		var td329 = d.createElement("td");   td329.style.padding = "2px";	 td329.style.verticalAlign = "top";
-		var td330 = d.createElement("td");   td330.style.padding = "2px";	 td330.style.verticalAlign = "top";
-		var td331 = d.createElement("td");   td331.style.padding = "2px";	 td331.style.verticalAlign = "top";
-	
-		var td421 = d.createElement("td");   td421.style.padding = "2px";	 td421.style.verticalAlign = "top";
-		var td422 = d.createElement("td");   td422.style.padding = "2px";	 td422.style.verticalAlign = "top";
-		var td423 = d.createElement("td");   td423.style.padding = "2px";	 td423.style.verticalAlign = "top";
-		var td424 = d.createElement("td");   td424.style.padding = "2px";	 td424.style.verticalAlign = "top";
-		var td425 = d.createElement("td");   td425.style.padding = "2px";	 td425.style.verticalAlign = "top";
-		var td426 = d.createElement("td");   td426.style.padding = "2px";	 td426.style.verticalAlign = "top";
-		var td427 = d.createElement("td");   td427.style.padding = "2px";	 td427.style.verticalAlign = "top";
-		var td428 = d.createElement("td");   td428.style.padding = "2px";	 td428.style.verticalAlign = "top";
-		var td429 = d.createElement("td");   td429.style.padding = "2px";	 td429.style.verticalAlign = "top";
-		var td430 = d.createElement("td");   td430.style.padding = "2px";	 td430.style.verticalAlign = "top";
-		var td431 = d.createElement("td");   td431.style.padding = "2px";	 td431.style.verticalAlign = "top";
-	
-	
+
+		var td021 = d.createElement("td");	 td021.style.padding = "2px";	 td021.style.verticalAlign = "top";
+		var td022 = d.createElement("td");	 td022.style.padding = "2px";	 td022.style.verticalAlign = "top";
+		var td023 = d.createElement("td");	 td023.style.padding = "2px";	 td023.style.verticalAlign = "top";
+		var td024 = d.createElement("td");	 td024.style.padding = "2px";	 td024.style.verticalAlign = "top";
+		var td025 = d.createElement("td");	 td025.style.padding = "2px";	 td025.style.verticalAlign = "top";
+		var td026 = d.createElement("td");	 td026.style.padding = "2px";	 td026.style.verticalAlign = "top";
+		var td027 = d.createElement("td");	 td027.style.padding = "2px";	 td027.style.verticalAlign = "top";
+		var td028 = d.createElement("td");	 td028.style.padding = "2px";	 td028.style.verticalAlign = "top";
+		var td029 = d.createElement("td");	 td029.style.padding = "2px";	 td029.style.verticalAlign = "top";
+		var td030 = d.createElement("td");	 td030.style.padding = "2px";	 td030.style.verticalAlign = "top";
+		var td031 = d.createElement("td");	 td031.style.padding = "2px";	 td031.style.verticalAlign = "top";
+
+		var td121 = d.createElement("td");	 td121.style.padding = "2px";	 td121.style.verticalAlign = "top";
+		var td122 = d.createElement("td");	 td122.style.padding = "2px";	 td122.style.verticalAlign = "top";
+		var td123 = d.createElement("td");	 td123.style.padding = "2px";	 td123.style.verticalAlign = "top";
+		var td124 = d.createElement("td");	 td124.style.padding = "2px";	 td124.style.verticalAlign = "top";
+		var td125 = d.createElement("td");	 td125.style.padding = "2px";	 td125.style.verticalAlign = "top";
+		var td126 = d.createElement("td");	 td126.style.padding = "2px";	 td126.style.verticalAlign = "top";
+		var td127 = d.createElement("td");	 td127.style.padding = "2px";	 td127.style.verticalAlign = "top";
+		var td128 = d.createElement("td");	 td128.style.padding = "2px";	 td128.style.verticalAlign = "top";
+		var td129 = d.createElement("td");	 td129.style.padding = "2px";	 td129.style.verticalAlign = "top";
+		var td130 = d.createElement("td");	 td130.style.padding = "2px";	 td130.style.verticalAlign = "top";
+		var td131 = d.createElement("td");	 td131.style.padding = "2px";	 td131.style.verticalAlign = "top";
+
+		var td221 = d.createElement("td");	 td221.style.padding = "2px";	 td221.style.verticalAlign = "top";
+		var td222 = d.createElement("td");	 td222.style.padding = "2px";	 td222.style.verticalAlign = "top";
+		var td223 = d.createElement("td");	 td223.style.padding = "2px";	 td223.style.verticalAlign = "top";
+		var td224 = d.createElement("td");	 td224.style.padding = "2px";	 td224.style.verticalAlign = "top";
+		var td225 = d.createElement("td");	 td225.style.padding = "2px";	 td225.style.verticalAlign = "top";
+		var td226 = d.createElement("td");	 td226.style.padding = "2px";	 td226.style.verticalAlign = "top";
+		var td227 = d.createElement("td");	 td227.style.padding = "2px";	 td227.style.verticalAlign = "top";
+		var td228 = d.createElement("td");	 td228.style.padding = "2px";	 td228.style.verticalAlign = "top";
+		var td229 = d.createElement("td");	 td229.style.padding = "2px";	 td229.style.verticalAlign = "top";
+		var td230 = d.createElement("td");	 td230.style.padding = "2px";	 td230.style.verticalAlign = "top";
+		var td231 = d.createElement("td");	 td231.style.padding = "2px";	 td231.style.verticalAlign = "top";
+
+		var td321 = d.createElement("td");	 td321.style.padding = "2px";	 td321.style.verticalAlign = "top";
+		var td322 = d.createElement("td");	 td322.style.padding = "2px";	 td322.style.verticalAlign = "top";
+		var td323 = d.createElement("td");	 td323.style.padding = "2px";	 td323.style.verticalAlign = "top";
+		var td324 = d.createElement("td");	 td324.style.padding = "2px";	 td324.style.verticalAlign = "top";
+		var td325 = d.createElement("td");	 td325.style.padding = "2px";	 td325.style.verticalAlign = "top";
+		var td326 = d.createElement("td");	 td326.style.padding = "2px";	 td326.style.verticalAlign = "top";
+		var td327 = d.createElement("td");	 td327.style.padding = "2px";	 td327.style.verticalAlign = "top";
+		var td328 = d.createElement("td");	 td328.style.padding = "2px";	 td328.style.verticalAlign = "top";
+		var td329 = d.createElement("td");	 td329.style.padding = "2px";	 td329.style.verticalAlign = "top";
+		var td330 = d.createElement("td");	 td330.style.padding = "2px";	 td330.style.verticalAlign = "top";
+		var td331 = d.createElement("td");	 td331.style.padding = "2px";	 td331.style.verticalAlign = "top";
+
+		var td421 = d.createElement("td");	 td421.style.padding = "2px";	 td421.style.verticalAlign = "top";
+		var td422 = d.createElement("td");	 td422.style.padding = "2px";	 td422.style.verticalAlign = "top";
+		var td423 = d.createElement("td");	 td423.style.padding = "2px";	 td423.style.verticalAlign = "top";
+		var td424 = d.createElement("td");	 td424.style.padding = "2px";	 td424.style.verticalAlign = "top";
+		var td425 = d.createElement("td");	 td425.style.padding = "2px";	 td425.style.verticalAlign = "top";
+		var td426 = d.createElement("td");	 td426.style.padding = "2px";	 td426.style.verticalAlign = "top";
+		var td427 = d.createElement("td");	 td427.style.padding = "2px";	 td427.style.verticalAlign = "top";
+		var td428 = d.createElement("td");	 td428.style.padding = "2px";	 td428.style.verticalAlign = "top";
+		var td429 = d.createElement("td");	 td429.style.padding = "2px";	 td429.style.verticalAlign = "top";
+		var td430 = d.createElement("td");	 td430.style.padding = "2px";	 td430.style.verticalAlign = "top";
+		var td431 = d.createElement("td");	 td431.style.padding = "2px";	 td431.style.verticalAlign = "top";
+
+
 		Other_Box.appendChild(tr1);
 		tr1.appendChild(td1);
-	
+
 		Other_Box.appendChild(tr2);
 		tr2.appendChild(td021);
 		tr2.appendChild(td022);
@@ -44885,7 +44889,7 @@ function disp_bro3_dasu(){
 		tr2.appendChild(td029);
 		tr2.appendChild(td030);
 		tr2.appendChild(td031);
-	
+
 		Other_Box.appendChild(tr3);
 		tr3.appendChild(td121);
 		tr3.appendChild(td122);
@@ -44898,7 +44902,7 @@ function disp_bro3_dasu(){
 		tr3.appendChild(td129);
 		tr3.appendChild(td130);
 		tr3.appendChild(td131);
-	
+
 		Other_Box.appendChild(tr4);
 		tr4.appendChild(td221);
 		tr4.appendChild(td222);
@@ -44911,7 +44915,7 @@ function disp_bro3_dasu(){
 		tr4.appendChild(td229);
 		tr4.appendChild(td230);
 		tr4.appendChild(td231);
-	
+
 		Other_Box.appendChild(tr5);
 		tr5.appendChild(td321);
 		tr5.appendChild(td322);
@@ -44924,7 +44928,7 @@ function disp_bro3_dasu(){
 		tr5.appendChild(td329);
 		tr5.appendChild(td330);
 		tr5.appendChild(td331);
-	
+
 		Other_Box.appendChild(tr6);
 		tr6.appendChild(td421);
 		tr6.appendChild(td422);
@@ -44937,7 +44941,7 @@ function disp_bro3_dasu(){
 		tr6.appendChild(td429);
 		tr6.appendChild(td430);
 		tr6.appendChild(td431);
-	
+
 		ccreateText(td021, "dummy", "破棄除外カード№", 0 );
 		ccreateTextBox(td022,"OPT_OTHER0", OPT_OTHER[0],"","",6,0);
 		ccreateTextBox(td023,"OPT_OTHER1", OPT_OTHER[1],"","",6,0);
@@ -44949,7 +44953,7 @@ function disp_bro3_dasu(){
 		ccreateTextBox(td029,"OPT_OTHER7", OPT_OTHER[7],"","",6,0);
 		ccreateTextBox(td030,"OPT_OTHER8", OPT_OTHER[8],"","",6,0);
 		ccreateTextBox(td031,"OPT_OTHER9", OPT_OTHER[9],"","",6,0);
-	
+
 		ccreateText(td121, "dummy", "　", 0 );
 		ccreateTextBox(td122,"OPT_OTHER10", OPT_OTHER[10],"","",6,0);
 		ccreateTextBox(td123,"OPT_OTHER11", OPT_OTHER[11],"","",6,0);
@@ -44961,7 +44965,7 @@ function disp_bro3_dasu(){
 		ccreateTextBox(td129,"OPT_OTHER17", OPT_OTHER[17],"","",6,0);
 		ccreateTextBox(td130,"OPT_OTHER18", OPT_OTHER[18],"","",6,0);
 		ccreateTextBox(td131,"OPT_OTHER19", OPT_OTHER[19],"","",6,0);
-	
+
 		ccreateText(td221, "dummy", "　", 0 );
 		ccreateTextBox(td222,"OPT_OTHER20", OPT_OTHER[20],"","",6,0);
 		ccreateTextBox(td223,"OPT_OTHER21", OPT_OTHER[21],"","",6,0);
@@ -44973,7 +44977,7 @@ function disp_bro3_dasu(){
 		ccreateTextBox(td229,"OPT_OTHER27", OPT_OTHER[27],"","",6,0);
 		ccreateTextBox(td230,"OPT_OTHER28", OPT_OTHER[28],"","",6,0);
 		ccreateTextBox(td231,"OPT_OTHER29", OPT_OTHER[29],"","",6,0);
-	
+
 		ccreateText(td321, "dummy", "　", 0 );
 		ccreateTextBox(td322,"OPT_OTHER30", OPT_OTHER[30],"","",6,0);
 		ccreateTextBox(td323,"OPT_OTHER31", OPT_OTHER[31],"","",6,0);
@@ -44985,7 +44989,7 @@ function disp_bro3_dasu(){
 		ccreateTextBox(td329,"OPT_OTHER37", OPT_OTHER[37],"","",6,0);
 		ccreateTextBox(td330,"OPT_OTHER38", OPT_OTHER[38],"","",6,0);
 		ccreateTextBox(td331,"OPT_OTHER39", OPT_OTHER[39],"","",6,0);
-	
+
 		ccreateText(td421, "dummy", "　", 0 );
 		ccreateTextBox(td422,"OPT_OTHER40", OPT_OTHER[40],"","",6,0);
 		ccreateTextBox(td423,"OPT_OTHER41", OPT_OTHER[41],"","",6,0);
@@ -44997,20 +45001,20 @@ function disp_bro3_dasu(){
 		ccreateTextBox(td429,"OPT_OTHER47", OPT_OTHER[47],"","",6,0);
 		ccreateTextBox(td430,"OPT_OTHER48", OPT_OTHER[48],"","",6,0);
 		ccreateTextBox(td431,"OPT_OTHER49", OPT_OTHER[49],"","",6,0);
-	
-	
+
+
 		var Operation_Box = d.createElement("table");
 			Operation_Box.style.border ="solid 0px gray";
 			Operation_Box.style.fontFamily = "ＭＳ ゴシック";
-	
+
 		var tr711 = d.createElement("tr");
 		var td711 = d.createElement("td");
 			td711.style.padding = "3px";
 			td711.style.verticalAlign = "top";
-	
+
 		Operation_Box.appendChild(tr711);
 			tr711.appendChild(td711);
-	
+
 		ccreateButton(td711, "保存", "設定内容を保存します", function() {
 			SaveSettingBox()
 			alert("保存しました");
@@ -45018,38 +45022,38 @@ function disp_bro3_dasu(){
 		ccreateButton(td711, "閉じる", "設定内容を保存せず閉じます", function() {
 			closeSettingBox();
 		});
-	
+
 		// == コンテナ設定 ==
 		// 上段
-		var tbl000 = d.createElement("table");  // 全体
+		var tbl000 = d.createElement("table");	// 全体
 			tbl000.style.border = "solid 0px lime";
-	
+
 		var tr000 = d.createElement("tr");
-		var td001 = d.createElement("td");  // 左枠
+		var td001 = d.createElement("td");	// 左枠
 			td001.style.verticalAlign = "top";
 			td001.appendChild(Attack_Box);
 			td001.appendChild(Defense_Box);
-	
+
 			td001.appendChild(Politics_Box);
 			td001.appendChild(Anabasis_Box);
 			td001.appendChild(Other_Box2);
 			td001.appendChild(Other_Box3);
 			td001.appendChild(Other_Box);
-	
-		//  レイアウト
-	
+
+		//	レイアウト
+
 		SettingContainer.appendChild(tbl000);
 			tbl000.appendChild(tr000);
 			tr000.appendChild(td001);
-	
-	
+
+
 		SettingContainer.appendChild(Operation_Box);
-	
+
 	}
-	
+
 	// セーブ ==========================================================================================================================================================================
 	function SaveSettingBox(){
-	
+
 		strSave = "";
 		for (i = 0; i < 201; i++){
 			try {
@@ -45058,7 +45062,7 @@ function disp_bro3_dasu(){
 				strSave += "0" + DELIMIT2;
 			}
 		}
-	
+
 		for (i = 0; i < 150; i++){
 			try {
 				if (i < 101) {
@@ -45073,13 +45077,13 @@ function disp_bro3_dasu(){
 		strSave += OPT_SEASON;
 		GM_setValue(HOST+PGNAME, strSave);
 	}
-	
+
 	// ロード ==========================================================================================================================================================================
 	function LoadSettingBox(){
-	
+
 		var defOther = [];
 		var src = GM_getValue(HOST+PGNAME, "");
-	
+
 		if (src == "") {
 			OPT_OTHER[101] = 1;  // 通常
 			OPT_OTHER[102] = 1;  // 攻撃
@@ -45113,18 +45117,18 @@ function disp_bro3_dasu(){
 				OPT_OTHER[i] = parseInt(Temp[201 + i]);
 			}
 		}
-	
+
 		if ((Temp[351] == undefined) || (Temp[351] == "")) {
 			OPT_SEASON = "DF";
 		} else {
 			OPT_SEASON = Temp[351];
 		}
 	}
-	
+
 	// 破棄チェック ====================================================================================================================================================================
 	function checkDestruction(cardno) {
-	
-	
+
+
 		try {
 			// 特定番号の除外
 			for (i=0;i<30;i++) {
@@ -45136,7 +45140,7 @@ function disp_bro3_dasu(){
 			if (card_list[cardno].r == "R" || card_list[cardno].r == "SR" || card_list[cardno].r == "UR") {
 				return 0;
 			}
-	
+
 			// 2013.01.18 追加
 			if (
 				( cardno == 4079 ) || // 水鏡
@@ -45151,12 +45155,12 @@ function disp_bro3_dasu(){
 				return 0;
 			}
 			// 2013.01.18 ここまで
-	
+
 			// 上記条件以外のコモンカードの強制破棄処理
 			if (card_list[cardno].r == "C" && OPT_OTHER[42] == 1) {
 				return 1;
 			}
-	
+
 			// 保持スキルのチェック
 			if (OPT_OTHER[101] == 1) {
 				for (i=0;i<Skill_List.length;i++){	if (card_list[cardno].bs == Skill_List[i][0]) {		if (OPT_DOME[Skill_List[i][1]] == 1) {	return 0;	}	}	}
@@ -45173,16 +45177,16 @@ function disp_bro3_dasu(){
 			if (OPT_OTHER[105] == 1) {
 				for (i=0;i<Skill_List.length;i++){	if (gousei_skill[card_list[cardno].bs][3] == Skill_List[i][0]) {	if (OPT_DOME[Skill_List[i][1]] == 1) {	return 0;	}	}	}
 			}	// 合成：隠し
-	
+
 			// 全部のチェック抜けたら破棄する
 			return 1;
-	
+
 		} catch(e) {
 			// 未知のカード番号だった
 			return 0;
 		}
 	}
-	
+
 	// チェックボックスの状態取得
 	function cgetCheckBoxValue(id)
 	{
@@ -45191,38 +45195,38 @@ function disp_bro3_dasu(){
 		if( !c.checked ) return 0;
 		return 1;
 	}
-	
+
 	function cgetTextBoxValue(id)
 	{
 		var c = id;
 		if( !c ) return "";
 		return c.value;
 	}
-	
+
 	// 設定画面表示
 	function openSettingBilderBox() {
 		addSettingHtml();
 	}
-	
+
 	// 設定画面クローズ
 	function closeSettingBox() {
 		deleteSettingHtml();
 		deleteSettingFrameHtml();
 	}
-	
+
 	// 設定画面削除
 	function deleteSettingHtml() {
 		var elem = d.getElementById("SettingContainer");
 		if (elem == undefined) return;
 		d.body.removeChild(d.getElementById("SettingContainer"));
 	}
-	
+
 	function deleteSettingFrameHtml() {
 		var elem = d.getElementById("SettingContainer");
 		if (elem == undefined) return;
 		d.body.removeChild(document.getElementById("SettingContainer"));
 	}
-	
+
 	function ccreateText(container, id, text, left )
 	{
 		left += 2;
@@ -45230,18 +45234,18 @@ function disp_bro3_dasu(){
 		dv.style.padding = "1px";
 		dv.style.paddingLeft= left + "px";
 		dv.style.paddingBottom = "3px";
-	
+
 		var lb = d.createElement("label");
 		lb.htmlFor = id;
 		lb.style.verticalAlign = "middle";
 		var tx = d.createTextNode(text);
 		tx.fontsize = "10px";
 		lb.appendChild( tx );
-	
+
 		dv.appendChild(lb);
 		container.appendChild(dv);
 	}
-	
+
 	function ccreateCheckBox(container, id, def, text, title, left )
 	{
 		left += 2;
@@ -45255,21 +45259,21 @@ function disp_bro3_dasu(){
 		cb.id = id;
 		cb.value = 1;
 		if( def ) cb.checked = true;
-	
+
 		var lb = d.createElement("label");
 		lb.htmlFor = id;
 		lb.style.verticalAlign = "middle";
-	
+
 		var tx = d.createTextNode(text);
-	
+
 		lb.appendChild( tx );
-	
+
 		dv.appendChild(cb);
 		dv.appendChild(lb);
 		container.appendChild(dv);
 		return cb;
 	}
-	
+
 	function ccreateButton(container, text, title, func, width)
 	{
 		var btn = d.createElement("input");
@@ -45290,7 +45294,7 @@ function disp_bro3_dasu(){
 		$e(btn, "click", func);
 		return btn;
 	}
-	
+
 	function ccreateTextBox(container, id, def, text, title, size, left )
 	{
 		left += 2;
@@ -45306,34 +45310,34 @@ function disp_bro3_dasu(){
 		tb.style.verticalAlign = "middle";
 		tb.style.textAlign = "right";
 		tb.style.paddingRight = "3px";
-	
+
 		var tx = d.createTextNode(text);
 		tx.title = title;
-	
+
 		dv.appendChild(tx);
 		dv.appendChild(tb);
 		container.appendChild(dv);
 		return tb;
 	}
-	
+
 	//3桁カンマ区切り
 	function addFigure(str) {
 	　var num = new String(str).replace(/,/g, "");
 	　while(num != (num = num.replace(/^(-?\d+)(\d{3})/, "$1,$2")));
 	　return num;
 	}
-	
+
 	function xpath(query,targetDoc) {
 		return document.evaluate(query, targetDoc, null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 	}
-	
+
 	function cloadData(key, value, local, ev)
 	{
 		if( local ) key = location.hostname + key  + PGNAME;
 		var ret = GM_getValue(key, value);
 		return ev ? eval('ret='+ret) : ret;
 	}
-	
+
 	function csaveData(key, value, local, ev)
 	{
 		if( local ) key = location.hostname + key  + PGNAME;
@@ -45347,7 +45351,7 @@ function disp_bro3_dasu(){
 		}
 		GM_setValue(key, value );
 	}
-	
+
 	// ラジオボタン生成 @@@@ add 2011.09.06
 	function createRadioBtn ( value, txt ) {
 		var radioLabel = document.createElement('label');
@@ -45375,7 +45379,7 @@ function disp_bro3_dasu(){
 //add
 function disp_bro3_misc() {
 	var logtitle = 'bro3_misc';
-	
+
 	if(typeof GM_getMetadata != 'undefined') {
 		if(typeof GM_getMetadata('name') != 'undefined') {
 			logtitle = GM_getMetadata('name');
@@ -45387,10 +45391,10 @@ function disp_bro3_misc() {
 			logtitle = GM_info.script.name;
 		}
 	}
-	
+
 	logtitle = logtitle.toLowerCase();
 	var debug_log = function(msg) { console.log(logtitle + ':' + location.host + ':' + msg); };
-	
+
 	jQuery.noConflict();
 	j$ = jQuery;
 	HOST = location.hostname;
@@ -45606,7 +45610,7 @@ function disp_bro3_misc() {
 			}
 		})
 	}
-	
+
 	function AutoBid(b) {
 		if (b.length == 0) {
 			j$("#direct_link_lists").val("");
@@ -45800,12 +45804,12 @@ function disp_create_unit_mask() {
 	jQuery.noConflict();
 	$ = jQuery;
 	var infantrySkill = new RegExp("(練兵訓練|練兵修練|攻城の檄文|剣兵増強|剣将の采配|老巧の政令|富国強兵|娘々強兵|師君強兵)");
-	var spearSkill    = new RegExp("(兵舎訓練|兵舎修練|強兵の檄文|槍兵増強|槍将の采配|老巧の政令|富国強兵|娘々強兵|師君強兵)");
+	var spearSkill	  = new RegExp("(兵舎訓練|兵舎修練|強兵の檄文|槍兵増強|槍将の采配|老巧の政令|富国強兵|娘々強兵|師君強兵)");
 	var archerSkill   = new RegExp("(弓兵訓練|弓兵修練|強兵の檄文|弓兵増強|弓将の采配|老巧の政令|富国強兵|娘々強兵|師君強兵)");
 	var cavalrySkill  = new RegExp("(厩舎訓練|厩舎修練|強兵の檄文|騎兵増強|騎将の采配|老巧の政令|富国強兵|娘々強兵|師君強兵)");
-	var ramSkill      = new RegExp("(兵器訓練|兵器修練|攻城の檄文|老巧の政令|富国強兵|娘々強兵|師君強兵)");
-	var scoutSkill    = new RegExp("(密偵召集|老巧の政令|富国強兵|娘々強兵|師君強兵)");
-	
+	var ramSkill	  = new RegExp("(兵器訓練|兵器修練|攻城の檄文|老巧の政令|富国強兵|娘々強兵|師君強兵)");
+	var scoutSkill	  = new RegExp("(密偵召集|老巧の政令|富国強兵|娘々強兵|師君強兵)");
+
 	if ($("form[name='createUnitForm']").length) {
 		$("form[name='createUnitForm']").css("display", "none").before("<div class='usedSkillDislay'>");
 		$(".usedSkillDislay").css("padding", "2px").css("background-color", "gray").css("color", "white").css("font-weight", "bold").css("text-decoration", "line-through").text("-");
@@ -45999,7 +46003,7 @@ function multi_remove_territory(b, e) {
 }
 
 //------------------------------------
-// 拠点化予約破棄をマップ詳細に追加 
+// 拠点化予約破棄をマップ詳細に追加
 //------------------------------------
 function disp_addReserveLink() {
 	if( location.pathname != "/land.php" ) {
@@ -46114,7 +46118,7 @@ function exec_build_base(type, x, y) {
 
 	var execMain = setTimeout(function(){
 		GM_xmlhttpRequest({
-			method: "GET", 
+			method: "GET",
 			url: url,
 			headers: {"Content-type":"application/x-www-form-urlencoded"},
 			onload: function(res){
@@ -46167,7 +46171,7 @@ function hiro_buildfacility(f,x,y,vId){
 	bilderForm.appendChild(bilderForm_x);
 	bilderForm.appendChild(bilderForm_y);
 	bilderForm.appendChild(bilderForm_village_id);
-	var objBody = d.getElementsByTagName("body").item(0); 
+	var objBody = d.getElementsByTagName("body").item(0);
 		objBody.appendChild(bilderForm);
 	d.getElementById("bilderForm").submit();
 }
@@ -46189,7 +46193,7 @@ function hiro_lvupfacility(x,y,vId){
 	bilderForm.appendChild(bilderForm_x);
 	bilderForm.appendChild(bilderForm_y);
 	bilderForm.appendChild(bilderForm_village_id);
-	var objBody = d.getElementsByTagName("body").item(0); 
+	var objBody = d.getElementsByTagName("body").item(0);
 		objBody.appendChild(bilderForm);
 	d.getElementById("bilderForm").submit();
 }
@@ -46206,7 +46210,7 @@ function hiro_buildfacitity2(buildfacitity2_ssid,buildfacitity2_id,buildfacitity
 	bilderForm.appendChild(bilderForm_x);
 	bilderForm.appendChild(bilderForm_y);
 	bilderForm.appendChild(bilderForm_village_id);
-	var objBody = d.getElementsByTagName("body").item(0); 
+	var objBody = d.getElementsByTagName("body").item(0);
 		objBody.appendChild(bilderForm);
 	d.getElementById("bilderForm").submit();
 }
@@ -46237,7 +46241,7 @@ function delTerritoryList(kind, x, y){ //kind=0:land 1:castle
 		return;
 	}
 	var lists = cloadData("RemoveList", "[]", true, true);
-	
+
 	for(var i=0 ; i<lists.length ; i++) {
 		if(lists[i].x == x && lists[i].y == y ) {
 			if( ( ( lists[i].kind == 1 || lists[i].kind == 2 ) && kind == 1 ) ||
@@ -46288,7 +46292,7 @@ function delReserveList(x, y){
 		return;
 	}
 	var lists = cloadData("ReserveList", "[]", true, true);
-	
+
 	for(var i=0 ; i<lists.length ; i++) {
 		if(lists[i].x == x && lists[i].y == y ) {
 			lists.splice(i,1);
@@ -46299,7 +46303,7 @@ function delReserveList(x, y){
 }
 
 //------------------------------------------------
-// 一括破棄画面から保護解除出品をできるようにする 
+// 一括破棄画面から保護解除出品をできるようにする
 //------------------------------------------------
 function allCardDeleteCustom() {
 	if( location.pathname != "/card/allcard_delete.php" ) {
