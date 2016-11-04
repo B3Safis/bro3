@@ -17,17 +17,17 @@
 // @grant		GM_getResourceURL
 // @require		http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js
 
-// @resource old_village                        http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg.jpg
-// @resource Spring_village                     http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_spring.jpg
-// @resource Summer_village                     http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_summer.jpg
-// @resource Autumn_village                     http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_autumn.jpg
-// @resource Winter_village                     http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_winter.jpg
+// @resource old_village                        http://w1.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg.jpg
+// @resource Spring_village                     http://w1.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_spring.jpg
+// @resource Summer_village                     http://w1.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_summer.jpg
+// @resource Autumn_village                     http://w1.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_autumn.jpg
+// @resource Winter_village                     http://w1.3gokushi.jp/20120525-01/extend_project/w760/img/common/village_bg_winter.jpg
 
-// @resource old_map                            http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg.gif
-// @resource Spring_map                         http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_spring.gif
-// @resource Summer_map                         http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_summer.gif
-// @resource Autumn_map                         http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_autumn.gif
-// @resource Winter_map                         http://w2.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_winter.gif
+// @resource old_map                            http://w1.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg.gif
+// @resource Spring_map                         http://w1.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_spring.gif
+// @resource Summer_map                         http://w1.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_summer.gif
+// @resource Autumn_map                         http://w1.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_autumn.gif
+// @resource Winter_map                         http://w1.3gokushi.jp/20120525-01/extend_project/w760/img/common/map_bg_winter.gif
 
 // ==/UserScript==
 //
